@@ -8,7 +8,7 @@ and send them to **insights-ocp**.
 After being parsed, the results will be notified thorugh a different Kafka topic and logged in a
 way to be determined.
 
-![diagram](./external_pipeline_diagram.jpg)
+![diagram](./doc/external_pipeline_diagram.jpg)
 
 This service will be built in top of [insights-core-messaging framework](https://github.com/RedHatInsights/insights-core-messaging)
 and will be deployed and run inside https://cloud.redhat.com
