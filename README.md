@@ -37,3 +37,22 @@ TBD
 
 TBD
 
+## Implementation
+
+First you need to start kafka, through `docker-compose`:
+
+```Shell
+docker-compose up -d
+```
+
+Second step is to install python dependencies:
+
+```Shell
+pip install -e .
+```
+
+Third step is to start controller:
+
+```Shell
+python -u -m insights_messaging config.yaml
+```
