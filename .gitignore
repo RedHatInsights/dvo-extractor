@@ -1,4 +1,7 @@
 .tox
 *egg-info
 *~
-
+.eggs/
+env/
+.DS_Store
+__pycache__
