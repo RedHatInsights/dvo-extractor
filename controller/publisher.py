@@ -5,6 +5,7 @@ from insights_messaging.publishers import Publisher
 
 log = logging.getLogger(__name__)
 
+
 class Publisher(Publisher):
     def __init__(self, **kwargs):
         self.topic = kwargs.pop('outgoing_topic')
@@ -19,5 +20,9 @@ class Publisher(Publisher):
             # Convert message string into a byte array.
             self.producer.send(self.topic, message.encode('utf-8'))
             log.debug("Message has been sent successfully.")
+
         except KeyboardInterrupt:
             self.producer.close()
+
+        except UnicodeEncodeError:
+            log.error(f"Error encoding the response to publish: f{message}")
