@@ -34,25 +34,13 @@ class Consumer(Kafka):
         we should take decissions about handling or not every input
         message
         """
-        return True
+        return input_msg.value is not None
 
     def get_url(self, input_msg):
         """
         Same sa previous 2 methods, when we receive and figure out the
         message format, we can modify this method
         """
-        filename = input_msg.key.decode('utf-8')
-        log.debug(filename)
-        return filename
-
-    def process(self, input_msg):
-        try:
-            print(input_msg)
-        except Exception as ex:
-            self.publisher.error(input_msg, ex)
-            self.fire("on_consumer_failure", input_msg, ex)
-            raise
-        finally:
-            self.fire("on_consumer_complete", input_msg)
-
-
+        url = input_msg.value.get('url', '')
+        log.debug(url)
+        return url
