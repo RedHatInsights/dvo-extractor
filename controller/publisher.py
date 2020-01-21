@@ -5,6 +5,7 @@ from insights_messaging.publishers import Publisher
 
 log = logging.getLogger(__name__)
 
+
 class Publisher(Publisher):
     def __init__(self, **kwargs):
         self.topic = kwargs.pop('outgoing_topic')

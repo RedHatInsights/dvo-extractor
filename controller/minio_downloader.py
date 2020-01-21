@@ -24,7 +24,8 @@ class MinioDownloader:
             access_key = os.environ.get(access_key_env, access_key)
             secret_key = os.environ.get(secret_key_env, secret_key)
 
-        self.minioClient = Minio(endpoint,
+        self.minioClient = Minio(
+            endpoint,
             access_key=access_key,
             secret_key=secret_key,
             secure=secure)
@@ -41,7 +42,7 @@ class MinioDownloader:
         try:
             data = self.minioClient.get_object(bucket, obj)
             with NamedTemporaryFile() as file_data:
-                for d in data.stream(32*1024):
+                for d in data.stream(32 * 1024):
                     file_data.write(d)
                 file_data.flush()
                 yield file_data.name
