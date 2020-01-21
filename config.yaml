@@ -2,7 +2,10 @@ plugins:
     packages:
         - insights.specs.default
         - controller
-configs: []
+        - ocp
+    configs:
+      - name: ocp.config.telemeter.TelemeterServiceConfig
+        enabled: false
 service:
     extract_timeout:
     extract_tmp_dir:
