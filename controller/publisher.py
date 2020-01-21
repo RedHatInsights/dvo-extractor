@@ -12,9 +12,12 @@ class Publisher(Publisher):
 
     def publish(self, input_msg, response):
         try:
-            message = json.dumps(response)
+            # Flush kafkacat buffer.
+            # Response is already a string, no need to JSON dump.
+            message = response + "\n"
             log.debug(f"Sending response to the {self.topic} topic.")
-            log.debug(f"Response: {message}")
+            # Convert message string into a byte array.
             self.producer.send(self.topic, message.encode('utf-8'))
+            log.debug("Message has been sent successfully.")
         except KeyboardInterrupt:
             self.producer.close()
