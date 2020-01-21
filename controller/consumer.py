@@ -41,6 +41,6 @@ class Consumer(Kafka):
         Same sa previous 2 methods, when we receive and figure out the
         message format, we can modify this method
         """
-        filename = input_msg.key.decode('utf-8')
-        log.debug(filename)
-        return filename
+        url = input_msg.value.get('url', '')
+        log.debug(url)
+        return url

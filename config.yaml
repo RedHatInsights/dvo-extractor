@@ -14,14 +14,14 @@ service:
           incoming_topic: platform.upload.ccx
           group_id: report_sync_app
           bootstrap_servers:
-            - "localhost:9092"
+            - "10.34.129.172:9092"
 
     downloader:
-        name: controller..minio_downloader.MinioDownloader
+        name: controller.minio_downloader.MinioDownloader
         kwargs:
-          endpoint: 'minio-service:9000'
-          access_key: 'miniouser'
-          secret_key_env: 'miniopass'
+          endpoint: '10.34.129.226:9000'
+          access_key_env: 'MINIOUSER'
+          secret_key_env: 'MINIOPASS'
           secure: false
 
     publisher:
@@ -29,7 +29,7 @@ service:
         kwargs:
           outgoing_topic: platform.results.ccx
           bootstrap_servers:
-            - "localhost:9092"
+            - "10.34.129.172:9092"
     watchers: []
     logging:
         version: 1
