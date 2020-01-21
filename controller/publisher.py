@@ -5,6 +5,7 @@ from insights_messaging.publishers import Publisher
 
 log = logging.getLogger(__name__)
 
+
 class Publisher(Publisher):
     def __init__(self, **kwargs):
         self.topic = kwargs.pop('outgoing_topic')
@@ -21,3 +22,10 @@ class Publisher(Publisher):
             log.debug("Message has been sent successfully.")
         except KeyboardInterrupt:
             self.producer.close()
+
+    def error(self, input_msg, ex):
+        """Handle pipeline errors by logging them."""
+        # The super call is probably unnecessary because the default behavior
+        # is to do nothing, but let's call it in case it ever does anything.
+        super().error(input_msg, ex)
+        log.error(ex)
