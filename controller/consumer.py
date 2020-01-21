@@ -2,6 +2,7 @@
 
 import json
 import logging
+from kafka.consumer.fetcher import ConsumerRecord
 from insights_messaging.consumers.kafka import Kafka
 
 from controller.data_pipeline_error import DataPipelineError
@@ -44,18 +45,14 @@ class Consumer(Kafka):
         Check the format of the input message and decide
         if it should/can be handled by this consumer.
         """
-        # This probably never happens.
-        if not input_msg:
-            log.debug("Input message is empty")
-            return False
-
-        # This usually happens when Kafka returns an error.
-        if not input_msg.value:
-            log.debug("Input message value is empty")
+        if not isinstance(input_msg, ConsumerRecord):
+            log.debug("Unexpected input message type " +
+                      f"(expected 'ConsumerRecord', got {input_msg.__class__.__name__})")
             return False
 
         if not isinstance(input_msg.value, dict):
-            log.debug(f"Input message value is not a dictionary: {input_msg.value}")
+            log.debug("Unexpected input message value type " +
+                      f"(expected 'dict', got '{input_msg.value.__class__.__name__}')")
             return False
 
         if "url" not in input_msg.value:
