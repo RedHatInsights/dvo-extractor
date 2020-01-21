@@ -11,15 +11,23 @@ service:
     consumer:
         name: controller.consumer.Consumer
         kwargs:
-          incoming_topic: NEW_REPORT
+          incoming_topic: platform.upload.ccx
           group_id: report_sync_app
           bootstrap_servers:
             - "localhost:9092"
 
+    downloader:
+        name: controller..minio_downloader.MinioDownloader
+        kwargs:
+          endpoint: 'minio-service:9000'
+          access_key: 'miniouser'
+          secret_key_env: 'miniopass'
+          secure: false
+
     publisher:
         name: controller.publisher.Publisher
         kwargs:
-          outgoing_topic: SYNCED_REPORT
+          outgoing_topic: platform.results.ccx
           bootstrap_servers:
             - "localhost:9092"
     watchers: []
