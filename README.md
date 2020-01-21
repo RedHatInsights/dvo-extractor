@@ -5,12 +5,12 @@
 This service will receive records from a given Kafka topic, download the items from the S3 server
 and send them to **insights-ocp**.
 
-After being parsed, the results will be notified thorugh a different Kafka topic and logged in a
+After being parsed, the results will be notified through a different Kafka topic and logged in a
 way to be determined.
 
 ![diagram](./doc/external_pipeline_diagram.jpg)
 
-This service will be built in top of [insights-core-messaging framework](https://github.com/RedHatInsights/insights-core-messaging)
+This service is built on top of [insights-core-messaging framework](https://github.com/RedHatInsights/insights-core-messaging)
 and will be deployed and run inside https://cloud.redhat.com
 
 ## Data consumer
@@ -24,10 +24,10 @@ TBD
 
 ## Reporting
 
-After **insights-ocp** processes the file, a JSON report will be received. This report will be handle and sent,
-in first place, to a different Kafka topic, where other services can take this record hand handle it properly.
-
-In addition, some logs will be generated.
+**insights-ocp** processes the tarball downloaded from S3 bucket and generates
+a JSON report.  This report will be handled and sent to a Kafka topic
+**platform.results.ccx**, where other services can take this record and handle
+it properly.
 
 ### Format of the notified Kafka records
 
@@ -39,7 +39,11 @@ TBD
 
 ## Implementation
 
-First you need to start kafka, through `docker-compose`:
+To be described
+
+## Usage
+
+First you need to start Kafka, through `docker-compose`:
 
 ```Shell
 docker-compose up -d
