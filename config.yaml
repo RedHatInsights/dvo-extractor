@@ -11,25 +11,25 @@ service:
     consumer:
         name: controller.consumer.Consumer
         kwargs:
-          incoming_topic: platform.upload.ccx
-          group_id: ccx_data_pipeline_app
-          bootstrap_servers:
-            - "10.34.129.172:9092"
+            incoming_topic: platform.upload.ccx
+            group_id: ccx_data_pipeline_app
+            bootstrap_servers:
+                - "10.34.129.172:9092"
 
     downloader:
         name: controller.minio_downloader.MinioDownloader
         kwargs:
-          endpoint: '10.34.129.226:9000'
-          access_key_env: 'MINIOUSER'
-          secret_key_env: 'MINIOPASS'
-          secure: false
+            endpoint: "10.34.129.226:9000"
+            access_key_env: "MINIOUSER"
+            secret_key_env: "MINIOPASS"
+            secure: false
 
     publisher:
         name: controller.publisher.Publisher
         kwargs:
-          outgoing_topic: platform.results.ccx
-          bootstrap_servers:
-            - "10.34.129.172:9092"
+            outgoing_topic: platform.results.ccx
+            bootstrap_servers:
+                - "10.34.129.172:9092"
     watchers: []
     logging:
         version: 1
