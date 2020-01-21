@@ -45,7 +45,9 @@ class Consumer(Kafka):
         we should take decissions about handling or not every input
         message.
         """
-        return input_msg.value is not None
+        return input_msg.value is not None and \
+            isinstance(input_msg.value, dict) and \
+            "url" in input_msg.value
 
     def get_url(self, input_msg):
         """
