@@ -6,6 +6,8 @@ from tempfile import NamedTemporaryFile
 from minio import Minio
 from minio.error import ResponseError
 
+from controller.data_pipeline_error import DataPipelineError
+
 import logging
 
 
@@ -36,7 +38,12 @@ class MinioDownloader:
         into a temporary file
         """
 
-        bucket, obj = src.split('/')
+        # Make sure the file URL has the correct format
+        # Format: <bucket name>/<file name>
+        if src is None or src.count("/") != 1:
+            raise DataPipelineError(f"Invalid URL format: {src}")
+
+        bucket, obj = src.split("/")
 
         try:
             data = self.minioClient.get_object(bucket, obj)
