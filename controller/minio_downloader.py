@@ -1,4 +1,5 @@
 import os
+import logging
 
 from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
@@ -8,18 +9,16 @@ from minio.error import ResponseError
 
 from controller.data_pipeline_error import DataPipelineError
 
-import logging
-
 
 log = logging.getLogger(__name__)
 
 
 class MinioDownloader:
-    """
-    Downloader for Minio S3 storage
-    """
+    """Downloader for Minio S3 storage."""
+
     def __init__(self, endpoint=None, access_key=None, secret_key=None,
                  access_key_env=None, secret_key_env=None, secure=True):
+        """Construct a new instace of the `MinioDownloader`."""
 
         if access_key_env is not None and secret_key_env is not None:
             # Use environment vars
@@ -34,10 +33,7 @@ class MinioDownloader:
 
     @contextmanager
     def get(self, src):
-        """
-        Get a file from Minio S3 server for an specified path and store it
-        into a temporary file
-        """
+        """Download a file from Minio S3 server and store it in a temporary file."""
 
         # Make sure the file URL has the correct format
         # Format: <bucket name>/<file name>

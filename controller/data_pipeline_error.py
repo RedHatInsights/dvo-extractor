@@ -1,5 +1,10 @@
-class DataPipelineError(Exception):
-    """Represents data pipeline exceptions."""
+"""Module containing the implementation of the `DataPipelineError` exception class."""
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+
+class DataPipelineError(Exception):
+    """
+    Represents a data pipeline exception.
+
+    This should make it easier to differentiate between
+    exceptions caused by internal and external code.
+    """
