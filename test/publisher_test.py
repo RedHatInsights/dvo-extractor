@@ -1,3 +1,5 @@
+"""Module for testing the controller.publisher module."""
+
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -5,7 +7,15 @@ from controller.publisher import Publisher
 
 
 class PublisherTest(unittest.TestCase):
+    """Test cases for testing the class Publisher."""
+
     def test_init(self):
+        """
+        Test Publisher initializer.
+
+        The test mocks the KafkaProducer from kafka module in order
+        to avoid real usage of the library
+        """
         producer_kwargs = {
             "bootstrap_servers": ['kafka_server1'],
             "client_id": "ccx-data-pipeline"
@@ -20,6 +30,7 @@ class PublisherTest(unittest.TestCase):
             self.assertEqual(sut.topic, "a topic name")
 
     def test_init_no_topic(self):
+        """Test Publisher initialier without outgoing topic."""
         producer_kwargs = {
             "bootstrap_servers": ['kafka_server1'],
             "client_id": "ccx-data-pipeline"
@@ -29,6 +40,12 @@ class PublisherTest(unittest.TestCase):
             sut = Publisher(**producer_kwargs)
 
     def test_publish(self):
+        """
+        Test Producer.publish method.
+
+        The kafka.KafkaProducer class is mocked in order to avoid the usage
+        of the real library
+        """
         producer_kwargs = {
             "bootstrap_servers": ['kafka_server1'],
             "client_id": "ccx-data-pipeline"
