@@ -20,8 +20,12 @@ class Publisher(Publisher):
             # Convert message string into a byte array.
             self.producer.send(self.topic, message.encode('utf-8'))
             log.debug("Message has been sent successfully.")
+
         except KeyboardInterrupt:
             self.producer.close()
+
+        except UnicodeEncodeError:
+            log.error(f"Error encoding the response to publish: {message}")
 
     def error(self, input_msg, ex):
         """Handle pipeline errors by logging them."""
