@@ -16,9 +16,10 @@ kafka1 --> Consumer : Notification about new tarball
 Consumer --> Downloader : Download tarball
 Downloader --> S3 : Read tarball from bucket
 S3 --> Downloader : Here's required tarball
-Downloader --> InsightsOcp : Run rules\nagainst tarball
-InsightsOcp --> Producer : Insights results\nin JSON format
+Downloader --> Consumer : Here's required tarball
+Consumer --> InsightsOcp : Run rules\nagainst tarball
+InsightsOcp --> Consumer : Return JSON report
+Consumer --> Producer : Insights results\nin JSON format
 Producer --> kafka2 : Publish insights\nresults\nin JSON format
 
 @enduml
-
