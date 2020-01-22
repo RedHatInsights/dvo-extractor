@@ -1,0 +1,24 @@
+@startuml
+hide footbox
+title External data pipeline data flow
+
+entity "Kafka\nplatform.upload.ccx" as kafka1 #99ff99
+database S3
+box "External data pipeline" #LightBlue
+    control Consumer
+    control Downloader
+    control InsightsOcp
+    control Producer
+end box
+entity "Kafka\nplatform.results.ccx" as kafka2 #ccccff
+
+kafka1 --> Consumer : Notification about new tarball
+Consumer --> Downloader : Download tarball
+Downloader --> S3 : Read tarball from bucket
+S3 --> Downloader : Here's required tarball
+Downloader --> InsightsOcp : Run rules\nagainst tarball
+InsightsOcp --> Producer : Insights results\nin JSON format
+Producer --> kafka2 : Publish insights\nresults\nin JSON format
+
+@enduml
+
