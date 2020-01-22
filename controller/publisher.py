@@ -1,3 +1,5 @@
+"""Module that implements a custom Kafka publisher."""
+
 import logging
 import json
 from kafka import KafkaProducer
@@ -7,11 +9,30 @@ log = logging.getLogger(__name__)
 
 
 class Publisher(Publisher):
+    """
+    Publisher based on the base Kafka publisher.
+
+    The results of the data analysis are received as a JSON (string)
+    and turned into a byte array using UTF-8 encoding.
+    The bytes are then sent to the output Kafka topic.
+
+    Custom error handling for the whole pipeline is implemented here.
+    """
+
     def __init__(self, **kwargs):
+        """Construct a new `Publisher` given `kwargs` from the config YAML."""
         self.topic = kwargs.pop('outgoing_topic')
         self.producer = KafkaProducer(**kwargs)
 
     def publish(self, input_msg, response):
+        """
+        Publish an EOL-terminated JSON message to the output Kafka topic.
+
+        The response is assumed to be a string representing a valid JSON object.
+        A newline character will be appended to it, it will be converted into
+        a byte array using UTF-8 encoding and the result of that will be sent
+        to the producer to produce a message in the output Kafka topic.
+        """
         try:
             # Flush kafkacat buffer.
             # Response is already a string, no need to JSON dump.
