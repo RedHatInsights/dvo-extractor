@@ -25,4 +25,11 @@ class Publisher(Publisher):
             self.producer.close()
 
         except UnicodeEncodeError:
-            log.error(f"Error encoding the response to publish: f{message}")
+            log.error(f"Error encoding the response to publish: {message}")
+
+    def error(self, input_msg, ex):
+        """Handle pipeline errors by logging them."""
+        # The super call is probably unnecessary because the default behavior
+        # is to do nothing, but let's call it in case it ever does anything.
+        super().error(input_msg, ex)
+        log.error(ex)
