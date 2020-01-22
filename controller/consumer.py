@@ -41,10 +41,7 @@ class Consumer(Kafka):
             log.error(f"Unable to decode received message: {bytes_}")
 
     def handles(self, input_msg):
-        """
-        Check the format of the input message and decide
-        if it should/can be handled by this consumer.
-        """
+        """Check format of the input message and decide if it can be handled by this consumer."""
         if not isinstance(input_msg, ConsumerRecord):
             log.debug("Unexpected input message type " +
                       f"(expected 'ConsumerRecord', got {input_msg.__class__.__name__})")
