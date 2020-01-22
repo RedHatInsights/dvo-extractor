@@ -13,6 +13,10 @@ way to be determined.
 This service is built on top of [insights-core-messaging framework](https://github.com/RedHatInsights/insights-core-messaging)
 and will be deployed and run inside https://cloud.redhat.com
 
+## Sequence diagram
+
+![sequence](./doc/sequence-diagram.png)
+
 ## Data consumer
 
 Every time a new record is sent by Kafka to the subscribes topic, the `KafkaConsumer` will handle and process it,
