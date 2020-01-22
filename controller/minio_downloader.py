@@ -1,4 +1,5 @@
 import os
+import logging
 
 from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
@@ -7,8 +8,6 @@ from minio import Minio
 from minio.error import ResponseError
 
 from controller.data_pipeline_error import DataPipelineError
-
-import logging
 
 
 log = logging.getLogger(__name__)
