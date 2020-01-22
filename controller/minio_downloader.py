@@ -1,3 +1,5 @@
+"""Module that defines a Downloader object to access to Minio S3 servers."""
+
 import os
 import logging
 
@@ -19,7 +21,6 @@ class MinioDownloader:
     def __init__(self, endpoint=None, access_key=None, secret_key=None,
                  access_key_env=None, secret_key_env=None, secure=True):
         """Construct a new instace of the `MinioDownloader`."""
-
         if access_key_env is not None and secret_key_env is not None:
             # Use environment vars
             access_key = os.environ.get(access_key_env, access_key)
@@ -34,7 +35,6 @@ class MinioDownloader:
     @contextmanager
     def get(self, src):
         """Download a file from Minio S3 server and store it in a temporary file."""
-
         # Make sure the file URL has the correct format
         # Format: <bucket name>/<file name>
         if src is None or src.count("/") != 1:
