@@ -19,19 +19,6 @@ class Consumer(Kafka):
     then passes the file to an internal engine for further processing.
     """
 
-    def __init__(self,
-                 publisher,
-                 downloader,
-                 engine,
-                 incoming_topic,
-                 group_id,
-                 bootstrap_servers,
-                 retry_backoff_ms=1000,
-                 uploader={}):
-        """Construct an instance of Consumer class."""
-        super().__init__(publisher, downloader, engine, incoming_topic, group_id,
-                         bootstrap_servers, retry_backoff_ms)
-
     def deserialize(self, bytes_):
         """Deserialize JSON message received from Kafka."""
         if isinstance(bytes_, (str, bytes, bytearray)):
