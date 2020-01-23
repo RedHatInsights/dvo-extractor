@@ -10,7 +10,7 @@ All methods meant to be used by end-user *must be* documented - **no exceptions!
 
 ## Submitting a pull request
 
-*Note: Every PR requires at least one review from at least one of the core review members. List of members are available on [Settings/Members page](https://gitlab.cee.redhat.com/ccx/insights-ocp/-/project_members)*
+*Note: Every PR requires at least two reviews from at least two of the core review members. It won't be possible to merge changes without having two acks. List of members are available on [Settings/Members page](https://gitlab.cee.redhat.com/ccx/insights-ocp/-/project_members)*
 
 Before you submit your pull request consider the following guidelines:
 
