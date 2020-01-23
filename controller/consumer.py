@@ -34,7 +34,7 @@ class Consumer(Kafka):
 
     def deserialize(self, bytes_):
         """Deserialize JSON message received from Kafka."""
-        if isinstance(bytes_, bytearray):
+        if isinstance(bytes_, (str, bytes, bytearray)):
             try:
                 return json.loads(bytes_)
             except json.JSONDecodeError as ex:
