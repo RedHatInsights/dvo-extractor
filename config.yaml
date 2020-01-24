@@ -20,12 +20,7 @@ service:
                 - "10.34.129.172:9092"
 
     downloader:
-        name: controller.minio_downloader.MinioDownloader
-        kwargs:
-            endpoint: "10.34.129.226:9000"
-            access_key_env: "MINIOUSER"
-            secret_key_env: "MINIOPASS"
-            secure: false
+        name: controller.http_downloader.HTTPDownloader
 
     publisher:
         name: controller.publisher.Publisher
