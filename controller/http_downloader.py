@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 class HTTPDownloader:
     """Downloader for HTTP uris."""
 
-    HTTP_RE = r"^https?://(.+)"
+    HTTP_RE = r"https?://(.+)"
 
     @contextmanager
     def get(self, src):
