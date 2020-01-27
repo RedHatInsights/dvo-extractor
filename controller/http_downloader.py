@@ -1,12 +1,12 @@
 """Module that defines a Downloader object to get HTTP urls."""
 
-import os
 import logging
 import re
 from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
 
 import requests
+
 
 from controller.data_pipeline_error import DataPipelineError
 

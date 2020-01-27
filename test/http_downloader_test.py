@@ -33,6 +33,7 @@ _INVALID_URLS = [
     "bucket/file"
 ]
 
+
 @pytest.mark.parametrize("url", _INVALID_URLS)
 def test_get_invalid_url(url):
     """Test that passing invalid URL to `get` raises an exception."""
