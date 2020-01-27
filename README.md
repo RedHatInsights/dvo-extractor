@@ -11,7 +11,7 @@ way to be determined.
 ![diagram](./doc/external_pipeline_diagram.jpg)
 
 This service is built on top of [insights-core-messaging framework](https://github.com/RedHatInsights/insights-core-messaging)
-and will be deployed and run inside https://cloud.redhat.com
+and will be deployed and run inside [cloud.redhat.com](https://cloud.redhat.com).
 
 ## Sequence diagram
 
@@ -49,18 +49,18 @@ To be described
 
 First you need to start Kafka, through `docker-compose`:
 
-```Shell
+```shell
 docker-compose up -d
 ```
 
 Second step is to install python dependencies:
 
-```Shell
+```shell
 pip install -e .
 ```
 
 Third step is to start controller:
 
-```Shell
+```shell
 python -u -m insights_messaging config.yaml
 ```
