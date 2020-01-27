@@ -1,5 +1,6 @@
 """Module containing unit tests for the `Consumer` class."""
 
+from unittest.mock import patch
 import pytest
 
 from controller.consumer import Consumer
@@ -9,6 +10,7 @@ from kafka.consumer.fetcher import ConsumerRecord
 
 _REGEX_BAD_TYPE = r'^Unexpected input message type: '
 _REGEX_BAD_JSON = r'^Unable to decode received message \(.*\):'
+_REGEX_BAD_URL = r'^Unable to extract URL from input message: (.*)'
 
 
 def _mock_consumer_record(value):
@@ -111,7 +113,8 @@ def test_handles_invalid(value):
 
 _VALID_RECORD_VALUES = [
     {"url": ""},
-    {"url": "bucket/file"}
+    {"url": "bucket/file"},
+    {"url": "https://a-valid-domain.com/precious_url"}
 ]
 
 
@@ -119,3 +122,16 @@ _VALID_RECORD_VALUES = [
 def test_handles_valid(value):
     """Test that `Consumer` accepts handling of correctly formatted input messages."""
     assert Consumer.handles(None, _mock_consumer_record(value))
+
+
+@pytest.mark.parametrize("value", _INVALID_RECORD_VALUES)
+def test_get_url_invalid(value):
+    """Test that `Consumer.get_url` raises the appropriate exception."""
+    with pytest.raises(DataPipelineError, match=_REGEX_BAD_URL):
+        Consumer.get_url(None, value)
+
+
+@pytest.mark.parametrize("value", _VALID_RECORD_VALUES)
+def test_get_url_valid(value):
+    """Test that `Consumer.get_url` returns the expected value."""
+    assert Consumer.get_url(None, _mock_consumer_record(value)) == value['url']

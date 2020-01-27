@@ -19,19 +19,6 @@ class Consumer(Kafka):
     then passes the file to an internal engine for further processing.
     """
 
-    def __init__(self,
-                 publisher,
-                 downloader,
-                 engine,
-                 incoming_topic,
-                 group_id,
-                 bootstrap_servers,
-                 retry_backoff_ms=1000,
-                 uploader={}):
-        """Construct an instance of Consumer class."""
-        super().__init__(publisher, downloader, engine, incoming_topic, group_id,
-                         bootstrap_servers, retry_backoff_ms)
-
     def deserialize(self, bytes_):
         """Deserialize JSON message received from Kafka."""
         if isinstance(bytes_, (str, bytes, bytearray)):
@@ -45,12 +32,12 @@ class Consumer(Kafka):
     def handles(self, input_msg):
         """Check format of the input message and decide if it can be handled by this consumer."""
         if not isinstance(input_msg, ConsumerRecord):
-            log.debug("Unexpected input message type " +
+            log.debug("Unexpected input message type "
                       f"(expected 'ConsumerRecord', got {input_msg.__class__.__name__})")
             return False
 
         if not isinstance(input_msg.value, dict):
-            log.debug("Unexpected input message value type " +
+            log.debug("Unexpected input message value type "
                       f"(expected 'dict', got '{input_msg.value.__class__.__name__}')")
             return False
 
