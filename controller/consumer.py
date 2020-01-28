@@ -25,9 +25,11 @@ class Consumer(Kafka):
             try:
                 return json.loads(bytes_)
             except json.JSONDecodeError as ex:
-                raise DataPipelineError(f"Unable to decode received message ({ex}): {bytes_}")
+                log.error(f"Unable to decode received message ({ex}): {bytes_}")
+                return None
         else:
-            raise DataPipelineError(f"Unexpected input message type: {bytes_.__class__.__name__}")
+            log.error(f"Unexpected input message type: {bytes_.__class__.__name__}")
+            return None
 
     def handles(self, input_msg):
         """Check format of the input message and decide if it can be handled by this consumer."""
