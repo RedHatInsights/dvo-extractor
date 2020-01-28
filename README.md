@@ -3,7 +3,7 @@
 [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 
 This service will receive records from a given Kafka topic, download the items from the S3 server
-and send them to **insights-ocp**.
+and send them to **ccx-rules-ocp**.
 
 After being parsed, the results will be notified through a different Kafka topic and logged in a
 way to be determined.
@@ -28,9 +28,9 @@ TBD
 
 ## Reporting
 
-**insights-ocp** processes the tarball downloaded from S3 bucket and generates
-a JSON report.  This report will be handled and sent to a Kafka topic
-**platform.results.ccx**, where other services can take this record and handle
+**ccx-ocp-core** and **ccx-rules-ocp** process the tarball downloaded from S3 bucket and generates
+a JSON report. This report will be handled and sent to a Kafka topic
+**ccx.ocp.results**, where other services can take this record and handle
 it properly.
 
 ### Format of the notified Kafka records
