@@ -31,8 +31,7 @@ _INVALID_TYPE_VALUES = [
 @pytest.mark.parametrize("value", _INVALID_TYPE_VALUES)
 def test_deserialize_invalid_type(value):
     """Test that passing invalid data type to `deserialize` raises an exception."""
-    with pytest.raises(DataPipelineError, match=_REGEX_BAD_TYPE):
-        Consumer.deserialize(None, value)
+    assert Consumer.deserialize(None, value) is None
 
 
 _INVALID_MESSAGES = [
@@ -47,22 +46,19 @@ _INVALID_MESSAGES = [
 @pytest.mark.parametrize("msg", _INVALID_MESSAGES)
 def test_deserialize_invalid_format_str(msg):
     """Test that passing a malformed message to `deserialize` raises an exception."""
-    with pytest.raises(DataPipelineError, match=_REGEX_BAD_JSON):
-        Consumer.deserialize(None, msg)
+    assert Consumer.deserialize(None, msg) is None
 
 
 @pytest.mark.parametrize("msg", _INVALID_MESSAGES)
 def test_deserialize_invalid_format_bytes(msg):
     """Test that passing a malformed message to `deserialize` raises an exception."""
-    with pytest.raises(DataPipelineError, match=_REGEX_BAD_JSON):
-        Consumer.deserialize(None, msg.encode("utf-8"))
+    assert Consumer.deserialize(None, msg.encode("utf-8")) is None
 
 
 @pytest.mark.parametrize("msg", _INVALID_MESSAGES)
 def test_deserialize_invalid_format_bytearray(msg):
     """Test that passing a malformed message to `deserialize` raises an exception."""
-    with pytest.raises(DataPipelineError, match=_REGEX_BAD_JSON):
-        Consumer.deserialize(None, bytearray(msg.encode("utf-8")))
+    assert Consumer.deserialize(None, bytearray(msg.encode("utf-8"))) is None
 
 
 _VALID_MESSAGES = [
