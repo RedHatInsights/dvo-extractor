@@ -17,9 +17,9 @@ log = logging.getLogger(__name__)
 class HTTPDownloader:
     """Downloader for HTTP uris."""
 
-    HTTP_RE = re.compile(
-        # https://<hostname>/<128b hex hash>?<credentials and other params>
-        r"^https://[^/]+\.s3\.amazonaws\.com/[0-9a-fA-F]{32}\?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=[^/]+$")
+    # https://<hostname>/<128b hex hash>?<credentials and other params>
+    HTTP_RE = re.compile(r"^https://[^/]+\.s3\.amazonaws\.com/[0-9a-fA-F]{32}\?"
+                         r"X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=[^/]+$")
 
     @contextmanager
     def get(self, src):
