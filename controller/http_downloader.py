@@ -17,12 +17,12 @@ log = logging.getLogger(__name__)
 class HTTPDownloader:
     """Downloader for HTTP uris."""
 
-    HTTP_RE = r"https?://(.+)"
+    HTTP_RE = re.compile(r"https?://(.+)")
 
     @contextmanager
     def get(self, src):
         """Download a file from HTTP server and store it in a temporary file."""
-        if src is None or not re.match(HTTPDownloader.HTTP_RE, src):
+        if src is None or not HTTPDownloader.HTTP_RE.match(src):
             raise DataPipelineError(f"Invalid URL format: {src}")
 
         try:
