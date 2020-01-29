@@ -1,12 +1,11 @@
 """Module containing unit tests for the `Consumer` class."""
 
-from unittest.mock import patch
 import pytest
+
+from kafka.consumer.fetcher import ConsumerRecord
 
 from controller.consumer import Consumer
 from controller.data_pipeline_error import DataPipelineError
-
-from kafka.consumer.fetcher import ConsumerRecord
 
 _REGEX_BAD_TYPE = r'^Unexpected input message type: '
 _REGEX_BAD_JSON = r'^Unable to decode received message \(.*\):'
