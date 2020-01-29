@@ -7,9 +7,7 @@ from kafka.consumer.fetcher import ConsumerRecord
 from controller.consumer import Consumer
 from controller.data_pipeline_error import DataPipelineError
 
-_REGEX_BAD_TYPE = r'^Unexpected input message type: '
-_REGEX_BAD_JSON = r'^Unable to decode received message \(.*\):'
-_REGEX_BAD_URL = r'^Unable to extract URL from input message: (.*)'
+_REGEX_BAD_SCHEMA = r'^Unable to extract URL from input message: '
 
 
 def _mock_consumer_record(value):
@@ -122,7 +120,7 @@ def test_handles_valid(value):
 @pytest.mark.parametrize("value", _INVALID_RECORD_VALUES)
 def test_get_url_invalid(value):
     """Test that `Consumer.get_url` raises the appropriate exception."""
-    with pytest.raises(DataPipelineError, match=_REGEX_BAD_URL):
+    with pytest.raises(DataPipelineError, match=_REGEX_BAD_SCHEMA):
         Consumer.get_url(None, value)
 
 
