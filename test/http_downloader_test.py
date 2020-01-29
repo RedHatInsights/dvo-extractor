@@ -42,6 +42,9 @@ def test_get_invalid_url(url):
             pass
 
 
+_VALID_URL = "https://zzzzzzzzzzzzzzzzzzzzzzzz.s3.amazonaws.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ&X-Amz-Date=19700101T000000Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+
+
 @patch('requests.get')
 def test_get_valid_url(get_mock):
     """Test that passing a valid URL the `get` method tries to download it."""
@@ -49,7 +52,7 @@ def test_get_valid_url(get_mock):
     get_mock.return_value = response_mock
     response_mock.content = b"file content"
 
-    with HTTPDownloader.get(None, "http://validurl") as filename:
+    with HTTPDownloader.get(None, _VALID_URL) as filename:
         with open(filename, 'rb') as f:
             file_content = f.read()
             assert file_content == response_mock.content
