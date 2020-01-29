@@ -17,12 +17,14 @@ log = logging.getLogger(__name__)
 class HTTPDownloader:
     """Downloader for HTTP uris."""
 
-    HTTP_RE = re.compile(r"https?://(.+)")
+    HTTP_RE = re.compile(
+        # https://<hostname>/<128b hex hash>?<credentials and other params>
+        r"^https://[^/]+\.s3\.amazonaws\.com/[0-9a-fA-F]{32}\?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=[^/]+$")
 
     @contextmanager
     def get(self, src):
         """Download a file from HTTP server and store it in a temporary file."""
-        if src is None or not HTTPDownloader.HTTP_RE.match(src):
+        if src is None or not HTTPDownloader.HTTP_RE.fullmatch(src):
             raise DataPipelineError(f"Invalid URL format: {src}")
 
         try:
