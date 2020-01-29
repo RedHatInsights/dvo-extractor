@@ -37,7 +37,7 @@ class PublisherTest(unittest.TestCase):
         }
 
         with self.assertRaises(KeyError):
-            sut = Publisher(**producer_kwargs)
+            _ = Publisher(**producer_kwargs)
 
     def test_publish(self):
         """
