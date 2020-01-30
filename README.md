@@ -5,7 +5,7 @@
 This service will receive records from a given Kafka topic, download the items
 from the S3 server and apply Insights rules to downloaded tarball.
 
-JSON containing Insights rules results will be send to a different Kafka topic
+JSON containing Insights rules results will be sent to a different Kafka topic
 and logged in a way to be determined.
 
 Incoming and outgoing Kafka topics are configurable, these can be even handled
