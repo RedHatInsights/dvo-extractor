@@ -13,6 +13,7 @@ Please only keep the relevant options (delete all others).
 - Breaking change (fix or feature that would cause existing functionality to not work as expected)
 - This change requires a documentation update
 - Refactor (refactoring code, removing useless files)
+- Documentation update (does not change source code nor configuration)
 
 ## Testing steps
 
