@@ -29,7 +29,9 @@ Before you submit your pull request, please consider the following guidelines:
     git checkout -b bug/my-fix-branch master
     ```
 
-1) Create your patch, **ideally including appropriate test cases**
+1) Create your patch, **ideally including appropriate test cases**.
+
+1) Make sure all your changes to Python code follow the `pycodestyle` guidelines. Aside from that, [EditorConfig](https://editorconfig.org/) rules must be satisfied, not just for Python files, but also for all configuration files. You can check it using [this Go utility](https://github.com/editorconfig-checker/editorconfig-checker) or let your editor handle it for you (see the [official documentation](https://editorconfig.org/#download) for more details).
 
 1) Include documentation that either describe a change to a behavior or the changed capability to an end user.
 
