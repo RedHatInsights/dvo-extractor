@@ -33,10 +33,12 @@ def test_deserialize_invalid_type(value):
 
 _INVALID_MESSAGES = [
     '',
-    '"'
-    '{"key":"value"',
-    '"key":"value"}',
-    '"key":"value"'
+    '{}',
+    '{"noturl":"https://s3.com/hash"}'
+    '{"url":"value"',
+    '"url":"value"}',
+    '"url":"value"',
+    '"{\"url\":\"value\"}"'
 ]
 
 
@@ -59,10 +61,12 @@ def test_deserialize_invalid_format_bytearray(msg):
 
 
 _VALID_MESSAGES = [
-    ('""', ""),
-    ('[]', []),
-    ('{}', {}),
-    ('{"key":"value"}', {"key": "value"})
+    ('{"url": ""}', {"url": ""}),
+
+    ('{"url": "https://s3.com/hash", "unused-property": null}',
+     {"url": "https://s3.com/hash", "unused-property": None}),
+
+    ('{"account":12345678, "url":"any/url"}', {"account": 12345678, "url": "any/url"})
 ]
 
 
