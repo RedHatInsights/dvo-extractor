@@ -49,7 +49,35 @@ properly.
 }
 ```
 
-The attribute `b64_identity` contains another JSON encoded by BASE64 encoding. User and org identities are stored here.
+The attribute `b64_identity` contains another JSON encoded by BASE64 encoding. User and org identities are stored here:
+
+```
+...
+...
+...
+    "identity": {
+        "account_number": "6212377",
+        "auth_type": "basic-auth",
+        "internal": {
+            "auth_time": 1400,
+            "org_id": "12383032"
+        },
+        "type": "User",
+        "user": {
+            "email": "jneedle+qa@redhat.com",
+            "first_name": "Insights",
+            "is_active": true,
+            "is_internal": false,
+            "is_org_admin": true,
+            "last_name": "QE",
+            "locale": "en_US",
+            "username": "insights-qe"
+        }
+...
+...
+...
+
+```
 
 ### Format of the logs
 
