@@ -2,10 +2,12 @@
 
 import json
 import logging
+import jsonschema
 from kafka.consumer.fetcher import ConsumerRecord
 from insights_messaging.consumers.kafka import Kafka
 
 from controller.data_pipeline_error import DataPipelineError
+from controller.schemas import INPUT_MESSAGE_SCHEMA
 
 log = logging.getLogger(__name__)
 
@@ -23,10 +25,18 @@ class Consumer(Kafka):
         """Deserialize JSON message received from Kafka."""
         if isinstance(bytes_, (str, bytes, bytearray)):
             try:
-                return json.loads(bytes_)
+                msg = json.loads(bytes_)
+                jsonschema.validate(instance=msg, schema=INPUT_MESSAGE_SCHEMA)
+                return msg
+
             except json.JSONDecodeError as ex:
                 log.error(f"Unable to decode received message ({ex}): {bytes_}")
                 return None
+
+            except jsonschema.ValidationError as ex:
+                log.error(f"Invalid input message JSON schema: {ex}")
+                return None
+
         else:
             log.error(f"Unexpected input message type: {bytes_.__class__.__name__}")
             return None
@@ -38,6 +48,7 @@ class Consumer(Kafka):
                       f"(expected 'ConsumerRecord', got {input_msg.__class__.__name__})")
             return False
 
+        # ---- Redundant checks. Already checked by JSON schema in `deserialize`. ----
         if not isinstance(input_msg.value, dict):
             log.debug("Unexpected input message value type "
                       f"(expected 'dict', got '{input_msg.value.__class__.__name__}')")
@@ -46,6 +57,7 @@ class Consumer(Kafka):
         if "url" not in input_msg.value:
             log.debug(f"Input message is missing a 'url' field: {input_msg.value}")
             return False
+        # ----------------------------------------------------------------------------
 
         return True
 
