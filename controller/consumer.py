@@ -27,6 +27,7 @@ class Consumer(Kafka):
             try:
                 msg = json.loads(bytes_)
                 jsonschema.validate(instance=msg, schema=INPUT_MESSAGE_SCHEMA)
+                log.info("JSON schema validated")
                 return msg
 
             except json.JSONDecodeError as ex:

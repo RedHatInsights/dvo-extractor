@@ -3,6 +3,8 @@ plugins:
     - insights.specs.default
     - controller
     - ocp
+    - pythonjsonlogger
+    - pythonjsonlogger.jsonlogger
   configs:
     - name: ocp.config.telemeter.TelemeterServiceConfig
       enabled: false
@@ -29,6 +31,7 @@ service:
       bootstrap_servers:
         - "10.34.129.172:9092"
   watchers: []
+
   logging:
     version: 1
     disable_existing_loggers: false
@@ -37,12 +40,25 @@ service:
         level: DEBUG
         class: logging.StreamHandler
         stream: ext://sys.stdout
+        formatter: json
+        filters:
+          - context_filter
+    formatters:
+      brief:
+        format: "%(message)s"
+      json:
+        (): "pythonjsonlogger.jsonlogger.JsonFormatter"
+        format: "%(levelname)s %(asctime)s %(name)s %(filename)s %(message)s"
+    filters:
+      context_filter:
+        (): "controller.log_filter.LogFilter"
     root:
       handlers:
         - default
-      level: WARNING
     loggers:
-      controller:
-        level: DEBUG
       insights_messaging:
+        level: DEBUG
+      insights:
+        level: WARNING
+      controller:
         level: DEBUG
