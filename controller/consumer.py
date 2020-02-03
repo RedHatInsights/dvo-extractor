@@ -22,10 +22,16 @@ class Consumer(Kafka):
     then passes the file to an internal engine for further processing.
     """
 
-    def __init__(self, publisher, downloader, engine, group_id,
+    def __init__(self, publisher, downloader, engine,
+                 group_id=None, group_id_env=None,
                  incoming_topic=None, incoming_topic_env=None,
                  bootstrap_servers=None, bootstrap_server_env=None, retry_backoff_ms=1000):
         """Construct a new external data pipeline Kafka consumer."""
+        if group_id_env is not None:
+            env_group = os.environ.get(group_id_env, None)
+            if env_group is not None:
+                group_id = env_group
+
         if incoming_topic_env is not None:
             env_topic = os.environ.get(incoming_topic_env, None)
             if env_topic is not None:
@@ -36,7 +42,8 @@ class Consumer(Kafka):
             if env_server is not None:
                 bootstrap_servers = [env_server]
 
-        log.info(f"Consuming topic {incoming_topic} from brokers {bootstrap_servers}")
+        log.info(f"Consuming topic '{incoming_topic}' from brokers {bootstrap_servers}"
+                 f" as group '{group_id}'")
 
         super().__init__(publisher, downloader, engine, incoming_topic,
                          group_id, bootstrap_servers, retry_backoff_ms=retry_backoff_ms)

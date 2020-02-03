@@ -19,6 +19,7 @@ service:
       incoming_topic: platform.upload.buckit
       incoming_topic_env: CDP_INCOMING_TOPIC
       group_id: ccx_data_pipeline_app
+      group_id_env: CDP_GROUP_ID
       bootstrap_servers:
         - "10.34.129.172:9092"
       bootstrap_server_env: CDP_CONSUMER_SERVER
