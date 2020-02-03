@@ -11,7 +11,7 @@ WORKDIR $HOME
 
 COPY . .
 
-RUN dnf -y --setopt=tsflags=nodocs install python3-pip git && \
+RUN dnf -y --setopt=tsflags=nodocs install python3-pip git unzip && \
     python3 -m venv $VENV
 
 ENV PATH="$VENV/bin:$PATH"

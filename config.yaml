@@ -2,11 +2,11 @@ plugins:
   packages:
     - insights.specs.default
     - controller
-    - ocp
+    - ccx_ocp_core
     - pythonjsonlogger
     - pythonjsonlogger.jsonlogger
   configs:
-    - name: ocp.config.telemeter.TelemeterServiceConfig
+    - name: ccx_ocp_core.config.telemeter.TelemeterServiceConfig
       enabled: false
 service:
   extract_timeout:
@@ -16,7 +16,7 @@ service:
   consumer:
     name: controller.consumer.Consumer
     kwargs:
-      incoming_topic: platform.upload.ccx
+      incoming_topic: platform.upload.buckit
       group_id: ccx_data_pipeline_app
       bootstrap_servers:
         - "10.34.129.172:9092"
@@ -27,7 +27,7 @@ service:
   publisher:
     name: controller.publisher.Publisher
     kwargs:
-      outgoing_topic: platform.results.ccx
+      outgoing_topic: ccx.ocp.results
       bootstrap_servers:
         - "10.34.129.172:9092"
   watchers: []
