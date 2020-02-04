@@ -30,7 +30,7 @@ class Publisher(Publisher):
         if server_env is not None:
             env_server = os.environ.get(server_env, None)
             if env_server is not None:
-                kwargs['boostrap_servers'] = [env_server]
+                kwargs['bootstrap_servers'] = [env_server]
 
         self.producer = KafkaProducer(**kwargs)
 
