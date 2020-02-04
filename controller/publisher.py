@@ -1,5 +1,6 @@
 """Module that implements a custom Kafka publisher."""
 
+import os
 import logging
 from kafka import KafkaProducer
 from insights_messaging.publishers import Publisher
@@ -20,7 +21,17 @@ class Publisher(Publisher):
 
     def __init__(self, **kwargs):
         """Construct a new `Publisher` given `kwargs` from the config YAML."""
-        self.topic = kwargs.pop('outgoing_topic')
+        fallback_topic = kwargs.pop('outgoing_topic', None)
+        topic_env = kwargs.pop('outgoing_topic_env', None)
+        self.topic = os.environ.get(topic_env, fallback_topic) \
+            if topic_env is not None else fallback_topic
+
+        server_env = kwargs.pop('bootstrap_server_env', None)
+        if server_env is not None:
+            env_server = os.environ.get(server_env, None)
+            if env_server is not None:
+                kwargs['boostrap_servers'] = [env_server]
+
         self.producer = KafkaProducer(**kwargs)
 
     def publish(self, input_msg, response):
