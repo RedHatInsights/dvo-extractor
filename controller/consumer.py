@@ -3,6 +3,7 @@
 import os
 import json
 import logging
+
 import jsonschema
 from kafka.consumer.fetcher import ConsumerRecord
 from insights_messaging.consumers.kafka import Kafka
@@ -74,16 +75,19 @@ class Consumer(Kafka):
         if not isinstance(input_msg, ConsumerRecord):
             log.debug("Unexpected input message type "
                       f"(expected 'ConsumerRecord', got {input_msg.__class__.__name__})")
+            self.fire('on_not_handled', input_msg)
             return False
 
         # ---- Redundant checks. Already checked by JSON schema in `deserialize`. ----
         if not isinstance(input_msg.value, dict):
             log.debug("Unexpected input message value type "
                       f"(expected 'dict', got '{input_msg.value.__class__.__name__}')")
+            self.fire('on_not_handled', input_msg)
             return False
 
         if "url" not in input_msg.value:
             log.debug(f"Input message is missing a 'url' field: {input_msg.value}")
+            self.fire('on_not_handled', input_msg)
             return False
         # ----------------------------------------------------------------------------
 
