@@ -1,5 +1,7 @@
 """Module containing unit tests for the `Consumer` class."""
 
+from unittest.mock import patch
+
 import pytest
 
 from kafka.consumer.fetcher import ConsumerRecord
@@ -103,9 +105,11 @@ _INVALID_RECORD_VALUES = [
 
 
 @pytest.mark.parametrize("value", _INVALID_RECORD_VALUES)
+@patch('insights_messaging.consumers.kafka.KafkaConsumer.__init__', lambda *args, **kwargs: None)
 def test_handles_invalid(value):
     """Test that `Consumer` refuses to handle malformed input messages."""
-    assert not Consumer.handles(None, _mock_consumer_record(value))
+    consumer = Consumer(None, None, None)
+    assert not consumer.handles(_mock_consumer_record(value))
 
 
 _VALID_RECORD_VALUES = [

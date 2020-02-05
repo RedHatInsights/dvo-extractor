@@ -35,7 +35,8 @@ service:
       bootstrap_servers:
         - "10.34.129.172:9092"
       bootstrap_server_env: CDP_PUBLISHER_SERVER
-  watchers: []
+  watchers:
+    - name: controller.consumer_watcher.ConsumerWatcher
 
   logging:
     version: 1
