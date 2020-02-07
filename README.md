@@ -2,6 +2,8 @@
 
 [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 
+## Description
+
 This service will receive records from a given Kafka topic, download the items
 from the S3 server and apply Insights rules to downloaded tarball.
 
@@ -11,25 +13,35 @@ and logged in a way to be determined.
 Incoming and outgoing Kafka topics are configurable, these can be even handled
 by different Kafka instances.
 
-![diagram](./doc/external_pipeline_diagram.jpg)
+## Architecture
 
 This service is built on top of [insights-core-messaging framework](https://github.com/RedHatInsights/insights-core-messaging)
 and will be deployed and run inside [cloud.redhat.com](https://cloud.redhat.com).
 
-## Sequence diagram
+### External data pipeline diagram
+
+![diagram](./doc/external_pipeline_diagram.jpg)
+
+### Sequence diagram
 
 ![sequence](./doc/sequence-diagram.png)
 
-## Data consumer
+### Whole data flow
+
+![data_flow](./doc/customer_facing_services_architecture.png)
+
+## Modules
+
+### Data consumer
 
 Every time a new record is sent by Kafka to the subscribes topic, the `KafkaConsumer` will handle and process it,
 recovering from the corresponding S3 bucket, and passing the downloaded file to the processor module.
 
-## Processor module
+### Processor module
 
 TBD
 
-## Reporting
+### Reporting
 
 **ccx-ocp-core** and **ccx-rules-ocp** process the tarball downloaded from S3
 bucket and generates a JSON report. This report will be handled and sent to a
