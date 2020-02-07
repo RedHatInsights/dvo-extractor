@@ -36,6 +36,7 @@ class Publisher(Publisher):
                 kwargs['bootstrap_servers'] = [env_server]
 
         self.producer = KafkaProducer(**kwargs)
+        log.info(f"Producing to topic '{self.topic}' on brokers {kwargs['bootstrap_servers']}")
 
     def publish(self, input_msg, response):
         """
@@ -54,9 +55,6 @@ class Publisher(Publisher):
             # Convert message string into a byte array.
             self.producer.send(self.topic, message.encode('utf-8'))
             log.debug("Message has been sent successfully.")
-
-        except KeyboardInterrupt:
-            self.producer.close()
 
         except UnicodeEncodeError:
             log.error(f"Error encoding the response to publish: {message}")

@@ -136,3 +136,32 @@ def test_get_url_invalid(value):
 def test_get_url_valid(value):
     """Test that `Consumer.get_url` returns the expected value."""
     assert Consumer.get_url(None, _mock_consumer_record(value)) == value['url']
+
+
+_VALID_TOPICS = [
+    "topic",
+    "funny-topic"
+]
+
+_VALID_GROUPS = [
+    "group",
+    "good-boys"
+]
+
+_VALID_SERVERS = [
+    "server",
+    "great.server.net"
+]
+
+
+@pytest.mark.parametrize("topic", _VALID_TOPICS)
+@pytest.mark.parametrize("group", _VALID_GROUPS)
+@pytest.mark.parametrize("server", _VALID_SERVERS)
+def test_consumer_init(topic, group, server):
+    """Test of our Consumer constructor, with direct (not loaded from env) config."""
+    with patch('insights_messaging.consumers.kafka.Kafka.__init__') as mock_kafka_init:
+        cons = Consumer(None, None, None, group, "GROUP_ENV",
+                        topic, "TOPIC_ENV", [server], "SERVER_ENV")
+
+        mock_kafka_init.assert_called_with(
+            None, None, None, topic, group, [server], retry_backoff_ms=1000)
