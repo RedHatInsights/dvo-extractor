@@ -154,22 +154,14 @@ _VALID_SERVERS = [
 ]
 
 
-def _mock_kafka_init(self, publisher, downloader, engine, incoming_topic,
-                     group_id, bootstrap_servers, retry_backoff_ms=1000):
-    self.INCOMING_TOPIC = incoming_topic
-    self.GROUP_ID = group_id
-    self.BOOSTRAP_SERVERS = bootstrap_servers
-
-
 @pytest.mark.parametrize("topic", _VALID_TOPICS)
 @pytest.mark.parametrize("group", _VALID_GROUPS)
 @pytest.mark.parametrize("server", _VALID_SERVERS)
-@patch('insights_messaging.consumers.kafka.Kafka.__init__', _mock_kafka_init)
 def test_consumer_init(topic, group, server):
     """Test of our Consumer constructor, with direct (not loaded from env) config."""
-    cons = Consumer(None, None, None, group, "GROUP_ENV",
-                    topic, "TOPIC_ENV", [server], "SERVER_ENV")
+    with patch('insights_messaging.consumers.kafka.Kafka.__init__') as mock_kafka_init:
+        cons = Consumer(None, None, None, group, "GROUP_ENV",
+                        topic, "TOPIC_ENV", [server], "SERVER_ENV")
 
-    assert cons.INCOMING_TOPIC == topic
-    assert cons.GROUP_ID == group
-    assert cons.BOOSTRAP_SERVERS == [server]
+        mock_kafka_init.assert_called_with(
+            None, None, None, topic, group, [server], retry_backoff_ms=1000)
