@@ -41,18 +41,18 @@ and will be deployed and run inside [cloud.redhat.com](https://cloud.redhat.com)
 ### Data consumer
 
 Every time a new record is sent by Kafka to the subscribes topic, the `KafkaConsumer` will handle and process it,
-recovering from the corresponding S3 bucket, and passing the downloaded file to the processor module.
+recovering from the corresponding S3 bucket, and passing the downloaded file to the `Engine` in order to process it.
 
-### Processor module
+### Processing
 
-TBD
+The ICM `Engine` class will take the downloaded tarball and, using **ccx-ocp-core** and **ccx-rules-ocp**, process it
+and generates a JSON report. This report will be handled and sent to a configured Kafka topic using a `KafkaPublisher`.
+
 
 ### Reporting
 
-**ccx-ocp-core** and **ccx-rules-ocp** process the tarball downloaded from S3
-bucket and generates a JSON report. This report will be handled and sent to a
-configured Kafka topic where other services can take this record and handle it
-properly.
+The JSON report generated in the previous step will be sent to a Kafka topic where other services can take this record
+and handle it properly.
 
 ### Format of the notified Kafka records
 
@@ -126,4 +126,38 @@ python -u -m insights_messaging config.yaml
 ```
 
 ## Configuration
+
+The `config.yaml` file includes almost everything you need to run this pipeline:
+
+- `plugins` section include a list of `packages` that should be imported to run the pipeline
+  and a list of `configs` with rules that should be enabled
+  
+- In the `service` section you can configure the classes used as `consumer`, `downloader` and
+  `publisher`. Note that if you change them, the pipeline will be different and the behaviour will
+  be different than the one described on this document.
+- The `format` configuration indicates which output format will be used for reporting.
+- The `target_components` will be the rules executed by the pipeline. You probably want to modify
+  this configuration.
+- `consumer` has a `kwargs` section. These are parameters passed to the class
+  initializer. The most relevants are:
+  - `incoming_topic`: the Kafka topic to subscribe the consumer object.
+  - `incoming_topic_env`: an environment variable that will store a Kafka topic to subscribe.
+    This option takes precedence over the previous one.
+  - `group_id`: Kafka group identifier. Several instances of the same pipeline will need to be into
+    the same group in order to not process the same messages.
+  - `group_id`: the name of an environment variable that will store the same as the previous option.
+    It takes precedence over `group_id`.
+  - `bootstrap_servers`: a list of "IP:PORT" strings where the Kafka server is listening.
+  - `bootstrap_server_env`: The name of an environment variable that stores the endpoint of a Kafka
+    server. It takes precedence over `boostrap_servers`, but it only allows to define one server.
+- `publisher` has a `kwargs` section too. These are its parameters:
+  - `outgoing_topic`: an string indicating the topic where the reported results should be sent.
+  - `outgoing_topic_env`: environment variable name that stores the same option described in
+    `outgoing_topic`. It takes precedence over it.
+  - `bootstrap_servers`: same as in `consumer`, a list of Kafka servers to connect
+  - `bootstrap_server_env`: same as in `consumer`. Takes precedence over the previous one.
+- `watchers`: it has a list of `Watcher` objects that will receive notifications of events during the
+  pipeline processing steps. The configured one is serving statistics for a Prometehus service.
+- `logging`: this configuration section is used to configure the Python `logging` facility. Please refer to
+  https://docs.python.org/3/howto/logging.html#configuring-logging for further info.
 
