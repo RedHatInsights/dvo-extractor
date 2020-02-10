@@ -161,6 +161,20 @@ def test_consumer_init_direct(topic, group, server):
     """Test of our Consumer constructor, with direct (not loaded from env) config."""
     with patch('insights_messaging.consumers.kafka.Kafka.__init__') as mock_kafka_init:
         with patch('os.environ', new=dict()):
+            cons = Consumer(None, None, None, group, None,
+                            topic, None, [server], None)
+
+            mock_kafka_init.assert_called_with(
+                None, None, None, topic, group, [server], retry_backoff_ms=1000)
+
+
+@pytest.mark.parametrize("topic", _VALID_TOPICS)
+@pytest.mark.parametrize("group", _VALID_GROUPS)
+@pytest.mark.parametrize("server", _VALID_SERVERS)
+def test_consumer_init_fallback(topic, group, server):
+    """Test of our Consumer constructor, with direct (not loaded from env) config."""
+    with patch('insights_messaging.consumers.kafka.Kafka.__init__') as mock_kafka_init:
+        with patch('os.environ', new=dict()):
             cons = Consumer(None, None, None, group, "GROUP_ENV",
                             topic, "TOPIC_ENV", [server], "SERVER_ENV")
 
