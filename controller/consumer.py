@@ -30,17 +30,26 @@ class Consumer(Kafka):
         """Construct a new external data pipeline Kafka consumer."""
         if group_id_env is not None:
             env_group = os.environ.get(group_id_env, None)
-            if env_group is not None:
+            if env_group is None:
+                log.warning(f"Ignoring unset group id environment variable "
+                            f"'{group_id_env}', falling back to '{group_id}'")
+            else:
                 group_id = env_group
 
         if incoming_topic_env is not None:
             env_topic = os.environ.get(incoming_topic_env, None)
-            if env_topic is not None:
+            if env_topic is None:
+                log.warning(f"Ignoring unset incoming topic environment variable "
+                            f"'{incoming_topic_env}', falling back to '{incoming_topic}'")
+            else:
                 incoming_topic = env_topic
 
         if bootstrap_server_env is not None:
             env_server = os.environ.get(bootstrap_server_env, None)
-            if env_server is not None:
+            if env_server is None:
+                log.warning(f"Ignoring unset bootstrap server environment variable "
+                            f"'{bootstrap_server_env}', falling back to {bootstrap_servers}")
+            else:
                 bootstrap_servers = [env_server]
 
         log.info(f"Consuming topic '{incoming_topic}' from brokers {bootstrap_servers}"
