@@ -158,7 +158,7 @@ _VALID_SERVERS = [
 @pytest.mark.parametrize("group", _VALID_GROUPS)
 @pytest.mark.parametrize("server", _VALID_SERVERS)
 def test_consumer_init_direct(topic, group, server):
-    """Test of our Consumer constructor, with direct (not loaded from env) config."""
+    """Test of our Consumer constructor, using direct configuration options."""
     with patch('insights_messaging.consumers.kafka.Kafka.__init__') as mock_kafka_init:
         with patch('os.environ', new=dict()):
             cons = Consumer(None, None, None, group, None,
@@ -172,7 +172,13 @@ def test_consumer_init_direct(topic, group, server):
 @pytest.mark.parametrize("group", _VALID_GROUPS)
 @pytest.mark.parametrize("server", _VALID_SERVERS)
 def test_consumer_init_fallback(topic, group, server):
-    """Test of our Consumer constructor, with direct (not loaded from env) config."""
+    """
+    Test of our Consumer constructor, using fallback configuration options.
+
+    Fallback configuration refers to the directly configured values, which
+    are also used when environment variables are referenced,
+    but they are currently not set / they are set to empty values.
+    """
     with patch('insights_messaging.consumers.kafka.Kafka.__init__') as mock_kafka_init:
         with patch('os.environ', new=dict()):
             cons = Consumer(None, None, None, group, "GROUP_ENV",
@@ -193,7 +199,7 @@ _ENV_MOCK = {
 @pytest.mark.parametrize("group", _VALID_GROUPS)
 @pytest.mark.parametrize("server", _VALID_SERVERS)
 def test_consumer_init_env(topic, group, server):
-    """Test of our Consumer constructor, with direct (not loaded from env) config."""
+    """Test of our Consumer constructor, using configuration loaded from environment variables."""
     with patch('insights_messaging.consumers.kafka.Kafka.__init__') as mock_kafka_init:
         with patch('os.environ', new=_ENV_MOCK):
             cons = Consumer(None, None, None, group, "GROUP_ENV",
