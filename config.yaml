@@ -37,6 +37,8 @@ service:
       bootstrap_server_env: CDP_PUBLISHER_SERVER
   watchers:
     - name: controller.consumer_watcher.ConsumerWatcher
+      kwargs:
+        prometheus_port: 8000
 
   logging:
     version: 1

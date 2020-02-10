@@ -155,5 +155,10 @@ the specific _consumer_, _downloader_ and _publisher_ are configured.
   - `bootstrap_servers`: same as in `consumer`, a list of Kafka servers to connect
   - `bootstrap_server_env`: same as in `consumer`. Takes precedence over the previous one.
 - `watchers`: it has a list of `Watcher` objects that will receive notifications of events during the
-  pipeline processing steps. The configured one is serving statistics for a
-  [Prometehus service](https://prometheus.io/).
+  pipeline processing steps. The default configured one is `controller.consumer_watcher.ConsumerWatcher`
+  that serve some statistics for [Prometehus service](https://prometheus.io/). The port where the
+  `prometheus_client` library will listen for petitions is configurable using `kwargs` dictionary in the
+  same way as `consumer` and `publisher`. The only recognized option is:
+  - `prometheus_port`: an integer indicating the port where the `prometheus_client` will listen for server
+    petitions. If not present, defaults to 8000.
+  
