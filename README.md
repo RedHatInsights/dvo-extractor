@@ -162,3 +162,19 @@ the specific _consumer_, _downloader_ and _publisher_ are configured.
   - `prometheus_port`: an integer indicating the port where the `prometheus_client` will listen for server
     petitions. If not present, defaults to 8000.
   
+## Deploy
+
+ccx-data-pipeline runs in cloud.redhat.com and it's a part of the same testing and promoting routines. There are three
+environments: CI, QA and PROD. The code should pass tests in QA env before it goes to PROD. cloud.redhat.com team
+uses jenkins, OCP and [ocdeployer](https://github.com/bsquizz/ocdeployer) for code deploying. All deployment
+configs are stored in [e2e-deploy](https://github.com/RedHatInsights/e2e-deploy) git repository.
+
+### References
+- [Promoting pipeline documentation](https://github.com/RedHatInsights/e2e-deploy/blob/master/docs/pipeline.md)
+- ccx-data-pipeline namespaces: 
+  [ci](https://console.insights-dev.openshift.com/console/project/ccx-data-pipeline-ci/),
+  [qa](https://console.insights-dev.openshift.com/console/project/ccx-data-pipeline-qa),
+  [prod](https://console.insights.openshift.com/console/project/ccx-data-pipeline-prod)
+- [Buildconfigs](https://github.com/RedHatInsights/e2e-deploy/tree/master/buildfactory/ccx-data-pipeline)
+- [OCP templates](https://github.com/RedHatInsights/e2e-deploy/tree/master/templates/ccx-data-pipeline)
+- [Jenkins](https://github.com/RedHatInsights/e2e-deploy/tree/master/templates/ccx-data-pipeline)
