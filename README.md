@@ -142,14 +142,14 @@ the specific _consumer_, _downloader_ and _publisher_ are configured.
     This option takes precedence over the previous one.
   - `group_id`: Kafka group identifier. Several instances of the same pipeline will need to be into
     the same group in order to not process the same messages.
-  - `group_id`: the name of an environment variable that will store the same as the previous option.
+  - `group_id_env`: the name of an environment variable that will store the same as the previous option.
     It takes precedence over `group_id`.
   - `bootstrap_servers`: a list of "IP:PORT" strings where the Kafka server is listening.
   - `bootstrap_server_env`: The name of an environment variable that stores the endpoint of a Kafka
     server. It takes precedence over `boostrap_servers`, but it only allows to define one server.
 - `publisher` name refers to the class `controller.publisher.Publisher` and it also allow to define the
   arguments passed to the initializer modifying the `kwargs` dictionary:
-  - `outgoing_topic`: an string indicating the topic where the reported results should be sent.
+  - `outgoing_topic`: a string indicating the topic where the reported results should be sent.
   - `outgoing_topic_env`: environment variable name that stores the same option described in
     `outgoing_topic`. It takes precedence over it.
   - `bootstrap_servers`: same as in `consumer`, a list of Kafka servers to connect
