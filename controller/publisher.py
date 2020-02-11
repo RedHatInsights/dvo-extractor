@@ -54,7 +54,7 @@ class Publisher(Publisher):
             # Response is already a string, no need to JSON dump.
             output_msg = {
                 "OrgId": input_msg.value["identity"]["identity"]["internal"]["org_id"],
-                "ClusterName": "aaaaaaaa-bbbb-cccc-dddd-000000000000",
+                "ClusterName": input_msg.value["cluster-name"],
                 "Report": json.loads(response)
             }
 
