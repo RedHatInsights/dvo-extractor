@@ -4,7 +4,8 @@
 INPUT_MESSAGE_SCHEMA = {
     "type": "object",
     "properties": {
-        "url": {"type": "string"}
+        "url": {"type": "string"},
+        "b64_identity": {"type": "string"}
     },
-    "required": ["url"]
+    "required": ["url", "b64_identity"]
 }
