@@ -52,8 +52,9 @@ class Publisher(Publisher):
         try:
             # Flush kafkacat buffer.
             # Response is already a string, no need to JSON dump.
+            org_id = input_msg.value["identity"]["identity"]["internal"]["org_id"]
             output_msg = {
-                "OrgID": input_msg.value["identity"]["identity"]["internal"]["org_id"],
+                "OrgID": int(org_id),
                 "ClusterName": input_msg.value["ClusterName"],
                 "Report": json.loads(response)
             }
@@ -67,6 +68,9 @@ class Publisher(Publisher):
 
         except UnicodeEncodeError:
             log.error(f"Error encoding the response to publish: {message}")
+
+        except ValueError:
+            log.error(f"Error extracting the OrgID: {org_id}")
 
     def error(self, input_msg, ex):
         """Handle pipeline errors by logging them."""
