@@ -58,7 +58,7 @@ class Publisher(Publisher):
                 "Report": json.loads(response)
             }
 
-            message = json.dumps(output_msg)
+            message = json.dumps(output_msg) + "\n"
 
             log.debug(f"Sending response to the {self.topic} topic.")
             # Convert message string into a byte array.
