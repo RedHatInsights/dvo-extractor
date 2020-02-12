@@ -2,7 +2,7 @@ plugins:
   packages:
     - insights.specs.default
     - controller
-    - ccx_ocp_core
+    - ccx_rules_ocp.external
     - pythonjsonlogger
     - pythonjsonlogger.jsonlogger
   configs:
