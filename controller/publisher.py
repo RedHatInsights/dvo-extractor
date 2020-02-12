@@ -53,8 +53,8 @@ class Publisher(Publisher):
             # Flush kafkacat buffer.
             # Response is already a string, no need to JSON dump.
             output_msg = {
-                "OrgId": input_msg.value["identity"]["identity"]["internal"]["org_id"],
-                "ClusterName": input_msg.value["cluster-name"],
+                "OrgID": input_msg.value["identity"]["identity"]["internal"]["org_id"],
+                "ClusterName": input_msg.value["ClusterName"],
                 "Report": json.loads(response)
             }
 

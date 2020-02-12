@@ -24,4 +24,4 @@ class ClusterIdWatcher(EngineWatcher, ConsumerWatcher):
         """
         id_file_path = os.path.join(ctx.root, 'config', 'id')
         with open(id_file_path, 'r') as id_file:
-            self.last_record.value["cluster-name"] = id_file.read()
+            self.last_record.value["ClusterName"] = id_file.read()
