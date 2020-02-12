@@ -43,18 +43,7 @@ and will be deployed and run inside [cloud.redhat.com](https://cloud.redhat.com)
 Every time a new record is sent by Kafka to the subscribes topic, the `KafkaConsumer` will handle and process it,
 recovering from the corresponding S3 bucket, and passing the downloaded file to the `Engine` in order to process it.
 
-### Processing
-
-The ICM `Engine` class will take the downloaded tarball and, using **ccx-ocp-core** and **ccx-rules-ocp**, process it
-and generates a JSON report. This report will be handled and sent to a configured Kafka topic using a `KafkaPublisher`.
-
-
-### Reporting
-
-The JSON report generated in the previous step will be sent to a Kafka topic where other services can take this record
-and handle it properly.
-
-### Format of the notified Kafka records
+#### Format of the received Kafka records
 
 ```
 {
@@ -96,6 +85,40 @@ The attribute `b64_identity` contains another JSON encoded by BASE64 encoding. U
 ...
 
 ```
+
+### Processing
+
+The ICM `Engine` class will take the downloaded tarball and, using **ccx-ocp-core** and **ccx-rules-ocp**, process it
+and generates a JSON report. This report will be handled and sent to a configured Kafka topic using a `KafkaPublisher`.
+
+
+### Reporting
+
+The JSON report generated in the previous step will be sent to a Kafka topic where other services can take this record
+and handle it properly.
+
+### Prometheus statistics
+
+The project allows to expose some metrics to **Prometheus** if desired. To enable it, you should add the
+`ConsumerWatcher` to the configuration file, as shown in the [provided one](config.yaml)
+
+
+The exposed metrics are 6 counters and 3 histograms:
+
+- `ccx_consumer_received_total`: a counter of the total amount of received messages from Kafka that can be handled by
+  the pipeline.
+- `ccx_downloaded_total`: total amount of handled messages that contains a valid and downloadable archive.
+- `ccx_engine_processed_total`: total amount of archives processed by the Insights library.
+- `ccx_published_total`: total amount of processed results that has been published to the outgoing Kafka topic.
+- `ccx_failures_total`: total amount of individual events received but not properly processed by the pipeline. It can
+  include failures due to an invalid URL for the archive, incorrect format of the downloaded archive, failure during the
+  processing...
+- `ccx_not_handled_total`: total amount of received records that cannot be handled by the pipeline, normally due to
+  incompatible format or incorrect JSON schema.
+- `ccx_download_duration_seconds`: histogram of the time that takes to download each archive.
+- `ccx_process_duration_seconds`: histogram of the time that takes to process the archive after it has been downloaded.
+- `ccx_publish_duration_seconds`: histogram of the time that takes to send the new record to the outgoing Kafka topic
+  after the archive has been processed.
 
 ### Format of the logs
 
@@ -161,7 +184,7 @@ the specific _consumer_, _downloader_ and _publisher_ are configured.
   same way as `consumer` and `publisher`. The only recognized option is:
   - `prometheus_port`: an integer indicating the port where the `prometheus_client` will listen for server
     petitions. If not present, defaults to 8000.
-  
+
 ## Deploy
 
 ccx-data-pipeline runs in cloud.redhat.com and it's a part of the same testing and promoting routines. There are three
@@ -169,9 +192,9 @@ environments: CI, QA and PROD. The code should pass tests in QA env before it go
 uses jenkins, OCP and [ocdeployer](https://github.com/bsquizz/ocdeployer) for code deploying. All deployment
 configs are stored in [e2e-deploy](https://github.com/RedHatInsights/e2e-deploy) git repository.
 
-### References
+## References
 - [Promoting pipeline documentation](https://github.com/RedHatInsights/e2e-deploy/blob/master/docs/pipeline.md)
-- ccx-data-pipeline namespaces: 
+- ccx-data-pipeline namespaces:
   [ci](https://console.insights-dev.openshift.com/console/project/ccx-data-pipeline-ci/),
   [qa](https://console.insights-dev.openshift.com/console/project/ccx-data-pipeline-qa),
   [prod](https://console.insights.openshift.com/console/project/ccx-data-pipeline-prod)
