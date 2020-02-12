@@ -3,6 +3,7 @@
 import os
 import json
 import logging
+import base64
 
 import jsonschema
 from kafka.consumer.fetcher import ConsumerRecord
@@ -65,6 +66,14 @@ class Consumer(Kafka):
                 msg = json.loads(bytes_)
                 jsonschema.validate(instance=msg, schema=INPUT_MESSAGE_SCHEMA)
                 log.debug("JSON schema validated")
+
+                b64_identity = msg["b64_identity"]
+
+                if isinstance(b64_identity, str):
+                    b64_identity = b64_identity.encode()
+
+                msg["identity"] = json.loads(base64.b64decode(b64_identity))
+                del msg["b64_identity"]
                 return msg
 
             except json.JSONDecodeError as ex:

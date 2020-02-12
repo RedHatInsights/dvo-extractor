@@ -6,6 +6,13 @@ from unittest.mock import MagicMock, patch
 
 from controller.publisher import Publisher
 
+from kafka.consumer.fetcher import ConsumerRecord
+
+
+def _mock_consumer_record(value):
+    """Construct a value-only `ConsumerRecord`."""
+    return ConsumerRecord(None, None, None, None, None, None, value, None, None, None, None, None)
+
 
 class PublisherTest(unittest.TestCase):
     """Test cases for testing the class Publisher."""
@@ -92,8 +99,15 @@ class PublisherTest(unittest.TestCase):
         }
 
         topic_name = "KAFKATOPIC"
+        values = {
+            "ClusterName": "the cluster name",
+            "identity": {"identity": {"internal": {"org_id": "organizationID"}}}
+        }
+        input_msg = _mock_consumer_record(values)
         message_to_publish = '{"key1": "value1"}'
-        expected_message = b'{"key1": "value1"}\n'
+        expected_message = (
+            b'{"OrgID": "organizationID", "ClusterName": "the cluster name", '
+            b'"Report": {"key1": "value1"}}\n')
 
         with patch('controller.publisher.KafkaProducer') as kafka_producer_init_mock:
             producer_mock = MagicMock()
@@ -103,5 +117,5 @@ class PublisherTest(unittest.TestCase):
                 outgoing_topic=topic_name, **producer_kwargs
             )
 
-            sut.publish(None, message_to_publish)
+            sut.publish(input_msg, message_to_publish)
             producer_mock.send.assert_called_with(topic_name, expected_message)

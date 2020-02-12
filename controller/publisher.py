@@ -2,6 +2,8 @@
 
 import os
 import logging
+
+import json
 from kafka import KafkaProducer
 from insights_messaging.publishers import Publisher
 
@@ -50,7 +52,14 @@ class Publisher(Publisher):
         try:
             # Flush kafkacat buffer.
             # Response is already a string, no need to JSON dump.
-            message = response + "\n"
+            output_msg = {
+                "OrgID": input_msg.value["identity"]["identity"]["internal"]["org_id"],
+                "ClusterName": input_msg.value["ClusterName"],
+                "Report": json.loads(response)
+            }
+
+            message = json.dumps(output_msg) + "\n"
+
             log.debug(f"Sending response to the {self.topic} topic.")
             # Convert message string into a byte array.
             self.producer.send(self.topic, message.encode('utf-8'))

@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 from prometheus_client import CollectorRegistry
 
-from controller.consumer_watcher import ConsumerWatcher
+from controller.watchers.consumer_watcher import ConsumerWatcher
 
 
 _INVALID_PORTS = [
@@ -31,7 +31,7 @@ _VALID_PORTS = [
 
 
 @pytest.mark.parametrize("value", _VALID_PORTS)
-@patch('controller.consumer_watcher.start_http_server')
+@patch('controller.watchers.consumer_watcher.start_http_server')
 def test_consumer_watcher_initialize(start_http_server_mock, value):
     """Test valid values in the initialize `ConsumerWatcher`."""
     ConsumerWatcher(**value)

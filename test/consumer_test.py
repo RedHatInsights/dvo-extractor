@@ -63,12 +63,15 @@ def test_deserialize_invalid_format_bytearray(msg):
 
 
 _VALID_MESSAGES = [
-    ('{"url": ""}', {"url": ""}),
+    ('{"url": "", "b64_identity": "eyJrZXkiOiAiSGVsbG8gd29ybGQifQ=="}',
+     {"url": "", "identity": {"key": "Hello world"}}),
 
-    ('{"url": "https://s3.com/hash", "unused-property": null}',
-     {"url": "https://s3.com/hash", "unused-property": None}),
+    ('{"url": "https://s3.com/hash", "unused-property": null, '
+     '"b64_identity": "eyJrZXkiOiAiSGVsbG8gd29ybGQifQ=="}',
+     {"url": "https://s3.com/hash", "unused-property": None, "identity": {"key": "Hello world"}}),
 
-    ('{"account":12345678, "url":"any/url"}', {"account": 12345678, "url": "any/url"})
+    ('{"account":12345678, "url":"any/url", "b64_identity": "eyJrZXkiOiAiSGVsbG8gd29ybGQifQ=="}',
+     {"account": 12345678, "url": "any/url", "identity": {"key": "Hello world"}})
 ]
 
 
