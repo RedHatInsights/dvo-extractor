@@ -56,7 +56,8 @@ class Publisher(Publisher):
             output_msg = {
                 "OrgID": int(org_id),
                 "ClusterName": input_msg.value["ClusterName"],
-                "Report": json.loads(response)
+                "Report": json.loads(response),
+                "LastChecked": input_msg.value["timestamp"]
             }
 
             message = json.dumps(output_msg) + "\n"

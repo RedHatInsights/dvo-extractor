@@ -5,7 +5,8 @@ INPUT_MESSAGE_SCHEMA = {
     "type": "object",
     "properties": {
         "url": {"type": "string"},
-        "b64_identity": {"type": "string"}
+        "b64_identity": {"type": "string"},
+        "timestamp": {"type": "string"}
     },
-    "required": ["url", "b64_identity"]
+    "required": ["url", "b64_identity", "timestamp"]
 }
