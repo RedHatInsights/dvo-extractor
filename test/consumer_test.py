@@ -63,15 +63,33 @@ def test_deserialize_invalid_format_bytearray(msg):
 
 
 _VALID_MESSAGES = [
-    ('{"url": "", "b64_identity": "eyJrZXkiOiAiSGVsbG8gd29ybGQifQ=="}',
-     {"url": "", "identity": {"key": "Hello world"}}),
+    ('{"url": "", "b64_identity": "eyJrZXkiOiAiSGVsbG8gd29ybGQifQ==",'
+     '"timestamp": "2020-01-23T16:15:59.478901889Z"}',
+     {
+         "url": "",
+         "identity": {"key": "Hello world"},
+         "timestamp": "2020-01-23T16:15:59.478901889Z"
+     }),
 
     ('{"url": "https://s3.com/hash", "unused-property": null, '
-     '"b64_identity": "eyJrZXkiOiAiSGVsbG8gd29ybGQifQ=="}',
-     {"url": "https://s3.com/hash", "unused-property": None, "identity": {"key": "Hello world"}}),
+     '"b64_identity": "eyJrZXkiOiAiSGVsbG8gd29ybGQifQ==",'
+     '"timestamp": "2020-01-23T16:15:59.478901889Z"}',
+     {
+         "url": "https://s3.com/hash",
+         "unused-property": None,
+         "identity": {"key": "Hello world"},
+         "timestamp": "2020-01-23T16:15:59.478901889Z"
+     }),
 
-    ('{"account":12345678, "url":"any/url", "b64_identity": "eyJrZXkiOiAiSGVsbG8gd29ybGQifQ=="}',
-     {"account": 12345678, "url": "any/url", "identity": {"key": "Hello world"}})
+    ('{"account":12345678, "url":"any/url", '
+     '"b64_identity": "eyJrZXkiOiAiSGVsbG8gd29ybGQifQ==",'
+     '"timestamp": "2020-01-23T16:15:59.478901889Z"}',
+     {
+         "account": 12345678,
+         "url": "any/url",
+         "identity": {"key": "Hello world"},
+         "timestamp": "2020-01-23T16:15:59.478901889Z"
+     })
 ]
 
 

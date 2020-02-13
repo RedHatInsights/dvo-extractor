@@ -101,13 +101,14 @@ class PublisherTest(unittest.TestCase):
         topic_name = "KAFKATOPIC"
         values = {
             "ClusterName": "the cluster name",
-            "identity": {"identity": {"internal": {"org_id": "5000"}}}
+            "identity": {"identity": {"internal": {"org_id": "5000"}}},
+            "timestamp": "2020-01-23T16:15:59.478901889Z"
         }
         input_msg = _mock_consumer_record(values)
         message_to_publish = '{"key1": "value1"}'
         expected_message = (
             b'{"OrgID": 5000, "ClusterName": "the cluster name", '
-            b'"Report": {"key1": "value1"}}\n')
+            b'"Report": {"key1": "value1"}, "LastChecked": "2020-01-23T16:15:59.478901889Z"}\n')
 
         with patch('controller.publisher.KafkaProducer') as kafka_producer_init_mock:
             producer_mock = MagicMock()
