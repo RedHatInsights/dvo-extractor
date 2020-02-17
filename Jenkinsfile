@@ -36,7 +36,7 @@ def runStages() {
     gitUtils.stageWithContext("Run-unit-tests") {
       sh "pytest --junitxml=junit.xml --cov --cov-config=.coveragerc test"
     }
-    
+
     junit "junit.xml"
   }
 }
