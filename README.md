@@ -161,7 +161,23 @@ The exposed metrics are 6 counters and 3 histograms:
 
 ### Format of the logs
 
-TBD
+The log format is highly configurable through the configuration file. By default, using the
+[provided configuration](config.yaml), each log message will produce a JSON dictionary with the following structure:
+
+```json5
+{
+  "levelname": "LOG_LEVEL",
+  "asctime": "timestamp",
+  "name": "Python module",
+  "filename": "filename",
+  "message": "Message content"
+}
+```
+
+By default, this log messages will be printed in the standard output. To change this behaviour, refer to the `logging`
+section in the [configuration file](config.yaml),  the
+[Python Logging HOWTO](https://docs.python.org/3.6/howto/logging.html#configuring-logging) and the
+[Python logging reference](https://docs.python.org/3.6/library/logging.config.html#module-logging.config)
 
 ## Implementation
 
