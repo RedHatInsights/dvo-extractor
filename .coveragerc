@@ -5,4 +5,4 @@ source = controller, test
 include =
     controller/*
     test/*
-fail_under = 50.0
+fail_under = 95.0
