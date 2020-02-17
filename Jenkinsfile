@@ -37,8 +37,8 @@ def runStages() {
       sh "pytest --junitxml=junit.xml --cov --cov-config=.coveragerc test"
     }
     
-	gitUtils.stageWithContext("Check-coverage-threshold") {
-      sh "coverage report --fail-under=99"
+    gitUtils.stageWithContext("Check-coverage-threshold") {
+      sh "coverage report --fail-under=80"
     }
 
     junit "junit.xml"
