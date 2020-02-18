@@ -1,8 +1,13 @@
 """Module including a mixed watcher to retrieve the cluster ID from the extracted file."""
 
+import logging
 import os
+from uuid import UUID
 
 from insights_messaging.watchers import ConsumerWatcher, EngineWatcher
+
+
+log = logging.getLogger(__name__)
 
 
 class ClusterIdWatcher(EngineWatcher, ConsumerWatcher):
@@ -22,6 +27,29 @@ class ClusterIdWatcher(EngineWatcher, ConsumerWatcher):
         The method get the directory where the files are extracted and find the
         id in the expected path.
         """
+        if self.last_record is None:
+            log.warning("Unexpected data flow: watched extraction event without "
+                        "a previous receiving event")
+            return
+
         id_file_path = os.path.join(ctx.root, 'config', 'id')
-        with open(id_file_path, 'r') as id_file:
-            self.last_record.value["ClusterName"] = id_file.read()
+
+        try:
+            with open(id_file_path, 'r') as id_file:
+                cluster_uuid = id_file.read()
+
+                try:
+                    UUID(cluster_uuid)
+                    self.last_record.value["ClusterName"] = cluster_uuid
+
+                except ValueError:
+                    self.last_record.value["ClusterName"] = None
+                    log.warning("The cluster id is not an UUID. Skipping its extraction")
+
+        except FileNotFoundError:
+            self.last_record.value["ClusterName"] = None
+            log.warning(
+                "The archive doesn't contain a valid Cluster Id file. Skipping its extraction")
+
+        finally:
+            self.last_record = None
