@@ -4,13 +4,14 @@ import os
 import json
 import logging
 import base64
+import binascii
 
 import jsonschema
 from kafka.consumer.fetcher import ConsumerRecord
 from insights_messaging.consumers.kafka import Kafka
 
 from controller.data_pipeline_error import DataPipelineError
-from controller.schemas import INPUT_MESSAGE_SCHEMA
+from controller.schemas import INPUT_MESSAGE_SCHEMA, IDENTITY_SCHEMA
 
 log = logging.getLogger(__name__)
 
@@ -81,7 +82,11 @@ class Consumer(Kafka):
                 if isinstance(b64_identity, str):
                     b64_identity = b64_identity.encode()
 
-                msg["identity"] = json.loads(base64.b64decode(b64_identity))
+                decoded_identity = json.loads(base64.b64decode(b64_identity))
+                jsonschema.validate(instance=decoded_identity, schema=IDENTITY_SCHEMA)
+                log.debug("Identity schema validated")
+
+                msg["identity"] = decoded_identity
                 del msg["b64_identity"]
                 return msg
 
@@ -90,6 +95,9 @@ class Consumer(Kafka):
 
             except jsonschema.ValidationError as ex:
                 return DataPipelineError(f"Invalid input message JSON schema: {ex}")
+
+            except binascii.Error as ex:
+                return DataPipelineError(f"Base64 encoded identity could not be parsed: {ex}")
 
         else:
             return DataPipelineError(f"Unexpected input message type: {bytes_.__class__.__name__}")

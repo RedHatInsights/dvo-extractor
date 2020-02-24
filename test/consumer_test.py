@@ -37,6 +37,7 @@ def test_deserialize_invalid_type(value):
 
 _ERR_UNABLE_TO_DECODE = 'Unable to decode received message: '
 _ERR_JSON_SCHEMA = 'Invalid input message JSON schema: '
+_ERR_BASE64 = 'Base64 encoded identity could not be parsed: '
 
 _INVALID_MESSAGES = [
     ('', _ERR_UNABLE_TO_DECODE),
@@ -45,7 +46,24 @@ _INVALID_MESSAGES = [
     ('{"url":"value"', _ERR_UNABLE_TO_DECODE),
     ('"url":"value"}', _ERR_UNABLE_TO_DECODE),
     ('"url":"value"', _ERR_UNABLE_TO_DECODE),
-    ('"{\"url\":\"value\"}"', _ERR_UNABLE_TO_DECODE)
+    ('"{\"url\":\"value\"}"', _ERR_UNABLE_TO_DECODE),
+    # incorrect content of b64_identity (org_id missing)
+    ('{"url": "https://s3.com/hash", "b64_identity": "eyJpZGVudGl0eSI6IHsiaW50ZXJuYWwiOiB7Im1pc3'\
+        'Npbmdfb3JnX2lkIjogIjEyMzgzMDMyIn19fQ==", "timestamp": "2020-01-23T16:15:59.478901889Z"}',
+        _ERR_JSON_SCHEMA),
+    # incorrect format of base64 encoding
+    ('{"url": "https://s3.com/hash", "b64_identity": "eyJpZGVudGl0eSI6IHsiaW50ZXJuYWwiOiB7Im9yZ1'\
+        '9pZCI6ICIxMjM4MzAzMiJ9f", "timestamp": "2020-01-23T16:15:59.478901889Z"}', _ERR_BASE64),
+    # org_id not string
+    ('{"url": "https://s3.com/hash", "b64_identity": "eyJpZGVudGl0eSI6IHsKICAgICJhY2NvdW50X251bW'\
+        'JlciI6ICI2MjEyMzc3IiwKICAgICJhdXRoX3R5cGUiOiAiYmFzaWMtYXV0aCIsCiAgICAiaW50ZXJuYWwiOiB7C'\
+        'iAgICAgICAgImF1dGhfdGltZSI6IDE0MDAsCiAgICAgICAgIm9yZ19pZCI6IDEyMzgzMDMyCiAgICB9LAogICAg'\
+        'InR5cGUiOiAiVXNlciIsCiAgICAidXNlciI6IHsKICAgICAgICAiZW1haWwiOiAiam5lZWRsZStxYUByZWRoYXQ'\
+        'uY29tIiwKICAgICAgICAiZmlyc3RfbmFtZSI6ICJJbnNpZ2h0cyIsCiAgICAgICAgImlzX2FjdGl2ZSI6IHRydW'\
+        'UsCiAgICAgICAgImlzX2ludGVybmFsIjogZmFsc2UsCiAgICAgICAgImlzX29yZ19hZG1pbiI6IHRydWUsCiAgI'\
+        'CAgICAgImxhc3RfbmFtZSI6ICJRRSIsCiAgICAgICAgImxvY2FsZSI6ICJlbl9VUyIsCiAgICAgICAgInVzZXJu'\
+        'YW1lIjogImluc2lnaHRzLXFlIgogICAgfQp9Cn0=", "timestamp": "2020-01-23T16:15:59.478901889Z"}',
+        _ERR_JSON_SCHEMA)
 ]
 
 
@@ -74,33 +92,68 @@ def test_deserialize_invalid_format_bytearray(msg):
 
 
 _VALID_MESSAGES = [
-    ('{"url": "", "b64_identity": "eyJrZXkiOiAiSGVsbG8gd29ybGQifQ==",'
+    ('{"url": "",'
+     '"b64_identity": "eyJpZGVudGl0eSI6IHsiaW50ZXJuYWwiOiB7Im9yZ19pZCI6ICIxMjM4MzAzMiJ9fX0=",'
      '"timestamp": "2020-01-23T16:15:59.478901889Z"}',
      {
          "url": "",
-         "identity": {"key": "Hello world"},
+         "identity": {"identity": {"internal": {"org_id": "12383032"}}},
          "timestamp": "2020-01-23T16:15:59.478901889Z"
      }),
 
     ('{"url": "https://s3.com/hash", "unused-property": null, '
-     '"b64_identity": "eyJrZXkiOiAiSGVsbG8gd29ybGQifQ==",'
+     '"b64_identity": "eyJpZGVudGl0eSI6IHsiaW50ZXJuYWwiOiB7Im9yZ19pZCI6ICIxMjM4MzAzMiJ9fX0=",'
      '"timestamp": "2020-01-23T16:15:59.478901889Z"}',
      {
          "url": "https://s3.com/hash",
          "unused-property": None,
-         "identity": {"key": "Hello world"},
+         "identity": {"identity": {"internal": {"org_id": "12383032"}}},
          "timestamp": "2020-01-23T16:15:59.478901889Z"
      }),
 
     ('{"account":12345678, "url":"any/url", '
-     '"b64_identity": "eyJrZXkiOiAiSGVsbG8gd29ybGQifQ==",'
+     '"b64_identity": "eyJpZGVudGl0eSI6IHsiaW50ZXJuYWwiOiB7Im9yZ19pZCI6ICIxMjM4MzAzMiJ9fX0=",'
      '"timestamp": "2020-01-23T16:15:59.478901889Z"}',
      {
          "account": 12345678,
          "url": "any/url",
-         "identity": {"key": "Hello world"},
+         "identity": {"identity": {"internal": {"org_id": "12383032"}}},
          "timestamp": "2020-01-23T16:15:59.478901889Z"
-     })
+     }),
+
+    ('{"account":12345678, "url":"any/url", '
+     '"b64_identity": "eyJpZGVudGl0eSI6IHsKICAgICJhY2NvdW50X251bWJlciI6ICI2MjEyMzc3IiwKICAgICJhdX'
+     'RoX3R5cGUiOiAiYmFzaWMtYXV0aCIsCiAgICAiaW50ZXJuYWwiOiB7CiAgICAgICAgImF1dGhfdGltZSI6IDE0MDAsC'
+     'iAgICAgICAgIm9yZ19pZCI6ICIxMjM4MzAzMiIKICAgIH0sCiAgICAidHlwZSI6ICJVc2VyIiwKICAgICJ1c2VyIjog'
+     'ewogICAgICAgICJlbWFpbCI6ICJqbmVlZGxlK3FhQHJlZGhhdC5jb20iLAogICAgICAgICJmaXJzdF9uYW1lIjogIkl'
+     'uc2lnaHRzIiwKICAgICAgICAiaXNfYWN0aXZlIjogdHJ1ZSwKICAgICAgICAiaXNfaW50ZXJuYWwiOiBmYWxzZSwKIC'
+     'AgICAgICAiaXNfb3JnX2FkbWluIjogdHJ1ZSwKICAgICAgICAibGFzdF9uYW1lIjogIlFFIiwKICAgICAgICAibG9jY'
+     'WxlIjogImVuX1VTIiwKICAgICAgICAidXNlcm5hbWUiOiAiaW5zaWdodHMtcWUiCiAgICB9Cn0KfQ==",'
+     '"timestamp": "2020-01-23T16:15:59.478901889Z"}',
+     {
+         "account": 12345678,
+         "url": "any/url",
+         "identity": {"identity": {
+             "account_number": "6212377",
+             "auth_type": "basic-auth",
+             "internal": {
+                 "auth_time": 1400,
+                 "org_id": "12383032"
+             },
+             "type": "User",
+             "user": {
+                 "email": "jneedle+qa@redhat.com",
+                 "first_name": "Insights",
+                 "is_active": True,
+                 "is_internal": False,
+                 "is_org_admin": True,
+                 "last_name": "QE",
+                 "locale": "en_US",
+                 "username": "insights-qe"
+             }
+         }},
+         "timestamp": "2020-01-23T16:15:59.478901889Z"
+     }),
 ]
 
 
