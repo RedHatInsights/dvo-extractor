@@ -30,36 +30,47 @@ _INVALID_TYPE_VALUES = [
 @pytest.mark.parametrize("value", _INVALID_TYPE_VALUES)
 def test_deserialize_invalid_type(value):
     """Test that passing invalid data type to `deserialize` raises an exception."""
-    assert Consumer.deserialize(None, value) is None
+    deserialized = Consumer.deserialize(None, value)
+    assert isinstance(deserialized, DataPipelineError)
+    assert str(deserialized).startswith('Unexpected input message type: ')
 
+
+_ERR_UNABLE_TO_DECODE = 'Unable to decode received message: '
+_ERR_JSON_SCHEMA = 'Invalid input message JSON schema: '
 
 _INVALID_MESSAGES = [
-    '',
-    '{}',
-    '{"noturl":"https://s3.com/hash"}'
-    '{"url":"value"',
-    '"url":"value"}',
-    '"url":"value"',
-    '"{\"url\":\"value\"}"'
+    ('', _ERR_UNABLE_TO_DECODE),
+    ('{}', _ERR_JSON_SCHEMA),
+    ('{"noturl":"https://s3.com/hash"}', _ERR_JSON_SCHEMA),
+    ('{"url":"value"', _ERR_UNABLE_TO_DECODE),
+    ('"url":"value"}', _ERR_UNABLE_TO_DECODE),
+    ('"url":"value"', _ERR_UNABLE_TO_DECODE),
+    ('"{\"url\":\"value\"}"', _ERR_UNABLE_TO_DECODE)
 ]
 
 
 @pytest.mark.parametrize("msg", _INVALID_MESSAGES)
 def test_deserialize_invalid_format_str(msg):
     """Test that passing a malformed message to `deserialize` raises an exception."""
-    assert Consumer.deserialize(None, msg) is None
+    deserialized = Consumer.deserialize(None, msg[0])
+    assert isinstance(deserialized, DataPipelineError)
+    assert str(deserialized).startswith(msg[1])
 
 
 @pytest.mark.parametrize("msg", _INVALID_MESSAGES)
 def test_deserialize_invalid_format_bytes(msg):
     """Test that passing a malformed message to `deserialize` raises an exception."""
-    assert Consumer.deserialize(None, msg.encode("utf-8")) is None
+    deserialized = Consumer.deserialize(None, msg[0].encode("utf-8"))
+    assert isinstance(deserialized, DataPipelineError)
+    assert str(deserialized).startswith(msg[1])
 
 
 @pytest.mark.parametrize("msg", _INVALID_MESSAGES)
 def test_deserialize_invalid_format_bytearray(msg):
     """Test that passing a malformed message to `deserialize` raises an exception."""
-    assert Consumer.deserialize(None, bytearray(msg.encode("utf-8"))) is None
+    deserialized = Consumer.deserialize(None, bytearray(msg[0].encode("utf-8")))
+    assert isinstance(deserialized, DataPipelineError)
+    assert str(deserialized).startswith(msg[1])
 
 
 _VALID_MESSAGES = [

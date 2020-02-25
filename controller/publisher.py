@@ -7,6 +7,8 @@ import json
 from kafka import KafkaProducer
 from insights_messaging.publishers import Publisher
 
+from controller.data_pipeline_error import DataPipelineError
+
 log = logging.getLogger(__name__)
 
 
@@ -53,11 +55,12 @@ class Publisher(Publisher):
             # Flush kafkacat buffer.
             # Response is already a string, no need to JSON dump.
             org_id = input_msg.value["identity"]["identity"]["internal"]["org_id"]
+            msg_timestamp = input_msg.value["timestamp"]
             output_msg = {
                 "OrgID": int(org_id),
                 "ClusterName": input_msg.value["ClusterName"],
                 "Report": json.loads(response),
-                "LastChecked": input_msg.value["timestamp"]
+                "LastChecked": msg_timestamp
             }
 
             message = json.dumps(output_msg) + "\n"
@@ -67,15 +70,25 @@ class Publisher(Publisher):
             self.producer.send(self.topic, message.encode('utf-8'))
             log.debug("Message has been sent successfully.")
 
+            log.info(f"Status: Success; "
+                     f"Topic: {input_msg.topic}; "
+                     f"Partition: {input_msg.partition}; "
+                     f"Offset: {input_msg.offset}; "
+                     f"LastChecked: {msg_timestamp}")
+
         except UnicodeEncodeError:
-            log.error(f"Error encoding the response to publish: {message}")
+            raise DataPipelineError(f"Error encoding the response to publish: {message}")
 
         except ValueError:
-            log.error(f"Error extracting the OrgID: {org_id}")
+            raise DataPipelineError(f"Error extracting the OrgID: {org_id}")
 
     def error(self, input_msg, ex):
         """Handle pipeline errors by logging them."""
         # The super call is probably unnecessary because the default behavior
         # is to do nothing, but let's call it in case it ever does anything.
         super().error(input_msg, ex)
-        log.error(ex)
+
+        if not isinstance(ex, DataPipelineError):
+            ex = DataPipelineError(ex)
+
+        log.error(ex.format(input_msg))
