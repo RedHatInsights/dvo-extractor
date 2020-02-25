@@ -203,6 +203,12 @@ Third step is to start controller:
 python -u -m insights_messaging config.yaml
 ```
 
+### logstash configuration
+
+Clone this repo https://github.com/deviantony/docker-elk and start `docker-compose up` in it's directory. 
+Don't forget to use the latest docker version(fedora repository doesn't have the latest version).
+
+
 ## Configuration
 
 The `config.yaml` is an standard **Insights Core Messaging** configuration file. To learn
