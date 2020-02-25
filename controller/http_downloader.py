@@ -36,5 +36,4 @@ class HTTPDownloader:
                 yield file_data.name
 
         except requests.exceptions.ConnectionError as err:
-            log.error(f"Error getting the file {src}: {err}")
-            raise err
+            raise DataPipelineError(err)

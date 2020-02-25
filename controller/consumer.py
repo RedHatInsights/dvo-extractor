@@ -60,7 +60,16 @@ class Consumer(Kafka):
                          group_id, bootstrap_servers, retry_backoff_ms=retry_backoff_ms)
 
     def deserialize(self, bytes_):
-        """Deserialize JSON message received from Kafka."""
+        """
+        Deserialize JSON message received from Kafka.
+
+        Returns:
+            dict: Deserialized input message if successful.
+            DataPipelineError: Exception containing error message if anything failed.
+
+            The exception is returns instead of being thrown in order to prevent
+            breaking the message handling / polling loop in `Consumer.run`.
+        """
         if isinstance(bytes_, (str, bytes, bytearray)):
             try:
                 msg = json.loads(bytes_)
@@ -77,16 +86,13 @@ class Consumer(Kafka):
                 return msg
 
             except json.JSONDecodeError as ex:
-                log.error(f"Unable to decode received message ({ex}): {bytes_}")
-                return None
+                return DataPipelineError(f"Unable to decode received message: {ex}")
 
             except jsonschema.ValidationError as ex:
-                log.error(f"Invalid input message JSON schema: {ex}")
-                return None
+                return DataPipelineError(f"Invalid input message JSON schema: {ex}")
 
         else:
-            log.error(f"Unexpected input message type: {bytes_.__class__.__name__}")
-            return None
+            return DataPipelineError(f"Unexpected input message type: {bytes_.__class__.__name__}")
 
     def handles(self, input_msg):
         """Check format of the input message and decide if it can be handled by this consumer."""
@@ -94,6 +100,10 @@ class Consumer(Kafka):
             log.debug("Unexpected input message type "
                       f"(expected 'ConsumerRecord', got {input_msg.__class__.__name__})")
             self.fire('on_not_handled', input_msg)
+            return False
+
+        if isinstance(input_msg.value, DataPipelineError):
+            log.error(input_msg.value.format(input_msg))
             return False
 
         # ---- Redundant checks. Already checked by JSON schema in `deserialize`. ----
