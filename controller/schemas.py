@@ -9,10 +9,7 @@ INPUT_MESSAGE_SCHEMA = {
             "type": "string",
             "contentEncoding": "base64",
         },
-        "timestamp": {
-            "type": "string",
-            "format": "date-time",
-        }
+        "timestamp": {"type": "string"}
     },
     "required": ["url", "b64_identity", "timestamp"]
 }
