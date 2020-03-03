@@ -32,7 +32,8 @@ class HTTPDownloader:
     """Downloader for HTTP uris."""
 
     # https://<hostname>/<128b hex hash>?<credentials and other params>
-    HTTP_RE = re.compile(r"^https://[^/]+\.s3\.amazonaws\.com/[0-9a-fA-F]{32}\?"
+    HTTP_RE = re.compile(r"^(?:https://[^/]+\.s3\.amazonaws\.com/[0-9a-fA-F]{32}|"
+                         r"http://minio:9000/insights-upload-perma/[0-9a-fA-F]+/[0-9a-zA-Z\-]+)\?"
                          r"X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=[^/]+$")
 
     @contextmanager
