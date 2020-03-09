@@ -183,27 +183,34 @@ section in the [configuration file](config.yaml),  the
 
 To be described
 
-## Usage
+## Local setup
 
-First you need to start Kafka, through `docker-compose`:
+There is a `docker-compose` configuration that provisions a minimal stack of Insight Platform and
+a postgres database.
+You can download it here https://gitlab.cee.redhat.com/insights-qe/iqe-ccx-plugin/blob/master/docker-compose.yml
 
-```shell
-docker-compose up -d
+### Prerequisites
+
+* minio requires `../minio/data/` and `../minio/config` directories to be created
+* edit localhost line in your `/etc/hosts`:  `127.0.0.1       localhost kafka minio`
+* `ingress` image should present on your machine. You can build it locally from this repo https://github.com/RedHatInsights/insights-ingress-go
+
+### Usage
+
+1. Start the stack `podman-compose up` or `docker-compose up`
+2. Wait until kafka will be up.
+3. Start `ccx-data-pipeline`: `python3 -m insights_messaging config-devel.yaml`
+
+Stop Minimal Insights Platform stack `podman-compose down` or `docker-compose down`
+
+In order to upload an insights archive, you can use `curl`:
+```
+curl -k -vvvv -F "upload=@/path/to/your/archive.zip;type=application/vnd.redhat.testareno.archive+zip" http://localhost:3000/api/ingress/v1/upload -H "x-rh-identity: eyJpZGVudGl0eSI6IHsiYWNjb3VudF9udW1iZXIiOiAiMDAwMDAwMSIsICJpbnRlcm5hbCI6IHsib3JnX2lkIjogIjEifX19Cg=="
 ```
 
-Second step is to install python dependencies:
+or you can use integration tests suite. More details are [here](https://gitlab.cee.redhat.com/insights-qe/iqe-ccx-plugin).
 
-```shell
-pip install -e .
-```
-
-Third step is to start controller:
-
-```shell
-python -u -m insights_messaging config.yaml
-```
-
-### logstash configuration
+## Logstash configuration
 
 Clone this repo https://github.com/deviantony/docker-elk and start `docker-compose up` in it's directory. 
 Don't forget to use the latest docker version(fedora repository doesn't have the latest version).
