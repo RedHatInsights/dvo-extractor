@@ -57,6 +57,6 @@ def test_get_valid_url(get_mock):
     response_mock.content = b"file content"
 
     with HTTPDownloader.get(None, _VALID_URL) as filename:
-        with open(filename, 'rb') as f:
-            file_content = f.read()
+        with open(filename, 'rb') as file_desc:
+            file_content = file_desc.read()
             assert file_content == response_mock.content

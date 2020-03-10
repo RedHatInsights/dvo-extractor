@@ -37,6 +37,11 @@ def runStages() {
       sh "pytest --junitxml=junit.xml --cov --cov-config=.coveragerc test"
     }
 
+    gitUtils.stageWithContext("Pylint") {
+      sh "pylint controller test"
+    }
+
+
     junit "junit.xml"
   }
 }

@@ -21,10 +21,10 @@ from insights_messaging.watchers import ConsumerWatcher
 from prometheus_client import Counter, Histogram, start_http_server, REGISTRY
 
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
-class ConsumerWatcher(ConsumerWatcher):
+class StatsWatcher(ConsumerWatcher):
     """A Watcher that stores different Prometheus `Counter`s."""
 
     def __init__(self, prometheus_port=8000):
@@ -68,10 +68,12 @@ class ConsumerWatcher(ConsumerWatcher):
             "Histogram of durations of publishing the OCP engine results")
 
         self._start_time = None
-        self._reset_times()
+        self._downloaded_time = None
+        self._processed_time = None
+        self._published_time = None
 
         start_http_server(prometheus_port)
-        log.info(f"ConsumerWatcher created and listening on port {prometheus_port}")
+        LOG.info("StatWatcher created and listening on port %s", prometheus_port)
 
     def on_recv(self, input_msg):
         """On received event handler."""

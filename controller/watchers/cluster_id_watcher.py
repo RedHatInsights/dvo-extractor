@@ -21,7 +21,7 @@ from uuid import UUID
 from insights_messaging.watchers import ConsumerWatcher, EngineWatcher
 
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class ClusterIdWatcher(EngineWatcher, ConsumerWatcher):
@@ -42,7 +42,7 @@ class ClusterIdWatcher(EngineWatcher, ConsumerWatcher):
         id in the expected path.
         """
         if self.last_record is None:
-            log.warning("Unexpected data flow: watched extraction event without "
+            LOG.warning("Unexpected data flow: watched extraction event without "
                         "a previous receiving event")
             return
 
@@ -58,11 +58,11 @@ class ClusterIdWatcher(EngineWatcher, ConsumerWatcher):
 
                 except ValueError:
                     self.last_record.value["ClusterName"] = None
-                    log.warning("The cluster id is not an UUID. Skipping its extraction")
+                    LOG.warning("The cluster id is not an UUID. Skipping its extraction")
 
         except FileNotFoundError:
             self.last_record.value["ClusterName"] = None
-            log.warning(
+            LOG.warning(
                 "The archive doesn't contain a valid Cluster Id file. Skipping its extraction")
 
         finally:

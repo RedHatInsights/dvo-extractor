@@ -14,7 +14,6 @@
 
 """Module that defines a Downloader object to get HTTP urls."""
 
-import logging
 import re
 from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
@@ -23,9 +22,6 @@ import requests
 
 
 from controller.data_pipeline_error import DataPipelineError
-
-
-log = logging.getLogger(__name__)
 
 
 class HTTPDownloader:

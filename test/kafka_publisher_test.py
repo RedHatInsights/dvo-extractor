@@ -1,12 +1,12 @@
-"""Module for testing the controller.publisher module."""
+"""Module for testing the controller.kafka_publisher module."""
 
 import os
 import unittest
 from unittest.mock import MagicMock, patch
 
-from controller.publisher import Publisher
-
 from kafka.consumer.fetcher import ConsumerRecord
+
+from controller.kafka_publisher import KafkaPublisher
 
 
 def _mock_consumer_record(value):
@@ -14,12 +14,12 @@ def _mock_consumer_record(value):
     return ConsumerRecord(None, None, None, None, None, None, value, None, None, None, None, None)
 
 
-class PublisherTest(unittest.TestCase):
-    """Test cases for testing the class Publisher."""
+class KafkaPublisherTest(unittest.TestCase):
+    """Test cases for testing the class KafkaPublisher."""
 
     def test_init(self):
         """
-        Test Publisher initializer.
+        Test KafkaPublisher initializer.
 
         The test mocks the KafkaProducer from kafka module in order
         to avoid real usage of the library
@@ -30,8 +30,8 @@ class PublisherTest(unittest.TestCase):
             "client_id": "ccx-data-pipeline"
         }
 
-        with patch('controller.publisher.KafkaProducer') as kafka_producer_mock:
-            sut = Publisher(**producer_kwargs)
+        with patch('controller.kafka_publisher.KafkaProducer') as kafka_producer_mock:
+            sut = KafkaPublisher(**producer_kwargs)
 
             kafka_producer_mock.assert_called_with(
                 bootstrap_servers=['kafka_server1'],
@@ -39,7 +39,7 @@ class PublisherTest(unittest.TestCase):
             self.assertEqual(sut.topic, "a topic name")
 
     def test_init_environment_vars(self):
-        """Test Publisher initializer with env vars and no topic."""
+        """Test KafkaPublisher initializer with env vars and no topic."""
         producer_kwargs = {
             "bootstrap_server_env": "MY_TEST_SERVER",
             "outgoing_topic_env": "MY_TOPIC",
@@ -49,15 +49,15 @@ class PublisherTest(unittest.TestCase):
         os.environ["MY_TEST_SERVER"] = "kafka_server1"
         os.environ["MY_TOPIC"] = "a topic name"
 
-        with patch('controller.publisher.KafkaProducer') as kafka_producer_mock:
-            sut = Publisher(**producer_kwargs)
+        with patch('controller.kafka_publisher.KafkaProducer') as kafka_producer_mock:
+            sut = KafkaPublisher(**producer_kwargs)
             kafka_producer_mock.assert_called_with(
                 bootstrap_servers=["kafka_server1"],
                 client_id="ccx-data-pipeline")
             self.assertEqual(sut.topic, "a topic name")
 
     def test_init_both(self):
-        """Test Publisher initializer with both env vars and values."""
+        """Test KafkaPublisher initializer with both env vars and values."""
         producer_kwargs = {
             "bootstrap_servers": ["another_kafkaserver"],
             "bootstrap_server_env": "MY_TEST_SERVER",
@@ -69,22 +69,22 @@ class PublisherTest(unittest.TestCase):
         os.environ["MY_TEST_SERVER"] = "kafka_server1"
         os.environ["MY_TOPIC"] = "a topic name"
 
-        with patch('controller.publisher.KafkaProducer') as kafka_producer_mock:
-            sut = Publisher(**producer_kwargs)
+        with patch('controller.kafka_publisher.KafkaProducer') as kafka_producer_mock:
+            sut = KafkaPublisher(**producer_kwargs)
             kafka_producer_mock.assert_called_with(
                 bootstrap_servers=["kafka_server1"],
                 client_id="ccx-data-pipeline")
             self.assertEqual(sut.topic, "a topic name")
 
     def test_init_no_topic(self):
-        """Test Publisher initializer without outgoing topic."""
+        """Test KafkaPublisher initializer without outgoing topic."""
         producer_kwargs = {
             "bootstrap_servers": ['kafka_server1'],
             "client_id": "ccx-data-pipeline"
         }
 
         with self.assertRaises(KeyError):
-            _ = Publisher(**producer_kwargs)
+            _ = KafkaPublisher(**producer_kwargs)
 
     def test_publish(self):
         """
@@ -110,11 +110,11 @@ class PublisherTest(unittest.TestCase):
             b'{"OrgID": 5000, "ClusterName": "the cluster name", '
             b'"Report": {"key1": "value1"}, "LastChecked": "2020-01-23T16:15:59.478901889Z"}\n')
 
-        with patch('controller.publisher.KafkaProducer') as kafka_producer_init_mock:
+        with patch('controller.kafka_publisher.KafkaProducer') as kafka_producer_init_mock:
             producer_mock = MagicMock()
             kafka_producer_init_mock.return_value = producer_mock
 
-            sut = Publisher(
+            sut = KafkaPublisher(
                 outgoing_topic=topic_name, **producer_kwargs
             )
 

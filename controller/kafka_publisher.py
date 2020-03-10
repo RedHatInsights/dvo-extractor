@@ -23,12 +23,12 @@ from insights_messaging.publishers import Publisher
 
 from controller.data_pipeline_error import DataPipelineError
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
-class Publisher(Publisher):
+class KafkaPublisher(Publisher):
     """
-    Publisher based on the base Kafka publisher.
+    KafkaPublisher based on the base Kafka publisher.
 
     The results of the data analysis are received as a JSON (string)
     and turned into a byte array using UTF-8 encoding.
@@ -38,7 +38,7 @@ class Publisher(Publisher):
     """
 
     def __init__(self, **kwargs):
-        """Construct a new `Publisher` given `kwargs` from the config YAML."""
+        """Construct a new `KafkaPublisher` given `kwargs` from the config YAML."""
         fallback_topic = kwargs.pop('outgoing_topic', None)
         topic_env = kwargs.pop('outgoing_topic_env', None)
         self.topic = os.environ.get(topic_env, fallback_topic) \
@@ -54,7 +54,8 @@ class Publisher(Publisher):
                 kwargs['bootstrap_servers'] = [env_server]
 
         self.producer = KafkaProducer(**kwargs)
-        log.info(f"Producing to topic '{self.topic}' on brokers {kwargs['bootstrap_servers']}")
+        LOG.info("Producing to topic '%s' on brokers %s",
+                 self.topic, kwargs['bootstrap_servers'])
 
     def publish(self, input_msg, response):
         """
@@ -79,16 +80,17 @@ class Publisher(Publisher):
 
             message = json.dumps(output_msg) + "\n"
 
-            log.debug(f"Sending response to the {self.topic} topic.")
+            LOG.debug("Sending response to the %s topic.", self.topic)
             # Convert message string into a byte array.
             self.producer.send(self.topic, message.encode('utf-8'))
-            log.debug("Message has been sent successfully.")
+            LOG.debug("Message has been sent successfully.")
 
-            log.info(f"Status: Success; "
-                     f"Topic: {input_msg.topic}; "
-                     f"Partition: {input_msg.partition}; "
-                     f"Offset: {input_msg.offset}; "
-                     f"LastChecked: {msg_timestamp}")
+            LOG.info("Status: Success; "
+                     "Topic: %s; "
+                     "Partition: %s; "
+                     "Offset: %s; "
+                     "LastChecked: %s",
+                     input_msg.topic, input_msg.partition, input_msg.offset, msg_timestamp)
 
         except UnicodeEncodeError:
             raise DataPipelineError(f"Error encoding the response to publish: {message}")
@@ -105,4 +107,4 @@ class Publisher(Publisher):
         if not isinstance(ex, DataPipelineError):
             ex = DataPipelineError(ex)
 
-        log.error(ex.format(input_msg))
+        LOG.error(ex.format(input_msg))

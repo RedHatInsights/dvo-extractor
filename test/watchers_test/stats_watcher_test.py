@@ -3,9 +3,8 @@
 from unittest.mock import patch
 
 import pytest
-from prometheus_client import CollectorRegistry
 
-from controller.watchers.consumer_watcher import ConsumerWatcher
+from controller.watchers.stats_watcher import StatsWatcher
 
 
 _INVALID_PORTS = [
@@ -18,10 +17,10 @@ _INVALID_PORTS = [
 
 
 @pytest.mark.parametrize("value", _INVALID_PORTS)
-def test_consumer_watcher_initialize_invalid_port(value):
-    """Test passing invalid data types or values to the `ConsumerWatcher` initializer fails."""
+def test_stats_watcher_initialize_invalid_port(value):
+    """Test passing invalid data types or values to the `StatsWatcher` initializer fails."""
     with pytest.raises((TypeError, PermissionError, OverflowError)):
-        _ = ConsumerWatcher(value)
+        _ = StatsWatcher(value)
 
 
 _VALID_PORTS = [
@@ -31,9 +30,9 @@ _VALID_PORTS = [
 
 
 @pytest.mark.parametrize("value", _VALID_PORTS)
-@patch('controller.watchers.consumer_watcher.start_http_server')
-def test_consumer_watcher_initialize(start_http_server_mock, value):
-    """Test valid values in the initialize `ConsumerWatcher`."""
-    ConsumerWatcher(**value)
+@patch('controller.watchers.stats_watcher.start_http_server')
+def test_stats_watcher_initialize(start_http_server_mock, value):
+    """Test valid values in the initialize `StatsWatcher`."""
+    StatsWatcher(**value)
     port = value.get("prometheus_port", 8000)  # 8000 is the default value
     start_http_server_mock.assert_called_with(port)
