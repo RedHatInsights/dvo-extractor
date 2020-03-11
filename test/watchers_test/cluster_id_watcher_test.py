@@ -8,6 +8,7 @@ from controller.watchers.cluster_id_watcher import ClusterIdWatcher
 
 
 def _mock_input_msg():
+    # pylint: disable=too-few-public-methods
     class InputMessageDouble:
         """Test double for InputMessage."""
 

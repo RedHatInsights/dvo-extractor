@@ -86,6 +86,7 @@ class KafkaPublisherTest(unittest.TestCase):
         with self.assertRaises(KeyError):
             _ = KafkaPublisher(**producer_kwargs)
 
+    # pylint: disable=no-self-use
     def test_publish(self):
         """
         Test Producer.publish method.

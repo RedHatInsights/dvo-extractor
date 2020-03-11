@@ -24,6 +24,7 @@ import requests
 from controller.data_pipeline_error import DataPipelineError
 
 
+# pylint: disable=too-few-public-methods
 class HTTPDownloader:
     """Downloader for HTTP uris."""
 
@@ -32,6 +33,7 @@ class HTTPDownloader:
                          r"http://minio:9000/insights-upload-perma/[0-9a-fA-F]+/[0-9a-zA-Z\-]+)\?"
                          r"X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=[^/]+$")
 
+    # pylint: disable=no-self-use
     @contextmanager
     def get(self, src):
         """Download a file from HTTP server and store it in a temporary file."""
