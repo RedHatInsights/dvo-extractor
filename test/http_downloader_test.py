@@ -42,21 +42,30 @@ def test_get_invalid_url(url):
             pass
 
 
-_VALID_URL = "https://zzzzzzzzzzzzzzzzzzzzzzzz.s3.amazonaws.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\
-    "?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential="\
-    "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ&X-Amz-Date=19700101T000000Z"\
-    "&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature="\
-    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+_VALID_URLS = [
+    "https://zzzzzzzzzzzzzzzzzzzzzzzz.s3.amazonaws.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    "?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential="
+    "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ&X-Amz-Date=19700101T000000Z"
+    "&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature="
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+
+    "https://insights-dev-upload-perm.s3.amazonaws.com/upload-service-1-48nb7/gPRz2EdWpr-000144"
+    "?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJW4PUHKGSOIEEI7A%2F20200311%2F"
+    "us-east-1%2Fs3%2Faws4_request&X-Amz-Date=20200311T080728Z&X-Amz-Expires=86400&"
+    "X-Amz-SignedHeaders=host&"
+    "X-Amz-Signature=d345738105796fd81e3e643cf9cf86067956c0cd0783b3a69cd0268566f108a4 "
+]
 
 
 @patch('requests.get')
-def test_get_valid_url(get_mock):
+@pytest.mark.parametrize("url", _VALID_URLS)
+def test_get_valid_url(get_mock, url):
     """Test that passing a valid URL the `get` method tries to download it."""
     response_mock = MagicMock()
     get_mock.return_value = response_mock
     response_mock.content = b"file content"
 
-    with HTTPDownloader.get(None, _VALID_URL) as filename:
+    with HTTPDownloader.get(None, url) as filename:
         with open(filename, 'rb') as f:
             file_content = f.read()
             assert file_content == response_mock.content
