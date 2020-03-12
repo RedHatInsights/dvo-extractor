@@ -8,7 +8,7 @@ if (env.CHANGE_TARGET == "stable" && env.CHANGE_ID) {
     execSmokeTest (
         ocDeployerBuilderPath: "ccx-data-pipeline/ccx-data-pipeline",
         ocDeployerComponentPath: "ccx-data-pipeline/ccx-data-pipeline",
-        ocDeployerServiceSets: "ccx-data-pipeline,ingress,buck-it,engine,platform-mq",
+        ocDeployerServiceSets: "ccx-data-pipeline,ingress,buck-it,platform-mq",
         iqePlugins: ["iqe-ccx-plugin"],
         pytestMarker: ["smoke"]
     )
