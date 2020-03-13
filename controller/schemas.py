@@ -39,7 +39,7 @@ IDENTITY_SCHEMA = {
                 "internal": {
                     "type": "object",
                     "properties": {
-                        "auth_time": {"type": "integer"},
+                        "auth_time": {"type": "number"},
                         "org_id": {"type": "string"},
                     },
                     "required": ["org_id"],

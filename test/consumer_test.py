@@ -154,6 +154,39 @@ _VALID_MESSAGES = [
          }},
          "timestamp": "2020-01-23T16:15:59.478901889Z"
      }),
+
+    ('{"account":12345678, "url":"any/url", '
+     '"b64_identity": "eyJpZGVudGl0eSI6IHsiYWNjb3VudF9udW1iZXIiOiAiNjIxMjM3NyIsICJhdXRoX3R5cGUiOiA'
+     'iYmFzaWMtYXV0aCIsICJpbnRlcm5hbCI6IHsiYXV0aF90aW1lIjogMC41NiwgIm9yZ19pZCI6ICIxMjM4MzAzMiJ9LCA'
+     'idHlwZSI6ICJVc2VyIiwgInVzZXIiOiB7ImVtYWlsIjogImpuZWVkbGUrcWFAcmVkaGF0LmNvbSIsICJmaXJzdF9uYW1'
+     'lIjogIkluc2lnaHRzIiwgImlzX2FjdGl2ZSI6IHRydWUsICJpc19pbnRlcm5hbCI6IGZhbHNlLCAiaXNfb3JnX2FkbWl'
+     'uIjogdHJ1ZSwgImxhc3RfbmFtZSI6ICJRRSIsICJsb2NhbGUiOiAiZW5fVVMiLCAidXNlcm5hbWUiOiAiaW5zaWdodHM'
+     'tcWUifX19",'
+     '"timestamp": "2020-01-23T16:15:59.478901889Z"}',
+     {
+         "account": 12345678,
+         "url": "any/url",
+         "identity": {"identity": {
+             "account_number": "6212377",
+             "auth_type": "basic-auth",
+             "internal": {
+                 "auth_time": 0.56,
+                 "org_id": "12383032"
+             },
+             "type": "User",
+             "user": {
+                 "email": "jneedle+qa@redhat.com",
+                 "first_name": "Insights",
+                 "is_active": True,
+                 "is_internal": False,
+                 "is_org_admin": True,
+                 "last_name": "QE",
+                 "locale": "en_US",
+                 "username": "insights-qe"
+             }
+         }},
+         "timestamp": "2020-01-23T16:15:59.478901889Z"
+     }),
 ]
 
 
