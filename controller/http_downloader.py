@@ -28,8 +28,8 @@ from controller.data_pipeline_error import DataPipelineError
 class HTTPDownloader:
     """Downloader for HTTP uris."""
 
-    # https://<hostname>/<128b hex hash>?<credentials and other params>
-    HTTP_RE = re.compile(r"^(?:https://[^/]+\.s3\.amazonaws\.com/[0-9a-fA-F]{32}|"
+    # https://<hostname>/service_id/file_id?<credentials and other params>
+    HTTP_RE = re.compile(r"^(?:https://[^/]+\.s3\.amazonaws\.com/[0-9a-zA-Z/\-]+|"
                          r"http://minio:9000/insights-upload-perma/[0-9a-fA-F]+/[0-9a-zA-Z\-]+)\?"
                          r"X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=[^/]+$")
 

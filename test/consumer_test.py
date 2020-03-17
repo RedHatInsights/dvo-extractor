@@ -154,6 +154,87 @@ _VALID_MESSAGES = [
          }},
          "timestamp": "2020-01-23T16:15:59.478901889Z"
      }),
+
+    ('{"account":12345678, "url":"any/url", '
+     '"b64_identity": "eyJpZGVudGl0eSI6IHsiYWNjb3VudF9udW1iZXIiOiAiNjIxMjM3NyIsICJhdXRoX3R5cGUiOiA'
+     'iYmFzaWMtYXV0aCIsICJpbnRlcm5hbCI6IHsiYXV0aF90aW1lIjogMC41NiwgIm9yZ19pZCI6ICIxMjM4MzAzMiJ9LCA'
+     'idHlwZSI6ICJVc2VyIiwgInVzZXIiOiB7ImVtYWlsIjogImpuZWVkbGUrcWFAcmVkaGF0LmNvbSIsICJmaXJzdF9uYW1'
+     'lIjogIkluc2lnaHRzIiwgImlzX2FjdGl2ZSI6IHRydWUsICJpc19pbnRlcm5hbCI6IGZhbHNlLCAiaXNfb3JnX2FkbWl'
+     'uIjogdHJ1ZSwgImxhc3RfbmFtZSI6ICJRRSIsICJsb2NhbGUiOiAiZW5fVVMiLCAidXNlcm5hbWUiOiAiaW5zaWdodHM'
+     'tcWUifX19",'
+     '"timestamp": "2020-01-23T16:15:59.478901889Z"}',
+     {
+         "account": 12345678,
+         "url": "any/url",
+         "identity": {"identity": {
+             "account_number": "6212377",
+             "auth_type": "basic-auth",
+             "internal": {
+                 "auth_time": 0.56,
+                 "org_id": "12383032"
+             },
+             "type": "User",
+             "user": {
+                 "email": "jneedle+qa@redhat.com",
+                 "first_name": "Insights",
+                 "is_active": True,
+                 "is_internal": False,
+                 "is_org_admin": True,
+                 "last_name": "QE",
+                 "locale": "en_US",
+                 "username": "insights-qe"
+             }
+         }},
+         "timestamp": "2020-01-23T16:15:59.478901889Z"
+     }),
+    ('{"account":"5869752","category":"periodic",'
+     '"metadata":{"reporter":"","stale_timestamp":"0001-01-01T00:00:00Z"},'
+     '"request_id":"1cafddc658c942be8660ea0341fe8027","principal":"10918904",'
+     '"service":"openshift","size":15099,'
+     '"url":"https://insights-upload-perma.s3.amazonaws.com/1cafddc658c942be8660ea0341fe8027?'
+     'X-Amz-Algorithm=AWS4-HMAC-SHA256\u0026X-Amz-Credential=AKIAJW4PUHKGSOIEEI7A%2F20200313%2F'
+     'us-east-1%2Fs3%2Faws4_request\u0026X-Amz-Date=20200313T083008Z\u0026X-Amz-Expires=86400'
+     '\u0026X-Amz-SignedHeaders=host\u0026'
+     'X-Amz-Signature=0db0ae5569ef7bf5e1eb59d64d8b420c323f43fa0154a6bfb81b8873b1d0e836",'
+     '"b64_identity":"eyJlbnRpdGxlbWVudHMiOnt9LCJpZGVudGl0eSI6eyJpbnRlcm5hbCI6eyJhdXRoX3RpbWUiOjAu'
+     'Mjk5OTk5OTUyMzE2MjgsIm9yZ19pZCI6IjEwOTE4OTA0In0sImFjY291bnRfbnVtYmVyIjoiNTg2OTc1MiIsImF1dGhf'
+     'dHlwZSI6InVoYy1hdXRoIiwic3lzdGVtIjp7ImNsdXN0ZXJfaWQiOiIxODJjMTVkZi02MDE0LTQyZjgtYmRkMC02OGMy'
+     'YzViMGI4MWUifSwidHlwZSI6IlN5c3RlbSJ9fQ==",'
+     '"timestamp":"2020-03-13T08:30:08.968858699Z"}',
+     {
+         "account": "5869752",
+         "category": "periodic",
+         "metadata": {
+             "reporter": "",
+             "stale_timestamp": "0001-01-01T00:00:00Z",
+         },
+         "request_id": "1cafddc658c942be8660ea0341fe8027",
+         "principal": "10918904",
+         "service": "openshift",
+         "size": 15099,
+         "url": (
+             "https://insights-upload-perma.s3.amazonaws.com/1cafddc658c942be8660ea0341fe8027?"
+             "X-Amz-Algorithm=AWS4-HMAC-SHA256\u0026X-Amz-Credential=AKIAJW4PUHKGSOIEEI7A%2F"
+             "20200313%2Fus-east-1%2Fs3%2Faws4_request\u0026X-Amz-Date=20200313T083008Z\u0026"
+             "X-Amz-Expires=86400\u0026X-Amz-SignedHeaders=host\u0026"
+             "X-Amz-Signature=0db0ae5569ef7bf5e1eb59d64d8b420c323f43fa0154a6bfb81b8873b1d0e836"),
+         "identity": {
+             "entitlements": {},
+             "identity": {
+                 "internal": {
+                     "auth_time": 0.29999995231628,
+                     "org_id": "10918904"
+                 },
+                 "account_number": '5869752',
+                 "auth_type": "uhc-auth",
+                 "system": {
+                     "cluster_id": "182c15df-6014-42f8-bdd0-68c2c5b0b81e"
+                 },
+                 "type": "System"
+             },
+         },
+         "timestamp": "2020-03-13T08:30:08.968858699Z"
+     })
 ]
 
 
