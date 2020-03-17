@@ -46,7 +46,7 @@ class ClusterIdWatcher(EngineWatcher, ConsumerWatcher):
                         "a previous receiving event")
             return
 
-        id_file_path = os.path.join(ctx.root, 'config', 'id')
+        id_file_path = os.path.join(extraction.tmp_dir, 'config', 'id')
 
         try:
             with open(id_file_path, 'r') as id_file:
