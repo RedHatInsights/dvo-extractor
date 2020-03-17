@@ -17,6 +17,7 @@
 import logging
 
 
+# pylint: disable=too-few-public-methods
 class LogFilter(logging.Filter):
     """Class that implements the `filter` function for log filtering."""
 

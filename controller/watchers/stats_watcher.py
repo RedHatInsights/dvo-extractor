@@ -90,7 +90,7 @@ class StatsWatcher(ConsumerWatcher):
         self._downloaded_time = time.time()
         self._download_duration.observe(self._downloaded_time - self._start_time)
 
-    # pylint: disable=unused-argument
+    # pylint: disable=unused-argument, arguments-differ
     def on_process(self, input_msg, result):
         """On processed event handler."""
         self._processed_total.inc()
@@ -105,7 +105,7 @@ class StatsWatcher(ConsumerWatcher):
         self._published_time = time.time()
         self._publish_duration.observe(self._published_time - self._processed_time)
 
-    # pylint: disable=unused-argument
+    # pylint: disable=unused-argument,arguments-differ
     def on_consumer_failure(self, input_msg, ex):
         """On consumer failure event handler."""
         self._failures_total.inc()

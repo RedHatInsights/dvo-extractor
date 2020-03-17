@@ -39,6 +39,7 @@ class Consumer(Kafka):
     then passes the file to an internal engine for further processing.
     """
 
+    # pylint: disable=too-many-arguments
     def __init__(self, publisher, downloader, engine,
                  group_id=None, group_id_env=None,
                  incoming_topic=None, incoming_topic_env=None,
