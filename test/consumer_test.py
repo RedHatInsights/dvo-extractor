@@ -50,7 +50,7 @@ _INVALID_MESSAGES = [
     # incorrect content of b64_identity (org_id missing)
     ('{"url": "https://s3.com/hash", "b64_identity": "eyJpZGVudGl0eSI6IHsiaW50ZXJuYWwiOiB7Im1pc3'\
         'Npbmdfb3JnX2lkIjogIjEyMzgzMDMyIn19fQ==", "timestamp": "2020-01-23T16:15:59.478901889Z"}',
-        _ERR_JSON_SCHEMA),
+     _ERR_JSON_SCHEMA),
     # incorrect format of base64 encoding
     ('{"url": "https://s3.com/hash", "b64_identity": "eyJpZGVudGl0eSI6IHsiaW50ZXJuYWwiOiB7Im9yZ1'\
         '9pZCI6ICIxMjM4MzAzMiJ9f", "timestamp": "2020-01-23T16:15:59.478901889Z"}', _ERR_BASE64),
@@ -63,7 +63,7 @@ _INVALID_MESSAGES = [
         'UsCiAgICAgICAgImlzX2ludGVybmFsIjogZmFsc2UsCiAgICAgICAgImlzX29yZ19hZG1pbiI6IHRydWUsCiAgI'\
         'CAgICAgImxhc3RfbmFtZSI6ICJRRSIsCiAgICAgICAgImxvY2FsZSI6ICJlbl9VUyIsCiAgICAgICAgInVzZXJu'\
         'YW1lIjogImluc2lnaHRzLXFlIgogICAgfQp9Cn0=", "timestamp": "2020-01-23T16:15:59.478901889Z"}',
-        _ERR_JSON_SCHEMA)
+     _ERR_JSON_SCHEMA)
 ]
 
 
@@ -327,8 +327,8 @@ def test_consumer_init_direct(topic, group, server):
     """Test of our Consumer constructor, using direct configuration options."""
     with patch('insights_messaging.consumers.kafka.Kafka.__init__') as mock_kafka_init:
         with patch('os.environ', new=dict()):
-            cons = Consumer(None, None, None, group, None,
-                            topic, None, [server], None)
+            Consumer(None, None, None, group, None,
+                     topic, None, [server], None)
 
             mock_kafka_init.assert_called_with(
                 None, None, None, topic, group, [server], retry_backoff_ms=1000)
@@ -347,8 +347,8 @@ def test_consumer_init_fallback(topic, group, server):
     """
     with patch('insights_messaging.consumers.kafka.Kafka.__init__') as mock_kafka_init:
         with patch('os.environ', new=dict()):
-            cons = Consumer(None, None, None, group, "GROUP_ENV",
-                            topic, "TOPIC_ENV", [server], "SERVER_ENV")
+            Consumer(None, None, None, group, "GROUP_ENV",
+                     topic, "TOPIC_ENV", [server], "SERVER_ENV")
 
             mock_kafka_init.assert_called_with(
                 None, None, None, topic, group, [server], retry_backoff_ms=1000)
@@ -368,8 +368,8 @@ def test_consumer_init_env(topic, group, server):
     """Test of our Consumer constructor, using configuration loaded from environment variables."""
     with patch('insights_messaging.consumers.kafka.Kafka.__init__') as mock_kafka_init:
         with patch('os.environ', new=_ENV_MOCK):
-            cons = Consumer(None, None, None, group, "GROUP_ENV",
-                            topic, "TOPIC_ENV", [server], "SERVER_ENV")
+            Consumer(None, None, None, group, "GROUP_ENV",
+                     topic, "TOPIC_ENV", [server], "SERVER_ENV")
 
             mock_kafka_init.assert_called_with(None, None, None,
                                                "topic_from_env", "group_from_env",

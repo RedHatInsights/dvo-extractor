@@ -21,10 +21,11 @@ from insights_messaging.watchers import ConsumerWatcher
 from prometheus_client import Counter, Histogram, start_http_server, REGISTRY
 
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
-class ConsumerWatcher(ConsumerWatcher):
+# pylint: disable=too-many-instance-attributes
+class StatsWatcher(ConsumerWatcher):
     """A Watcher that stores different Prometheus `Counter`s."""
 
     def __init__(self, prometheus_port=8000):
@@ -68,10 +69,12 @@ class ConsumerWatcher(ConsumerWatcher):
             "Histogram of durations of publishing the OCP engine results")
 
         self._start_time = None
-        self._reset_times()
+        self._downloaded_time = None
+        self._processed_time = None
+        self._published_time = None
 
         start_http_server(prometheus_port)
-        log.info(f"ConsumerWatcher created and listening on port {prometheus_port}")
+        LOG.info("StatWatcher created and listening on port %s", prometheus_port)
 
     def on_recv(self, input_msg):
         """On received event handler."""
@@ -87,6 +90,7 @@ class ConsumerWatcher(ConsumerWatcher):
         self._downloaded_time = time.time()
         self._download_duration.observe(self._downloaded_time - self._start_time)
 
+    # pylint: disable=unused-argument, arguments-differ
     def on_process(self, input_msg, result):
         """On processed event handler."""
         self._processed_total.inc()
@@ -101,6 +105,7 @@ class ConsumerWatcher(ConsumerWatcher):
         self._published_time = time.time()
         self._publish_duration.observe(self._published_time - self._processed_time)
 
+    # pylint: disable=unused-argument,arguments-differ
     def on_consumer_failure(self, input_msg, ex):
         """On consumer failure event handler."""
         self._failures_total.inc()
@@ -113,6 +118,7 @@ class ConsumerWatcher(ConsumerWatcher):
 
         self._publish_duration.observe(0)
 
+    # pylint: disable=unused-argument
     def on_not_handled(self, input_msg):
         """On not handled messages success event handler."""
         self._not_handling_total.inc()

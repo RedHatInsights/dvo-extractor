@@ -28,7 +28,7 @@ service:
     name: controller.http_downloader.HTTPDownloader
 
   publisher:
-    name: controller.publisher.Publisher
+    name: controller.kafka_publisher.KafkaPublisher
     kwargs:
       outgoing_topic: ccx.ocp.results
       outgoing_topic_env: CDP_OUTGOING_TOPIC
@@ -36,7 +36,7 @@ service:
         - "10.34.129.172:9092"
       bootstrap_server_env: CDP_PUBLISHER_SERVER
   watchers:
-    - name: controller.watchers.consumer_watcher.ConsumerWatcher
+    - name: controller.watchers.consumer_watcher.StatsWatcher
       kwargs:
         prometheus_port: 8000
     - name: controller.watchers.cluster_id_watcher.ClusterIdWatcher
