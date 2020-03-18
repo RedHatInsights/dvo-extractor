@@ -36,7 +36,7 @@ service:
         - "10.34.129.172:9092"
       bootstrap_server_env: CDP_PUBLISHER_SERVER
   watchers:
-    - name: controller.watchers.consumer_watcher.StatsWatcher
+    - name: controller.watchers.stats_watcher.StatsWatcher
       kwargs:
         prometheus_port: 8000
     - name: controller.watchers.cluster_id_watcher.ClusterIdWatcher

@@ -25,13 +25,13 @@ service:
     name: controller.http_downloader.HTTPDownloader
 
   publisher:
-    name: controller.publisher.Publisher
+    name: controller.kafka_publisher.KafkaPublisher
     kwargs:
       outgoing_topic: ccx.ocp.results
       bootstrap_servers:
         - "kafka:29092"
   watchers:
-    - name: controller.watchers.consumer_watcher.ConsumerWatcher
+    - name: controller.watchers.stats_watcher.StatsWatcher
       kwargs:
         prometheus_port: 8000
     - name: controller.watchers.cluster_id_watcher.ClusterIdWatcher
