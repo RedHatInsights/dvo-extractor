@@ -84,6 +84,8 @@ class KafkaPublisher(Publisher):
             # Convert message string into a byte array.
             self.producer.send(self.topic, message.encode('utf-8'))
             LOG.debug("Message has been sent successfully.")
+            LOG.debug("Message context: OrgId=%s, ClusterName=\"%s\", LastChecked=\"%s\"",
+                      output_msg["OrgID"], output_msg["ClusterName"], output_msg["LastChecked"])
 
             LOG.info("Status: Success; "
                      "Topic: %s; "
