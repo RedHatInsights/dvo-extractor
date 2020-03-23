@@ -37,7 +37,7 @@ and will be deployed and run inside [cloud.redhat.com](https://cloud.redhat.com)
 ![data_flow](./doc/customer_facing_services_architecture.png)
 
 1. Event about new data from insights operator is consumed from Kafka. That event contains (among other things) URL to S3 Bucket
-2. Insights operator data is read from S3 Bucket and insigts rules are applied to that data
+2. Insights operator data is read from S3 Bucket and insights rules are applied to that data
 3. Results (basically organization ID + cluster name + insights results JSON) are stored back into Kafka, but into different topic
 4. That results are consumed by Insights rules aggregator service that caches them
 5. The service provides such data via REST API to other tools, like OpenShift Cluster Manager web UI, OpenShift console, etc.
@@ -247,7 +247,7 @@ the specific _consumer_, _downloader_ and _publisher_ are configured.
   - `bootstrap_server_env`: same as in `consumer`. Takes precedence over the previous one.
 - `watchers`: it has a list of `Watcher` objects that will receive notifications of events during the
   pipeline processing steps. The default configured one is `controller.consumer_watcher.ConsumerWatcher`
-  that serve some statistics for [Prometehus service](https://prometheus.io/). The port where the
+  that serve some statistics for [Prometheus service](https://prometheus.io/). The port where the
   `prometheus_client` library will listen for petitions is configurable using `kwargs` dictionary in the
   same way as `consumer` and `publisher`. The only recognized option is:
   - `prometheus_port`: an integer indicating the port where the `prometheus_client` will listen for server
