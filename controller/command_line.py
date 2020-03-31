@@ -15,12 +15,10 @@
 """command_line submodule includes the handlers for CLI commands."""
 
 import argparse
-import logging
 import os
 
+import boto3
 from insights_messaging.appbuilder import AppBuilder
-from boto3.session import Session
-from watchtower import CloudWatchLogHandler
 
 
 def parse_args():
@@ -34,16 +32,14 @@ def ccx_data_pipeline():
     """Handler for ccx-data-pipeline command."""
     args = parse_args()
 
-    aws_session = Session(
-        aws_access_key_id=os.environ.get('CWS_AWS_ACCESS_KEY_ID'),
-        aws_secret_access_key=os.environ.get('CWS_AWS_SECRET_ACCESS_KEY'),
-        region_name=os.environ.get('AWS_REGION_NAME'))
-    cloudwatch_handler = CloudWatchLogHandler(
-        boto3_session=aws_session,
-        log_group=os.environ.get('CWS_LOG_GROUP'),
-        stream_name=os.environ.get('CWS_STREAM_NAME'))
-    root_logger = logging.getLogger()
-    root_logger.addHandler(cloudwatch_handler)
+    if ('CW_AWS_ACCESS_KEY_ID' in os.environ and
+            'CW_AWS_SECRET_ACCESS_KEY' in os.environ and
+            'AWS_REGION_NAME' in os.environ):
+        boto3.setup_default_session(
+            aws_access_key_id=os.environ.get('CW_AWS_ACCESS_KEY_ID'),
+            aws_secret_access_key=os.environ.get('CW_AWS_SECRET_ACCESS_KEY'),
+            region_name=os.environ.get('AWS_REGION_NAME'))
 
     with open(args.config) as f:
         AppBuilder(f.read()).build_app().run()
+        exit(0)
