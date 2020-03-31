@@ -16,6 +16,7 @@
 
 import argparse
 import os
+import sys
 
 import boto3
 from insights_messaging.appbuilder import AppBuilder
@@ -23,23 +24,22 @@ from insights_messaging.appbuilder import AppBuilder
 
 def parse_args():
     """Parse the command line options and arguments."""
-    p = argparse.ArgumentParser()
-    p.add_argument("config", help="Application Configuration.")
-    return p.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("config", help="Application Configuration.")
+    return parser.parse_args()
 
 
 def ccx_data_pipeline():
-    """Handler for ccx-data-pipeline command."""
+    """Handle for ccx-data-pipeline command."""
     args = parse_args()
 
-    if ('CW_AWS_ACCESS_KEY_ID' in os.environ and
-            'CW_AWS_SECRET_ACCESS_KEY' in os.environ and
-            'AWS_REGION_NAME' in os.environ):
+    aws_config_vars = ('CW_AWS_ACCESS_KEY_ID', 'CW_AWS_SECRET_ACCESS_KEY', 'AWS_REGION_NAME')
+    if all(key in os.environ for key in aws_config_vars):
         boto3.setup_default_session(
             aws_access_key_id=os.environ.get('CW_AWS_ACCESS_KEY_ID'),
             aws_secret_access_key=os.environ.get('CW_AWS_SECRET_ACCESS_KEY'),
             region_name=os.environ.get('AWS_REGION_NAME'))
 
-    with open(args.config) as f:
-        AppBuilder(f.read()).build_app().run()
-        exit(0)
+    with open(args.config) as file_:
+        AppBuilder(file_.read()).build_app().run()
+        sys.exit(0)
