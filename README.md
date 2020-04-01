@@ -263,8 +263,8 @@ through the definition of environment variables.
 Cloud Watch is a service to enable log message publication. In `ccx-data-pipeline` it is done using `boto3` and
 `watchtower` Python packages.
 
-To start to send messages to a Cloud Watch instance, you should define **all** the following environment
-variables:
+To enable the sending of log messages to a Cloud Watch instance, you should define **all** the following
+environment variables:
 
 - `CW_AWS_ACCESS_KEY_ID`: The AWS access key for creating the Cloud Watch session.
 - `CW_AWS_SECRET_ACCESS_KEY`: The AWS secret access key for creating the Cloud Watch session.
@@ -272,8 +272,8 @@ variables:
 - `CW_LOG_GROUP`: The logging group that will be used by `ccx-data-pipeline` to publish its messages.
 - `CW_STREAM_NAME`: A name to distinguish this application logs inside the log group.
 
-If any of that environment variables in missing, the Cloud Watch service cannot be configured and won't be used
-at all.
+If any of these environment variables are not defined, the Cloud Watch service cannot be configured and
+won't be used at all.
 
 ## Deploy
 
