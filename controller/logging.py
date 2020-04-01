@@ -23,22 +23,22 @@ from watchtower import CloudWatchLogHandler
 
 def setup_watchtower():
     """Setups the CloudWatch handler if the proper configuration is provided."""
-    aws_config_vars = ('CW_AWS_ACCESS_KEY_ID',
-                       'CW_AWS_SECRET_ACCESS_KEY',
-                       'AWS_REGION_NAME',
-                       'CW_LOG_GROUP',
-                       'CW_STREAM_NAME')
+    aws_config_vars = ("CW_AWS_ACCESS_KEY_ID",
+                       "CW_AWS_SECRET_ACCESS_KEY",
+                       "AWS_REGION_NAME",
+                       "CW_LOG_GROUP",
+                       "CW_STREAM_NAME")
 
     if any(key not in os.environ for key in aws_config_vars):
         return
 
     session = Session(
-        aws_access_key_id=os.environ['CW_AWS_ACCESS_KEY_ID'],
-        aws_secret_access_key=os.environ['CW_AWS_SECRET_ACCESS_KEY'],
-        region_name=os.environ['AWS_REGION_NAME'])
+        aws_access_key_id=os.environ["CW_AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=os.environ["CW_AWS_SECRET_ACCESS_KEY"],
+        region_name=os.environ["AWS_REGION_NAME"])
     root_logger = logging.getLogger()
     handler = CloudWatchLogHandler(
         boto3_session=session,
-        log_group=os.environ['CW_LOG_GROUP'],
-        stream_name=os.environ['CW_STREAM_NAME'])
+        log_group=os.environ["CW_LOG_GROUP"],
+        stream_name=os.environ["CW_STREAM_NAME"])
     root_logger.addHandler(handler)
