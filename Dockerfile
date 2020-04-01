@@ -28,4 +28,4 @@ RUN pip install -U --no-cache-dir pip wheel setuptools && \
 
 USER 1001
 
-CMD ["sh", "-c", "python3 -m insights_messaging $CONFIG_PATH"]
+CMD ["sh", "-c", "ccx-data-pipeline $CONFIG_PATH"]
