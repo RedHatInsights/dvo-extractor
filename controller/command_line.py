@@ -34,6 +34,7 @@ def ccx_data_pipeline():
     args = parse_args()
 
     with open(args.config) as file_:
-        AppBuilder(file_.read()).build_app().run()
+        consumer = AppBuilder(file_.read()).build_app()
         setup_watchtower()
+        consumer.run()
         sys.exit(0)
