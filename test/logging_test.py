@@ -47,6 +47,13 @@ _INCOMPLETE_CW_CONFIGURATION = [
         "CW_LOG_GROUP": "a group",
         "CW_STREAM_NAME": "",
     },
+    {
+        "CW_AWS_ACCESS_KEY_ID": "  ",
+        "CW_AWS_SECRET_ACCESS_KEY": "AWS_SECRET",
+        "AWS_REGION_NAME": "a region",
+        "CW_LOG_GROUP": "a group",
+        "CW_STREAM_NAME": "the stream",
+    },
     {},
 ]
 
