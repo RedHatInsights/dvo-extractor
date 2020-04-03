@@ -29,7 +29,7 @@ def setup_watchtower():
                        "CW_LOG_GROUP",
                        "CW_STREAM_NAME")
 
-    if any(key not in os.environ for key in aws_config_vars):
+    if any(os.environ.get(key, "") == "" for key in aws_config_vars):
         return
 
     session = Session(

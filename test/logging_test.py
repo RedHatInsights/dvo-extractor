@@ -8,6 +8,7 @@ from controller.logging import setup_watchtower
 
 
 _INCOMPLETE_CW_CONFIGURATION = [
+    # Missing one env var
     {
         "CW_AWS_ACCESS_KEY_ID": "AWS_KEY",
         "CW_AWS_SECRET_ACCESS_KEY": "AWS_SECRET",
@@ -37,14 +38,22 @@ _INCOMPLETE_CW_CONFIGURATION = [
         "AWS_REGION_NAME": "a region",
         "CW_LOG_GROUP": "a group",
         "CW_STREAM_NAME": "the stream",
+    },
+    # All envs, but some empty
+    {
+        "CW_AWS_ACCESS_KEY_ID": "AWS_KEY",
+        "CW_AWS_SECRET_ACCESS_KEY": "AWS_SECRET",
+        "AWS_REGION_NAME": "a region",
+        "CW_LOG_GROUP": "a group",
+        "CW_STREAM_NAME": "",
     },
     {},
 ]
 
 
 @pytest.mark.parametrize("fake_env", _INCOMPLETE_CW_CONFIGURATION)
-@patch("controller.logging.Session", lambda: None)
-@patch("controller.logging.CloudWatchLogHandler", lambda: None)
+@patch("controller.logging.Session", lambda **kwargs: None)
+@patch("controller.logging.CloudWatchLogHandler", lambda **kwargs: None)
 @patch("controller.logging.logging.getLogger")
 def test_setup_watchtower_misconfigured(get_logger_mock, fake_env):
     """Test that no watchtower is used when environment is not configured."""
