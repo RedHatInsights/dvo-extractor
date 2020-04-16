@@ -46,6 +46,13 @@ class ClusterIdWatcher(EngineWatcher, ConsumerWatcher):
                         "a previous receiving event")
             return
 
+        identity = self.last_record.value["identity"]
+
+        if "cluster_id" in identity.get("identity", {}).get("system", {}):
+            self.last_record.value["ClusterName"] = identity["identity"]["system"]["cluster_id"]
+            self.last_record = None
+            return
+
         id_file_path = os.path.join(extraction.tmp_dir, 'config', 'id')
 
         try:
