@@ -29,7 +29,7 @@ def test_cluster_id_watcher_unordered_events(caplog):
 def test_cluster_id_watcher_file_not_exist(caplog):
     """Test that the extracted archive doesn't contain a cluster id file."""
     input_msg_mock = MagicMock()
-    input_msg_mock.value = dict()
+    input_msg_mock.value = {"identity": {}}
 
     extraction_mock = MagicMock()
     extraction_mock.tmp_dir = '/tmp/to/non/existing/file/over/the/filesystem'
@@ -54,7 +54,7 @@ _INCORRECT_UUIDS = [
 def test_cluster_id_watcher_bad_content(caplog, value):
     """Test that the id file contains non UUID values."""
     input_msg_mock = MagicMock()
-    input_msg_mock.value = dict()
+    input_msg_mock.value = {"identity": {}}
 
     extraction_mock = MagicMock()
     extraction_mock.tmp_dir = '/tmp/mock/path'
@@ -71,7 +71,7 @@ def test_cluster_id_watcher_bad_content(caplog, value):
 def test_cluster_id_watcher_ok(caplog):
     """Test that the id file contains non UUID values."""
     input_msg_mock = MagicMock()
-    input_msg_mock.value = dict()
+    input_msg_mock.value = {"identity": {}}
 
     extraction_mock = MagicMock()
     extraction_mock.tmp_dir = '/tmp/mock/path'
