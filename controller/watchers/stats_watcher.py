@@ -17,8 +17,9 @@
 import logging
 import time
 
-from insights_messaging.watchers import ConsumerWatcher
 from prometheus_client import Counter, Histogram, start_http_server, REGISTRY
+
+from controller.watchers.consumer_watcher import ConsumerWatcher
 
 
 LOG = logging.getLogger(__name__)
@@ -90,8 +91,7 @@ class StatsWatcher(ConsumerWatcher):
         self._downloaded_time = time.time()
         self._download_duration.observe(self._downloaded_time - self._start_time)
 
-    # pylint: disable=unused-argument, arguments-differ
-    def on_process(self, input_msg, result):
+    def on_process(self, input_msg, results):
         """On processed event handler."""
         self._processed_total.inc()
 
@@ -105,8 +105,7 @@ class StatsWatcher(ConsumerWatcher):
         self._published_time = time.time()
         self._publish_duration.observe(self._published_time - self._processed_time)
 
-    # pylint: disable=unused-argument,arguments-differ
-    def on_consumer_failure(self, input_msg, ex):
+    def on_consumer_failure(self, input_msg, exception):
         """On consumer failure event handler."""
         self._failures_total.inc()
 
@@ -118,7 +117,6 @@ class StatsWatcher(ConsumerWatcher):
 
         self._publish_duration.observe(0)
 
-    # pylint: disable=unused-argument
     def on_not_handled(self, input_msg):
         """On not handled messages success event handler."""
         self._not_handling_total.inc()
