@@ -101,6 +101,9 @@ class Consumer(Kafka):
                 jsonschema.validate(instance=decoded_identity, schema=IDENTITY_SCHEMA)
                 LOG.debug("Identity schema validated")
 
+                msg["ClusterName"] = decoded_identity.get(
+                    "identity", {}).get("system", {}).get("cluster_id", None)
+
                 msg["identity"] = decoded_identity
                 del msg["b64_identity"]
                 return msg

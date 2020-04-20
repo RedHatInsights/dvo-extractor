@@ -29,4 +29,5 @@ class DataPipelineError(Exception):
                 f"Topic: {input_msg.topic}; "
                 f"Partition: {input_msg.partition}; "
                 f"Offset: {input_msg.offset}; "
+                f"Cluster: {input_msg.value['ClusterName']}; "
                 f"Cause: {self}")
