@@ -13,8 +13,3 @@
 # limitations under the License.
 
 """Module containing implementation of the external data pipeline."""
-
-# VERSION = "0.1"
-# BUILDTIME = "** not set **"
-# BUILDBRANCH = "** not set **"
-# BUILDCOMMIT = "** not set **"
