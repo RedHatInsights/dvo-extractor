@@ -34,7 +34,6 @@ def parse_args():
 
 def print_version(use_stdout=False):
     """Log version information."""
-
     if use_stdout:
         show_func = print
 
