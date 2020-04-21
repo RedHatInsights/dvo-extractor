@@ -43,7 +43,8 @@ def print_version(use_stdout=False):
     show_func("Python interpreter version: {}.{}.{}".format(
         sys.version_info.major, sys.version_info.minor,
         sys.version_info.micro))
-    show_func(pkg_resources.get_distribution("ccx-data-pipeline").version)
+    show_func("ccx-data-pipeline version: {}".format(
+        pkg_resources.get_distribution("ccx-data-pipeline").version))
 
 
 def ccx_data_pipeline():
