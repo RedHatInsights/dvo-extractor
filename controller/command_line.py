@@ -19,31 +19,41 @@ import logging
 import sys
 
 from insights_messaging.appbuilder import AppBuilder
+import pkg_resources
 
-import controller
 from controller.logging import setup_watchtower
 
 
 def parse_args():
     """Parse the command line options and arguments."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("config", help="Application Configuration.")
+    parser.add_argument("config", nargs="?", help="Application Configuration.")
+    parser.add_argument("--version", help="Show version", action="store_true")
     return parser.parse_args()
 
 
-def print_version():
+def print_version(use_stdout=False):
     """Log version information."""
-    logging.info("Interpreter version: %s.%s.%s", sys.version_info.major, sys.version_info.minor,
-                 sys.version_info.micro)
-    logging.info("Version: %s", controller.VERSION)
-    logging.info("Build time: %s", controller.BUILDTIME)
-    logging.info("Branch: %s", controller.BUILDBRANCH)
-    logging.info("Commit: %s", controller.BUILDCOMMIT)
+
+    if use_stdout:
+        show_func = print
+
+    else:
+        show_func = logging.info
+
+    show_func("Python interpreter version: {}.{}.{}".format(
+        sys.version_info.major, sys.version_info.minor,
+        sys.version_info.micro))
+    show_func(pkg_resources.get_distribution("ccx-data-pipeline").version)
 
 
 def ccx_data_pipeline():
     """Handle for ccx-data-pipeline command."""
     args = parse_args()
+
+    if args.version:
+        print_version(use_stdout=True)
+        sys.exit(0)
 
     with open(args.config) as file_:
         consumer = AppBuilder(file_.read()).build_app()
