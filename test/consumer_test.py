@@ -98,7 +98,8 @@ _VALID_MESSAGES = [
      {
          "url": "",
          "identity": {"identity": {"internal": {"org_id": "12383032"}}},
-         "timestamp": "2020-01-23T16:15:59.478901889Z"
+         "timestamp": "2020-01-23T16:15:59.478901889Z",
+         "ClusterName": None
      }),
 
     ('{"url": "https://s3.com/hash", "unused-property": null, '
@@ -108,7 +109,8 @@ _VALID_MESSAGES = [
          "url": "https://s3.com/hash",
          "unused-property": None,
          "identity": {"identity": {"internal": {"org_id": "12383032"}}},
-         "timestamp": "2020-01-23T16:15:59.478901889Z"
+         "timestamp": "2020-01-23T16:15:59.478901889Z",
+         "ClusterName": None
      }),
 
     ('{"account":12345678, "url":"any/url", '
@@ -118,7 +120,8 @@ _VALID_MESSAGES = [
          "account": 12345678,
          "url": "any/url",
          "identity": {"identity": {"internal": {"org_id": "12383032"}}},
-         "timestamp": "2020-01-23T16:15:59.478901889Z"
+         "timestamp": "2020-01-23T16:15:59.478901889Z",
+         "ClusterName": None
      }),
 
     ('{"account":12345678, "url":"any/url", '
@@ -152,7 +155,8 @@ _VALID_MESSAGES = [
                  "username": "insights-qe"
              }
          }},
-         "timestamp": "2020-01-23T16:15:59.478901889Z"
+         "timestamp": "2020-01-23T16:15:59.478901889Z",
+         "ClusterName": None
      }),
 
     ('{"account":12345678, "url":"any/url", '
@@ -185,7 +189,8 @@ _VALID_MESSAGES = [
                  "username": "insights-qe"
              }
          }},
-         "timestamp": "2020-01-23T16:15:59.478901889Z"
+         "timestamp": "2020-01-23T16:15:59.478901889Z",
+         "ClusterName": None
      }),
     ('{"account":"5869752","category":"periodic",'
      '"metadata":{"reporter":"","stale_timestamp":"0001-01-01T00:00:00Z"},'
@@ -233,7 +238,8 @@ _VALID_MESSAGES = [
                  "type": "System"
              },
          },
-         "timestamp": "2020-03-13T08:30:08.968858699Z"
+         "timestamp": "2020-03-13T08:30:08.968858699Z",
+         "ClusterName": "182c15df-6014-42f8-bdd0-68c2c5b0b81e"
      })
 ]
 
