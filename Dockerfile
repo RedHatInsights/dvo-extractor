@@ -9,16 +9,14 @@ ENV CONFIG_PATH=/ccx-data-pipeline/config.yaml \
 
 WORKDIR $HOME
 
-COPY . .
-
 RUN dnf -y --setopt=tsflags=nodocs install python3-pip git unzip && \
-    python3 -m venv $VENV
+    python3 -m venv $VENV && echo "echo $GITHUB_API_TOKEN" > $GIT_ASKPASS && \
+    chmod +x /git-askpass.sh && \
+    git clone https://github.com/RedHatInsights/ccx-data-pipeline $HOME
 
 ENV PATH="$VENV/bin:$PATH"
 
 RUN pip install -U --no-cache-dir pip wheel setuptools && \
-    echo "echo $GITHUB_API_TOKEN" > $GIT_ASKPASS && \
-    chmod +x /git-askpass.sh && \
     pip install --no-cache-dir -e . && \
     dnf remove -y git && \
     dnf clean all && \
