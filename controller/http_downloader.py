@@ -41,12 +41,18 @@ class HTTPDownloader:
             raise DataPipelineError(f"Invalid URL format: {src}")
 
         try:
-            request = requests.get(src)
-            data = request.content
+            response = requests.get(src)
+            data = response.content
+
+            if len(data) == 0:
+                raise DataPipelineError(f"Empty input archive from {src}")
+
             with NamedTemporaryFile() as file_data:
                 file_data.write(data)
                 file_data.flush()
                 yield file_data.name
+
+            response.close()
 
         except requests.exceptions.ConnectionError as err:
             raise DataPipelineError(err)
