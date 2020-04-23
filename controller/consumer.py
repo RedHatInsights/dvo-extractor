@@ -19,6 +19,7 @@ import json
 import logging
 import base64
 import binascii
+import time
 
 import jsonschema
 from kafka.consumer.fetcher import ConsumerRecord
@@ -120,6 +121,24 @@ class Consumer(Kafka):
         else:
             return DataPipelineError(f"Unexpected input message type: {bytes_.__class__.__name__}")
 
+    @staticmethod
+    def _handles_timestamp_check(input_msg):
+        if not isinstance(input_msg.timestamp, int):
+            LOG.error("Unexpected Kafka record timestamp type (expected 'int', got '%s')",
+                      input_msg.timestamp.__class__.__name__)
+            return False
+
+        # HACK: Skip old record to reduce time required to catch up.
+        max_record_age = 2 * 60 * 60  # 2 hours (in seconds)
+        # Kafka record timestamp is int64 in milliseconds.
+        if (input_msg.timestamp / 1000) < (time.time() - max_record_age):
+            LOG.debug("Skipping old message "
+                      "(topic: '%s', partition: %d, offset: %d, timestamp: %d)",
+                      input_msg.topic, input_msg.partition, input_msg.offset, input_msg.timestamp)
+            return False
+
+        return True
+
     def handles(self, input_msg):
         """Check format of the input message and decide if it can be handled by this consumer."""
         if not isinstance(input_msg, ConsumerRecord):
@@ -132,7 +151,11 @@ class Consumer(Kafka):
             LOG.error(input_msg.value.format(input_msg))
             return False
 
+        if not Consumer._handles_timestamp_check(input_msg):
+            return False
+
         # ---- Redundant checks. Already checked by JSON schema in `deserialize`. ----
+        # These checks are actually triggered by some of the unit tests for this method.
         if not isinstance(input_msg.value, dict):
             LOG.debug("Unexpected input message value type (expected 'dict', got '%s')",
                       input_msg.value.__class__.__name__)

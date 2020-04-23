@@ -1,5 +1,7 @@
 """Module containing unit tests for the `Consumer` class."""
 
+import time
+
 from unittest.mock import patch
 
 import pytest
@@ -14,7 +16,8 @@ _REGEX_BAD_SCHEMA = r'^Unable to extract URL from input message: '
 
 def _mock_consumer_record(value):
     """Construct a value-only `ConsumerRecord`."""
-    return ConsumerRecord(None, None, None, None, None, None, value, None, None, None, None, None)
+    return ConsumerRecord(None, None, None, int((time.time() * 1000) - 60),
+                          None, None, value, None, None, None, None, None)
 
 
 _INVALID_TYPE_VALUES = [
