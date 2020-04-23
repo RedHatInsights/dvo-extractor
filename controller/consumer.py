@@ -43,7 +43,7 @@ class Consumer(Kafka):
     def __init__(self, publisher, downloader, engine,
                  group_id=None, group_id_env=None,
                  incoming_topic=None, incoming_topic_env=None,
-                 bootstrap_servers=None, bootstrap_server_env=None, retry_backoff_ms=1000):
+                 bootstrap_servers=None, bootstrap_server_env=None, retry_backoff_ms=1000, **kwargs):
         """Construct a new external data pipeline Kafka consumer."""
         if group_id_env is not None:
             env_group = os.environ.get(group_id_env, None)
@@ -73,7 +73,7 @@ class Consumer(Kafka):
                  incoming_topic, bootstrap_servers, group_id)
 
         super().__init__(publisher, downloader, engine, incoming_topic,
-                         group_id, bootstrap_servers, retry_backoff_ms=retry_backoff_ms)
+                         group_id, bootstrap_servers, retry_backoff_ms=retry_backoff_ms, **kwargs)
 
     def deserialize(self, bytes_):
         """
