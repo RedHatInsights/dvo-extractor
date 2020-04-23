@@ -43,7 +43,8 @@ class Consumer(Kafka):
     def __init__(self, publisher, downloader, engine,
                  group_id=None, group_id_env=None,
                  incoming_topic=None, incoming_topic_env=None,
-                 bootstrap_servers=None, bootstrap_server_env=None, retry_backoff_ms=1000, **kwargs):
+                 bootstrap_servers=None, bootstrap_server_env=None, retry_backoff_ms=1000,
+                 **kwargs):
         """Construct a new external data pipeline Kafka consumer."""
         if group_id_env is not None:
             env_group = os.environ.get(group_id_env, None)
