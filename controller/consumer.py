@@ -19,6 +19,7 @@ import json
 import logging
 import base64
 import binascii
+import time
 
 import jsonschema
 from kafka.consumer.fetcher import ConsumerRecord
@@ -130,6 +131,19 @@ class Consumer(Kafka):
 
         if isinstance(input_msg.value, DataPipelineError):
             LOG.error(input_msg.value.format(input_msg))
+            return False
+
+        if not isinstance(input_msg.timestamp, int):
+            LOG.error("Unexpected Kafka record timestamp type (expected 'int', got '%s')",
+                      input_msg.timestamp.__class__.__name__)
+            return False
+
+        # HACK: Skip old record to reduce time required to catch up.
+        MAX_RECORD_AGE = 2 * 60 * 60  # 2 hours (in seconds)
+        # Kafka record timestamp is int64 in milliseconds.
+        if (input_msg.timestamp / 1000) < (time.time() - MAX_RECORD_AGE):
+            LOG.debug("Skipping old message (topic: '%s', partition: %d, offset: %d, timestamp: %d)",
+                      input_msg.topic, input_msg.partition, input_msg.offset, input_msg.timestamp)
             return False
 
         # ---- Redundant checks. Already checked by JSON schema in `deserialize`. ----
