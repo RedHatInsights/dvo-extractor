@@ -121,18 +121,8 @@ class Consumer(Kafka):
         else:
             return DataPipelineError(f"Unexpected input message type: {bytes_.__class__.__name__}")
 
-    def handles(self, input_msg):
-        """Check format of the input message and decide if it can be handled by this consumer."""
-        if not isinstance(input_msg, ConsumerRecord):
-            LOG.debug("Unexpected input message type (expected 'ConsumerRecord', got %s)",
-                      input_msg.__class__.__name__)
-            self.fire('on_not_handled', input_msg)
-            return False
-
-        if isinstance(input_msg.value, DataPipelineError):
-            LOG.error(input_msg.value.format(input_msg))
-            return False
-
+    @staticmethod
+    def _handles_timestamp_check(input_msg):
         if not isinstance(input_msg.timestamp, int):
             LOG.error("Unexpected Kafka record timestamp type (expected 'int', got '%s')",
                       input_msg.timestamp.__class__.__name__)
@@ -147,22 +137,35 @@ class Consumer(Kafka):
                       input_msg.topic, input_msg.partition, input_msg.offset, input_msg.timestamp)
             return False
 
-        # Commented out temporarily to make pylint happy.
-        # These checks are not really needed anymore, but they are kept here as
-        # an extra level of precaution. Once the hacky check above is removed
-        # they can be uncommented again.
+        return True
+
+    def handles(self, input_msg):
+        """Check format of the input message and decide if it can be handled by this consumer."""
+        if not isinstance(input_msg, ConsumerRecord):
+            LOG.debug("Unexpected input message type (expected 'ConsumerRecord', got %s)",
+                      input_msg.__class__.__name__)
+            self.fire('on_not_handled', input_msg)
+            return False
+
+        if isinstance(input_msg.value, DataPipelineError):
+            LOG.error(input_msg.value.format(input_msg))
+            return False
+
+        if not Consumer._handles_timestamp_check(input_msg):
+            return False
 
         # ---- Redundant checks. Already checked by JSON schema in `deserialize`. ----
-        # if not isinstance(input_msg.value, dict):
-        #     LOG.debug("Unexpected input message value type (expected 'dict', got '%s')",
-        #               input_msg.value.__class__.__name__)
-        #     self.fire('on_not_handled', input_msg)
-        #     return False
+        # These checks are actually triggered by some of the unit tests for this method.
+        if not isinstance(input_msg.value, dict):
+            LOG.debug("Unexpected input message value type (expected 'dict', got '%s')",
+                      input_msg.value.__class__.__name__)
+            self.fire('on_not_handled', input_msg)
+            return False
 
-        # if "url" not in input_msg.value:
-        #     LOG.debug("Input message is missing a 'url' field: %s", input_msg.value)
-        #     self.fire('on_not_handled', input_msg)
-        #     return False
+        if "url" not in input_msg.value:
+            LOG.debug("Input message is missing a 'url' field: %s", input_msg.value)
+            self.fire('on_not_handled', input_msg)
+            return False
         # ----------------------------------------------------------------------------
 
         return True
