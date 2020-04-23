@@ -139,24 +139,30 @@ class Consumer(Kafka):
             return False
 
         # HACK: Skip old record to reduce time required to catch up.
-        MAX_RECORD_AGE = 2 * 60 * 60  # 2 hours (in seconds)
+        max_record_age = 2 * 60 * 60  # 2 hours (in seconds)
         # Kafka record timestamp is int64 in milliseconds.
-        if (input_msg.timestamp / 1000) < (time.time() - MAX_RECORD_AGE):
-            LOG.debug("Skipping old message (topic: '%s', partition: %d, offset: %d, timestamp: %d)",
+        if (input_msg.timestamp / 1000) < (time.time() - max_record_age):
+            LOG.debug("Skipping old message "
+                      "(topic: '%s', partition: %d, offset: %d, timestamp: %d)",
                       input_msg.topic, input_msg.partition, input_msg.offset, input_msg.timestamp)
             return False
 
-        # ---- Redundant checks. Already checked by JSON schema in `deserialize`. ----
-        if not isinstance(input_msg.value, dict):
-            LOG.debug("Unexpected input message value type (expected 'dict', got '%s')",
-                      input_msg.value.__class__.__name__)
-            self.fire('on_not_handled', input_msg)
-            return False
+        # Commented out temporarily to make pylint happy.
+        # These checks are not really needed anymore, but they are kept here as
+        # an extra level of precaution. Once the hacky check above is removed
+        # they can be uncommented again.
 
-        if "url" not in input_msg.value:
-            LOG.debug("Input message is missing a 'url' field: %s", input_msg.value)
-            self.fire('on_not_handled', input_msg)
-            return False
+        # ---- Redundant checks. Already checked by JSON schema in `deserialize`. ----
+        # if not isinstance(input_msg.value, dict):
+        #     LOG.debug("Unexpected input message value type (expected 'dict', got '%s')",
+        #               input_msg.value.__class__.__name__)
+        #     self.fire('on_not_handled', input_msg)
+        #     return False
+
+        # if "url" not in input_msg.value:
+        #     LOG.debug("Input message is missing a 'url' field: %s", input_msg.value)
+        #     self.fire('on_not_handled', input_msg)
+        #     return False
         # ----------------------------------------------------------------------------
 
         return True
