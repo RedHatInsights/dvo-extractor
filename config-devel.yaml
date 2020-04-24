@@ -59,7 +59,9 @@ service:
         format: "%(message)s"
       json:
         (): "pythonjsonlogger.jsonlogger.JsonFormatter"
-        format: "%(levelname)s %(asctime)s %(name)s %(filename)s %(message)s"
+        format: "%(filename)s %(lineno)d %(process)d %(levelname)s %(asctime)s %(name)s %(message)s"
+      cloudwatch:
+        format: "LEVEL=%(levelname)s; FILENAME=%(filename)s; LINE=%(lineno)d; PID=%(process)d; TIME=%(asctime)s; NAME=%(name)s; HOST=%(hostname)s; MAC_ADDRESS=%(mac_address)s; MESSAGE=%(message)s;"
     filters:
       context_filter:
         (): "controller.log_filter.LogFilter"

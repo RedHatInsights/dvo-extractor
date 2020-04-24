@@ -56,8 +56,10 @@ def ccx_data_pipeline():
         sys.exit(0)
 
     with open(args.config) as file_:
-        consumer = AppBuilder(file_.read()).build_app()
-        setup_watchtower()
+        app_builder = AppBuilder(file_.read())
+        logging_config = app_builder.service['logging']
+        consumer = app_builder.build_app()
+        setup_watchtower(logging_config)
         print_version()
         consumer.run()
         sys.exit(0)
