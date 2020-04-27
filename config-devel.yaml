@@ -28,8 +28,7 @@ service:
     name: controller.kafka_publisher.KafkaPublisher
     kwargs:
       outgoing_topic: ${CDP_OUTGOING_TOPIC:ccx.ocp.results}
-      bootstrap_servers:
-        - "kafka:29092"
+      bootstrap_servers: ${CDP_PRODUCER_SERVER:kafka:29092}
   watchers:
     - name: controller.watchers.stats_watcher.StatsWatcher
       kwargs:

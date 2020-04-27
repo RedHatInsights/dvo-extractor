@@ -14,7 +14,6 @@
 
 """Module that implements a custom Kafka publisher."""
 
-import os
 import logging
 
 import json
@@ -37,25 +36,17 @@ class KafkaPublisher(Publisher):
     Custom error handling for the whole pipeline is implemented here.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, outgoing_topic, bootstrap_servers, **kwargs):
         """Construct a new `KafkaPublisher` given `kwargs` from the config YAML."""
-        fallback_topic = kwargs.pop('outgoing_topic', None)
-        topic_env = kwargs.pop('outgoing_topic_env', None)
-        self.topic = os.environ.get(topic_env, fallback_topic) \
-            if topic_env is not None else fallback_topic
+        self.topic = outgoing_topic
+        self.bootstrap_servers = bootstrap_servers
 
         if self.topic is None:
             raise KeyError('outgoing_topic')
 
-        server_env = kwargs.pop('bootstrap_server_env', None)
-        if server_env is not None:
-            env_server = os.environ.get(server_env, None)
-            if env_server is not None:
-                kwargs['bootstrap_servers'] = [env_server]
-
-        self.producer = KafkaProducer(**kwargs)
+        self.producer = KafkaProducer(bootstrap_servers=self.bootstrap_servers, **kwargs)
         LOG.info("Producing to topic '%s' on brokers %s",
-                 self.topic, kwargs['bootstrap_servers'])
+                 self.topic, self.bootstrap_servers)
 
     def publish(self, input_msg, response):
         """
