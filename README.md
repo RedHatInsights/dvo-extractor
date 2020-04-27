@@ -229,22 +229,13 @@ the specific _consumer_, _downloader_ and _publisher_ are configured.
   are defined in the `kwargs` dictionary:
   initializer. The most relevants are:
   - `incoming_topic`: the Kafka topic to subscribe the consumer object.
-  - `incoming_topic_env`: an environment variable that will store a Kafka topic to subscribe.
-    This option takes precedence over the previous one.
   - `group_id`: Kafka group identifier. Several instances of the same pipeline will need to be into
     the same group in order to not process the same messages.
-  - `group_id_env`: the name of an environment variable that will store the same as the previous option.
-    It takes precedence over `group_id`.
   - `bootstrap_servers`: a list of "IP:PORT" strings where the Kafka server is listening.
-  - `bootstrap_server_env`: The name of an environment variable that stores the endpoint of a Kafka
-    server. It takes precedence over `boostrap_servers`, but it only allows to define one server.
 - `publisher` name refers to the class `controller.publisher.Publisher` and it also allow to define the
   arguments passed to the initializer modifying the `kwargs` dictionary:
   - `outgoing_topic`: a string indicating the topic where the reported results should be sent.
-  - `outgoing_topic_env`: environment variable name that stores the same option described in
-    `outgoing_topic`. It takes precedence over it.
   - `bootstrap_servers`: same as in `consumer`, a list of Kafka servers to connect
-  - `bootstrap_server_env`: same as in `consumer`. Takes precedence over the previous one.
 - `watchers`: it has a list of `Watcher` objects that will receive notifications of events during the
   pipeline processing steps. The default configured one is `controller.consumer_watcher.ConsumerWatcher`
   that serve some statistics for [Prometheus service](https://prometheus.io/). The port where the
@@ -257,6 +248,20 @@ the specific _consumer_, _downloader_ and _publisher_ are configured.
 
 In addition to the configuration mentioned in the previous section, some other behaviours can be configured
 through the definition of environment variables.
+
+All the YAML file is parsed by the Insights Core Messaging library, that includes support for using
+environment variables with default values as values for any variable in the configuration file.
+
+As an example, given an environment variable named `CDP_INCOMING_TOPIC` that contains the Kafka topic name
+where the consumer should read, you can put `${CDP_INCOMING_TOPIC}` as the value for the
+`consumer`/`incoming_topic` configuration.
+
+Following the same example, if you want that a default value is used in case of `CDP_INCOMING_TOPIC` is not
+defined, you can specify `${CDP_INCOMING_TOPIC:default_value}`. In this case, the environment variable will
+take precedence over the default value, but this default will be used in case the environment variable is
+not defined.
+
+In addition to the YAML configuration, another important note about the needed environment variables:
 
 ### Cloud Watch configuration
 

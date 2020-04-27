@@ -14,7 +14,6 @@
 
 """Consumer implementation based on base Kafka class."""
 
-import os
 import json
 import logging
 import base64
@@ -41,35 +40,12 @@ class Consumer(Kafka):
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, publisher, downloader, engine,
-                 group_id=None, group_id_env=None,
-                 incoming_topic=None, incoming_topic_env=None,
-                 bootstrap_servers=None, bootstrap_server_env=None, retry_backoff_ms=1000,
-                 **kwargs):
+    def __init__(self, publisher, downloader, engine, group_id=None,
+                 incoming_topic=None, bootstrap_servers=None,
+                 retry_backoff_ms=1000, **kwargs):
         """Construct a new external data pipeline Kafka consumer."""
-        if group_id_env is not None:
-            env_group = os.environ.get(group_id_env, None)
-            if env_group is None:
-                LOG.warning("Ignoring unset group id environment variable "
-                            "'%s', falling back to '%s'", group_id_env, group_id)
-            else:
-                group_id = env_group
-
-        if incoming_topic_env is not None:
-            env_topic = os.environ.get(incoming_topic_env, None)
-            if env_topic is None:
-                LOG.warning("Ignoring unset incoming topic environment variable "
-                            "'%s', falling back to '%s'", incoming_topic_env, incoming_topic)
-            else:
-                incoming_topic = env_topic
-
-        if bootstrap_server_env is not None:
-            env_server = os.environ.get(bootstrap_server_env, None)
-            if env_server is None:
-                LOG.warning("Ignoring unset bootstrap server environment variable "
-                            "'%s', falling back to %s", bootstrap_server_env, bootstrap_servers)
-            else:
-                bootstrap_servers = [env_server]
+        if isinstance(bootstrap_servers, str):
+            bootstrap_servers = bootstrap_servers.split(',')
 
         LOG.info("Consuming topic '%s' from brokers %s as group '%s'",
                  incoming_topic, bootstrap_servers, group_id)
