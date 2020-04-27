@@ -17,10 +17,9 @@ service:
   consumer:
     name: controller.consumer.Consumer
     kwargs:
-      incoming_topic: platform.upload.testareno
-      group_id: ccx_data_pipeline_app
-      bootstrap_servers:
-        - "kafka:29092"
+      incoming_topic: ${CDP_INCOMING_TOPIC:platform.upload.testareno}
+      group_id: ${CDP_GROUP_ID:ccx_data_pipeline_app}
+      bootstrap_servers: ${CDP_CONSUMER_SERVER:kafka:29092}
 
   downloader:
     name: controller.http_downloader.HTTPDownloader
@@ -28,7 +27,7 @@ service:
   publisher:
     name: controller.kafka_publisher.KafkaPublisher
     kwargs:
-      outgoing_topic: ccx.ocp.results
+      outgoing_topic: ${CDP_OUTGOING_TOPIC:ccx.ocp.results}
       bootstrap_servers:
         - "kafka:29092"
   watchers:

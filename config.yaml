@@ -17,13 +17,9 @@ service:
   consumer:
     name: controller.consumer.Consumer
     kwargs:
-      incoming_topic: platform.upload.buckit
-      incoming_topic_env: CDP_INCOMING_TOPIC
-      group_id: ccx_data_pipeline_app
-      group_id_env: CDP_GROUP_ID
-      bootstrap_servers:
-        - "10.34.129.172:9092"
-      bootstrap_server_env: CDP_CONSUMER_SERVER
+      incoming_topic: ${CDP_INCOMING_TOPIC:platform.upload.buckit}
+      group_id: ${CDP_GROUP_ID:ccx_data_pipeline_app}
+      bootstrap_servers: ${CDP_CONSUMER_SERVER:["10.34.129.172:9092"]}
 
   downloader:
     name: controller.http_downloader.HTTPDownloader
@@ -31,11 +27,8 @@ service:
   publisher:
     name: controller.kafka_publisher.KafkaPublisher
     kwargs:
-      outgoing_topic: ccx.ocp.results
-      outgoing_topic_env: CDP_OUTGOING_TOPIC
-      bootstrap_servers:
-        - "10.34.129.172:9092"
-      bootstrap_server_env: CDP_PUBLISHER_SERVER
+      outgoing_topic: ${CDP_OUTGOING_TOPIC:ccx.ocp.results}
+      bootstrap_servers: ${CDP_PUBLISHER_SERVER:["10.34.129.172:9092"]}
   watchers:
     - name: controller.watchers.stats_watcher.StatsWatcher
       kwargs:
