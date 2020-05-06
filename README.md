@@ -199,7 +199,7 @@ You can download it here https://gitlab.cee.redhat.com/insights-qe/iqe-ccx-plugi
 
 1. Start the stack `podman-compose up` or `docker-compose up`
 2. Wait until kafka will be up.
-3. Start `ccx-data-pipeline`: `python3 -m insights_messaging config-devel.yaml`
+3. Start `ccx-data-pipeline`: `ccx-data-pipeline config-devel.yaml`
 
 Stop Minimal Insights Platform stack `podman-compose down` or `docker-compose down`
 
