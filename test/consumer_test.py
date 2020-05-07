@@ -295,9 +295,11 @@ _VALID_RECORD_VALUES = [
 
 
 @pytest.mark.parametrize("value", _VALID_RECORD_VALUES)
+@patch('insights_messaging.consumers.kafka.Kafka.__init__', lambda *a, **k: None)
 def test_handles_valid(value):
     """Test that `Consumer` accepts handling of correctly formatted input messages."""
-    assert Consumer.handles(None, _mock_consumer_record(value))
+    sut = Consumer(None, None, None)
+    assert sut.handles(_mock_consumer_record(value))
 
 
 @pytest.mark.parametrize("value", _INVALID_RECORD_VALUES)
