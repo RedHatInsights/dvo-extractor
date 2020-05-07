@@ -16,10 +16,13 @@
 
 import datetime
 import json
+import logging
 
 from kafka import KafkaProducer
 
 from controller.watchers.consumer_watcher import ConsumerWatcher
+
+LOG = logging.getLogger(__name__)
 
 
 class PayloadTrackerWatcher(ConsumerWatcher):
@@ -34,6 +37,10 @@ class PayloadTrackerWatcher(ConsumerWatcher):
 
         self.kafka_prod = KafkaProducer(bootstrap_servers=bootstrap_servers, **kwargs)
         self.service_name = service_name
+
+        LOG.info(
+            "Sending status reports to Payload Tracker on topic %s as service %s",
+            self.topic, self.service_name)
 
     def _publish_status(self, input_msg, status, status_msg=None):
         """Send an status update to payload tracker topic."""
@@ -53,6 +60,7 @@ class PayloadTrackerWatcher(ConsumerWatcher):
             tracker_msg["status_msg"] = status_msg
 
         self.kafka_prod.send(self.topic, json.dumps(tracker_msg))
+        LOG.info("Payload Tracker update successfully sent: %s %s", request_id, status)
 
     def on_recv(self, input_msg):
         """On received event handler."""
