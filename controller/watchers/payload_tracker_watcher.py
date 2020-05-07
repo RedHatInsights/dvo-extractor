@@ -47,6 +47,7 @@ class PayloadTrackerWatcher(ConsumerWatcher):
         request_id = input_msg.value.get("request_id")
 
         if request_id is None:
+            LOG.warning("The received record doesn't contain a request_id. It won't be reported")
             return
 
         tracker_msg = {
