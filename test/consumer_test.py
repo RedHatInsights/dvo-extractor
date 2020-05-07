@@ -1,25 +1,15 @@
 """Module containing unit tests for the `Consumer` class."""
 
-import time
-
 from unittest.mock import patch
 
 import pytest
 
-from kafka.consumer.fetcher import ConsumerRecord
-
 from controller.consumer import Consumer
 from controller.data_pipeline_error import DataPipelineError
 
+from .utils import mock_consumer_record
+
 _REGEX_BAD_SCHEMA = r'^Unable to extract URL from input message: '
-
-
-def _mock_consumer_record(value):
-    """Construct a value-only `ConsumerRecord`."""
-    return ConsumerRecord(None, None, None, int((time.time() * 1000) - 60),
-                          None, None, value, None, None, None, None, None)
-
-
 _INVALID_TYPE_VALUES = [
     None,
     42,
@@ -284,7 +274,7 @@ _INVALID_RECORD_VALUES = [
 def test_handles_invalid(value):
     """Test that `Consumer` refuses to handle malformed input messages."""
     consumer = Consumer(None, None, None)
-    assert not consumer.handles(_mock_consumer_record(value))
+    assert not consumer.handles(mock_consumer_record(value))
 
 
 _VALID_RECORD_VALUES = [
@@ -299,7 +289,7 @@ _VALID_RECORD_VALUES = [
 def test_handles_valid(value):
     """Test that `Consumer` accepts handling of correctly formatted input messages."""
     sut = Consumer(None, None, None)
-    assert sut.handles(_mock_consumer_record(value))
+    assert sut.handles(mock_consumer_record(value))
 
 
 @pytest.mark.parametrize("value", _INVALID_RECORD_VALUES)
@@ -312,7 +302,7 @@ def test_get_url_invalid(value):
 @pytest.mark.parametrize("value", _VALID_RECORD_VALUES)
 def test_get_url_valid(value):
     """Test that `Consumer.get_url` returns the expected value."""
-    assert Consumer.get_url(None, _mock_consumer_record(value)) == value['url']
+    assert Consumer.get_url(None, mock_consumer_record(value)) == value['url']
 
 
 _VALID_TOPICS = [
