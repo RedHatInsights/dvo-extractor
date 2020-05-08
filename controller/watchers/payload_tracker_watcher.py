@@ -60,7 +60,7 @@ class PayloadTrackerWatcher(ConsumerWatcher):
         if status_msg:
             tracker_msg["status_msg"] = status_msg
 
-        self.kafka_prod.send(self.topic, json.dumps(tracker_msg))
+        self.kafka_prod.send(self.topic, json.dumps(tracker_msg).encode("utf-8"))
         LOG.info("Payload Tracker update successfully sent: %s %s", request_id, status)
 
     def on_recv(self, input_msg):
