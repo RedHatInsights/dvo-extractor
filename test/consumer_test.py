@@ -4,10 +4,19 @@ from unittest.mock import patch
 
 import pytest
 
+from kafka import KafkaConsumer
+
 from controller.consumer import Consumer
 from controller.data_pipeline_error import DataPipelineError
 
 from .utils import mock_consumer_record
+
+
+@pytest.fixture(autouse=True)
+def mock_consumer(monkeypatch):
+    """Mock KafkaConsumer."""
+    monkeypatch.setattr(KafkaConsumer, "__init__", lambda *args, **kargs: None)
+
 
 _REGEX_BAD_SCHEMA = r'^Unable to extract URL from input message: '
 _INVALID_TYPE_VALUES = [
@@ -23,7 +32,7 @@ _INVALID_TYPE_VALUES = [
 @pytest.mark.parametrize("value", _INVALID_TYPE_VALUES)
 def test_deserialize_invalid_type(value):
     """Test that passing invalid data type to `deserialize` raises an exception."""
-    deserialized = Consumer.deserialize(None, value)
+    deserialized = Consumer.deserialize(Consumer(None, None, None), value)
     assert isinstance(deserialized, DataPipelineError)
     assert str(deserialized).startswith('Unexpected input message type: ')
 
@@ -63,7 +72,7 @@ _INVALID_MESSAGES = [
 @pytest.mark.parametrize("msg", _INVALID_MESSAGES)
 def test_deserialize_invalid_format_str(msg):
     """Test that passing a malformed message to `deserialize` raises an exception."""
-    deserialized = Consumer.deserialize(None, msg[0])
+    deserialized = Consumer.deserialize(Consumer(None, None, None), msg[0])
     assert isinstance(deserialized, DataPipelineError)
     assert str(deserialized).startswith(msg[1])
 
@@ -71,7 +80,7 @@ def test_deserialize_invalid_format_str(msg):
 @pytest.mark.parametrize("msg", _INVALID_MESSAGES)
 def test_deserialize_invalid_format_bytes(msg):
     """Test that passing a malformed message to `deserialize` raises an exception."""
-    deserialized = Consumer.deserialize(None, msg[0].encode("utf-8"))
+    deserialized = Consumer.deserialize(Consumer(None, None, None), msg[0].encode("utf-8"))
     assert isinstance(deserialized, DataPipelineError)
     assert str(deserialized).startswith(msg[1])
 
@@ -79,7 +88,8 @@ def test_deserialize_invalid_format_bytes(msg):
 @pytest.mark.parametrize("msg", _INVALID_MESSAGES)
 def test_deserialize_invalid_format_bytearray(msg):
     """Test that passing a malformed message to `deserialize` raises an exception."""
-    deserialized = Consumer.deserialize(None, bytearray(msg[0].encode("utf-8")))
+    deserialized = Consumer.deserialize(
+        Consumer(None, None, None), bytearray(msg[0].encode("utf-8")))
     assert isinstance(deserialized, DataPipelineError)
     assert str(deserialized).startswith(msg[1])
 
@@ -240,19 +250,19 @@ _VALID_MESSAGES = [
 @pytest.mark.parametrize("msg,value", _VALID_MESSAGES)
 def test_deserialize_valid_str(msg, value):
     """Test that proper string JSON input messages are correctly deserialized."""
-    assert Consumer.deserialize(None, msg) == value
+    assert Consumer.deserialize(Consumer(None, None, None), msg) == value
 
 
 @pytest.mark.parametrize("msg,value", _VALID_MESSAGES)
 def test_deserialize_valid_bytes(msg, value):
     """Test that proper bytes JSON input messages are correctly deserialized."""
-    assert Consumer.deserialize(None, msg.encode("utf-8")) == value
+    assert Consumer.deserialize(Consumer(None, None, None), msg.encode("utf-8")) == value
 
 
 @pytest.mark.parametrize("msg,value", _VALID_MESSAGES)
 def test_deserialize_valid_bytearray(msg, value):
     """Test that proper bytearray JSON input messages are correctly deserialized."""
-    assert Consumer.deserialize(None, bytearray(msg.encode("utf-8"))) == value
+    assert Consumer.deserialize(Consumer(None, None, None), bytearray(msg.encode("utf-8"))) == value
 
 
 # This would have been a valid input, but it's supposed to be a `dict`, not `str`.
