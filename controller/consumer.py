@@ -53,6 +53,7 @@ class Consumer(Kafka):
         super().__init__(publisher, downloader, engine, incoming_topic,
                          group_id, bootstrap_servers, retry_backoff_ms=retry_backoff_ms, **kwargs)
         self.max_record_age = max_record_age
+        self.log_pattern = f"topic: {incoming_topic}, group_id: {group_id}"
 
     def deserialize(self, bytes_):
         """
@@ -65,12 +66,13 @@ class Consumer(Kafka):
             The exception is returns instead of being thrown in order to prevent
             breaking the message handling / polling loop in `Consumer.run`.
         """
+        LOG.debug("Deserializing incoming bytes (%s)", self.log_pattern)
+
         if isinstance(bytes_, (str, bytes, bytearray)):
             try:
                 msg = json.loads(bytes_)
                 jsonschema.validate(instance=msg, schema=INPUT_MESSAGE_SCHEMA)
-                LOG.debug("JSON schema validated")
-
+                LOG.debug("JSON schema validated (%s)", self.log_pattern)
                 b64_identity = msg["b64_identity"]
 
                 if isinstance(b64_identity, str):
@@ -78,7 +80,7 @@ class Consumer(Kafka):
 
                 decoded_identity = json.loads(base64.b64decode(b64_identity))
                 jsonschema.validate(instance=decoded_identity, schema=IDENTITY_SCHEMA)
-                LOG.debug("Identity schema validated")
+                LOG.debug("Identity schema validated (%s)", self.log_pattern)
 
                 msg["ClusterName"] = decoded_identity.get(
                     "identity", {}).get("system", {}).get("cluster_id", None)
@@ -101,15 +103,14 @@ class Consumer(Kafka):
 
     def _handles_timestamp_check(self, input_msg):
         if not isinstance(input_msg.timestamp, int):
-            LOG.error("Unexpected Kafka record timestamp type (expected 'int', got '%s')",
-                      input_msg.timestamp.__class__.__name__)
+            LOG.error("Unexpected Kafka record timestamp type (expected 'int', got '%s')(%s)",
+                      input_msg.timestamp.__class__.__name__,
+                      Consumer.get_stringfied_record(input_msg))
             return False
 
         # Kafka record timestamp is int64 in milliseconds.
         if (input_msg.timestamp / 1000) < (time.time() - self.max_record_age):
-            LOG.debug("Skipping old message "
-                      "(topic: '%s', partition: %d, offset: %d, timestamp: %d)",
-                      input_msg.topic, input_msg.partition, input_msg.offset, input_msg.timestamp)
+            LOG.debug("Skipping old message (%s)", Consumer.get_stringfied_record(input_msg))
             return False
 
         return True
@@ -117,13 +118,15 @@ class Consumer(Kafka):
     def handles(self, input_msg):
         """Check format of the input message and decide if it can be handled by this consumer."""
         if not isinstance(input_msg, ConsumerRecord):
-            LOG.debug("Unexpected input message type (expected 'ConsumerRecord', got %s)",
-                      input_msg.__class__.__name__)
+            LOG.debug("Unexpected input message type (expected 'ConsumerRecord', got %s)(%s)",
+                      input_msg.__class__.__name__, Consumer.get_stringfied_record(input_msg))
             self.fire('on_not_handled', input_msg)
             return False
 
         if isinstance(input_msg.value, DataPipelineError):
-            LOG.error(input_msg.value.format(input_msg))
+            LOG.error("%s (topic: '%s', partition: %d, offset: %d, timestamp: %d)",
+                      input_msg.value.format(input_msg), input_msg.topic, input_msg.partition,
+                      input_msg.offset, input_msg.timestamp)
             return False
 
         if not self._handles_timestamp_check(input_msg):
@@ -132,13 +135,14 @@ class Consumer(Kafka):
         # ---- Redundant checks. Already checked by JSON schema in `deserialize`. ----
         # These checks are actually triggered by some of the unit tests for this method.
         if not isinstance(input_msg.value, dict):
-            LOG.debug("Unexpected input message value type (expected 'dict', got '%s')",
-                      input_msg.value.__class__.__name__)
+            LOG.debug("Unexpected input message value type (expected 'dict', got '%s') (%s)",
+                      input_msg.value.__class__.__name__, Consumer.get_stringfied_record(input_msg))
             self.fire('on_not_handled', input_msg)
             return False
 
         if "url" not in input_msg.value:
-            LOG.debug("Input message is missing a 'url' field: %s", input_msg.value)
+            LOG.debug("Input message is missing a 'url' field: %s "
+                      "(%s)", input_msg.value, Consumer.get_stringfied_record(input_msg))
             self.fire('on_not_handled', input_msg)
             return False
         # ----------------------------------------------------------------------------
@@ -154,7 +158,8 @@ class Consumer(Kafka):
         """
         try:
             url = input_msg.value["url"]
-            LOG.debug("Extracted URL from input message: %s", url)
+            LOG.debug("Extracted URL from input message: %s (%s)",
+                      url, Consumer.get_stringfied_record(input_msg))
             return url
 
         # This should never happen, but let's check it just to be absolutely sure.
@@ -162,3 +167,9 @@ class Consumer(Kafka):
         # being called if the input message format is wrong.
         except Exception as ex:
             raise DataPipelineError(f"Unable to extract URL from input message: {ex}")
+
+    @staticmethod
+    def get_stringfied_record(input_record):
+        """Retrieve a string with information about the received record ready to log."""
+        return (f"topic: '{input_record.topic}', partition: {input_record.partition}, "
+                f"offset: {input_record.offset}, timestamp: {input_record.timestamp}")
