@@ -66,7 +66,8 @@ class KafkaPublisher(Publisher):
                 "OrgID": int(org_id),
                 "ClusterName": input_msg.value["ClusterName"],
                 "Report": json.loads(response),
-                "LastChecked": msg_timestamp
+                "LastChecked": msg_timestamp,
+                "RequestId": input_msg.value.get("request_id")
             }
 
             message = json.dumps(output_msg) + "\n"
