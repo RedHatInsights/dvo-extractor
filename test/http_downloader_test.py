@@ -42,6 +42,12 @@ _VALID_URLS = [
     "us-east-1%2Fs3%2Faws4_request&X-Amz-Date=20200311T080728Z&X-Amz-Expires=86400&"
     "X-Amz-SignedHeaders=host&"
     "X-Amz-Signature=d345738105796fd81e3e643cf9cf86067956c0cd0783b3a69cd0268566f108a4 ",
+
+    "http://minio:9000/insights-upload-perma/hpe-dl380pgen8-02-vm-9.hpe2.lab.eng.bos.redhat.com/"
+    "Z0ThU1Jyxc-000004?X-Amz-Algorithm=AWS4-HMAC-SHA256&"
+    "X-Amz-Credential=BQA2GEXO711FVBVXDWKM%2F20200520%2Fus-east-1%2Fs3%2Faws4_request&"
+    "X-Amz-Date=20200520T140918Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&"
+    "X-Amz-Signature=39f482f7650c6c65ed7e182d512a8fc3420b9a0d34292814be713258cbc24f04"
 ]
 
 
