@@ -1,8 +1,8 @@
 [run]
-source = controller, test
+source = ccx_data_pipeline, test
 
 [report]
 include =
-    controller/*
+    ccx_data_pipeline/*
     test/*
 fail_under = 80.0
