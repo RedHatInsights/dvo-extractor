@@ -95,10 +95,10 @@ def test_setup_watchtower(get_logger_mock, log_handler_init_mock, session_init_m
         session_init_mock.assert_called_with(
             aws_access_key_id=valid_env["CW_AWS_ACCESS_KEY_ID"],
             aws_secret_access_key=valid_env["CW_AWS_SECRET_ACCESS_KEY"],
-            region_name=valid_env["AWS_REGION_NAME"]
+            region_name=valid_env["AWS_REGION_NAME"],
         )
         log_handler_init_mock.assert_called_with(
             boto3_session=session_mock,
             log_group=valid_env["CW_LOG_GROUP"],
-            stream_name=valid_env["CW_STREAM_NAME"]
+            stream_name=valid_env["CW_STREAM_NAME"],
         )

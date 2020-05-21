@@ -46,9 +46,7 @@ def test_payload_tracker_watcher_invalid_initialize_invalid_servers(bootstrap_va
 @patch("ccx_data_pipeline.watchers.payload_tracker_watcher.KafkaProducer")
 def test_payload_tracker_watcher_publish_status(producer_init_mock):
     """Test publish_status method sends the expected value to Kafka."""
-    mocked_values = {
-        "request_id": "some request id"
-    }
+    mocked_values = {"request_id": "some request id"}
     mocked_input_message = mock_consumer_record(mocked_values)
 
     producer_mock = _prepare_kafka_mock(producer_init_mock)
@@ -57,4 +55,5 @@ def test_payload_tracker_watcher_publish_status(producer_init_mock):
     producer_mock.send.assert_called_with(
         "valid_topic",
         b'{"service": "ccx-data-pipeline", "request_id": "some request id", '
-        b'"status": "received", "date": "2020-05-07T14:00:00"}')
+        b'"status": "received", "date": "2020-05-07T14:00:00"}',
+    )

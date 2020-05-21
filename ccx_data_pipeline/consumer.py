@@ -39,19 +39,40 @@ class Consumer(Kafka):
     then passes the file to an internal engine for further processing.
     """
 
-    # pylint: disable=too-many-arguments
-    def __init__(self, publisher, downloader, engine, group_id=None,
-                 incoming_topic=None, bootstrap_servers=None, max_record_age=7200,
-                 retry_backoff_ms=1000, **kwargs):
+    # pylint: disable=too-many-arguments,bad-continuation
+    def __init__(
+        self,
+        publisher,
+        downloader,
+        engine,
+        group_id=None,
+        incoming_topic=None,
+        bootstrap_servers=None,
+        max_record_age=7200,
+        retry_backoff_ms=1000,
+        **kwargs,
+    ):
         """Construct a new external data pipeline Kafka consumer."""
         if isinstance(bootstrap_servers, str):
-            bootstrap_servers = bootstrap_servers.split(',')
+            bootstrap_servers = bootstrap_servers.split(",")
 
-        LOG.info("Consuming topic '%s' from brokers %s as group '%s'",
-                 incoming_topic, bootstrap_servers, group_id)
+        LOG.info(
+            "Consuming topic '%s' from brokers %s as group '%s'",
+            incoming_topic,
+            bootstrap_servers,
+            group_id,
+        )
 
-        super().__init__(publisher, downloader, engine, incoming_topic,
-                         group_id, bootstrap_servers, retry_backoff_ms=retry_backoff_ms, **kwargs)
+        super().__init__(
+            publisher,
+            downloader,
+            engine,
+            incoming_topic,
+            group_id,
+            bootstrap_servers,
+            retry_backoff_ms=retry_backoff_ms,
+            **kwargs,
+        )
         self.max_record_age = max_record_age
         self.log_pattern = f"topic: {incoming_topic}, group_id: {group_id}"
 
@@ -82,8 +103,9 @@ class Consumer(Kafka):
                 jsonschema.validate(instance=decoded_identity, schema=IDENTITY_SCHEMA)
                 LOG.debug("Identity schema validated (%s)", self.log_pattern)
 
-                msg["ClusterName"] = decoded_identity.get(
-                    "identity", {}).get("system", {}).get("cluster_id", None)
+                msg["ClusterName"] = (
+                    decoded_identity.get("identity", {}).get("system", {}).get("cluster_id", None)
+                )
 
                 msg["identity"] = decoded_identity
                 del msg["b64_identity"]
@@ -103,9 +125,11 @@ class Consumer(Kafka):
 
     def _handles_timestamp_check(self, input_msg):
         if not isinstance(input_msg.timestamp, int):
-            LOG.error("Unexpected Kafka record timestamp type (expected 'int', got '%s')(%s)",
-                      input_msg.timestamp.__class__.__name__,
-                      Consumer.get_stringfied_record(input_msg))
+            LOG.error(
+                "Unexpected Kafka record timestamp type (expected 'int', got '%s')(%s)",
+                input_msg.timestamp.__class__.__name__,
+                Consumer.get_stringfied_record(input_msg),
+            )
             return False
 
         # Kafka record timestamp is int64 in milliseconds.
@@ -118,15 +142,23 @@ class Consumer(Kafka):
     def handles(self, input_msg):
         """Check format of the input message and decide if it can be handled by this consumer."""
         if not isinstance(input_msg, ConsumerRecord):
-            LOG.debug("Unexpected input message type (expected 'ConsumerRecord', got %s)(%s)",
-                      input_msg.__class__.__name__, Consumer.get_stringfied_record(input_msg))
-            self.fire('on_not_handled', input_msg)
+            LOG.debug(
+                "Unexpected input message type (expected 'ConsumerRecord', got %s)(%s)",
+                input_msg.__class__.__name__,
+                Consumer.get_stringfied_record(input_msg),
+            )
+            self.fire("on_not_handled", input_msg)
             return False
 
         if isinstance(input_msg.value, DataPipelineError):
-            LOG.error("%s (topic: '%s', partition: %d, offset: %d, timestamp: %d)",
-                      input_msg.value.format(input_msg), input_msg.topic, input_msg.partition,
-                      input_msg.offset, input_msg.timestamp)
+            LOG.error(
+                "%s (topic: '%s', partition: %d, offset: %d, timestamp: %d)",
+                input_msg.value.format(input_msg),
+                input_msg.topic,
+                input_msg.partition,
+                input_msg.offset,
+                input_msg.timestamp,
+            )
             return False
 
         if not self._handles_timestamp_check(input_msg):
@@ -135,15 +167,21 @@ class Consumer(Kafka):
         # ---- Redundant checks. Already checked by JSON schema in `deserialize`. ----
         # These checks are actually triggered by some of the unit tests for this method.
         if not isinstance(input_msg.value, dict):
-            LOG.debug("Unexpected input message value type (expected 'dict', got '%s') (%s)",
-                      input_msg.value.__class__.__name__, Consumer.get_stringfied_record(input_msg))
-            self.fire('on_not_handled', input_msg)
+            LOG.debug(
+                "Unexpected input message value type (expected 'dict', got '%s') (%s)",
+                input_msg.value.__class__.__name__,
+                Consumer.get_stringfied_record(input_msg),
+            )
+            self.fire("on_not_handled", input_msg)
             return False
 
         if "url" not in input_msg.value:
-            LOG.debug("Input message is missing a 'url' field: %s "
-                      "(%s)", input_msg.value, Consumer.get_stringfied_record(input_msg))
-            self.fire('on_not_handled', input_msg)
+            LOG.debug(
+                "Input message is missing a 'url' field: %s " "(%s)",
+                input_msg.value,
+                Consumer.get_stringfied_record(input_msg),
+            )
+            self.fire("on_not_handled", input_msg)
             return False
         # ----------------------------------------------------------------------------
 
@@ -158,8 +196,11 @@ class Consumer(Kafka):
         """
         try:
             url = input_msg.value["url"]
-            LOG.debug("Extracted URL from input message: %s (%s)",
-                      url, Consumer.get_stringfied_record(input_msg))
+            LOG.debug(
+                "Extracted URL from input message: %s (%s)",
+                url,
+                Consumer.get_stringfied_record(input_msg),
+            )
             return url
 
         # This should never happen, but let's check it just to be absolutely sure.
@@ -171,5 +212,7 @@ class Consumer(Kafka):
     @staticmethod
     def get_stringfied_record(input_record):
         """Retrieve a string with information about the received record ready to log."""
-        return (f"topic: '{input_record.topic}', partition: {input_record.partition}, "
-                f"offset: {input_record.offset}, timestamp: {input_record.timestamp}")
+        return (
+            f"topic: '{input_record.topic}', partition: {input_record.partition}, "
+            f"offset: {input_record.offset}, timestamp: {input_record.timestamp}"
+        )

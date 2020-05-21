@@ -25,11 +25,13 @@ from watchtower import CloudWatchLogHandler
 
 def setup_watchtower(logging_config=None):
     """Setups the CloudWatch handler if the proper configuration is provided."""
-    aws_config_vars = ("CW_AWS_ACCESS_KEY_ID",
-                       "CW_AWS_SECRET_ACCESS_KEY",
-                       "AWS_REGION_NAME",
-                       "CW_LOG_GROUP",
-                       "CW_STREAM_NAME")
+    aws_config_vars = (
+        "CW_AWS_ACCESS_KEY_ID",
+        "CW_AWS_SECRET_ACCESS_KEY",
+        "AWS_REGION_NAME",
+        "CW_LOG_GROUP",
+        "CW_STREAM_NAME",
+    )
 
     if any(os.environ.get(key, "").strip() == "" for key in aws_config_vars):
         return
@@ -37,17 +39,19 @@ def setup_watchtower(logging_config=None):
     session = Session(
         aws_access_key_id=os.environ["CW_AWS_ACCESS_KEY_ID"],
         aws_secret_access_key=os.environ["CW_AWS_SECRET_ACCESS_KEY"],
-        region_name=os.environ["AWS_REGION_NAME"])
+        region_name=os.environ["AWS_REGION_NAME"],
+    )
 
     root_logger = logging.getLogger()
 
     handler = CloudWatchLogHandler(
         boto3_session=session,
         log_group=os.environ["CW_LOG_GROUP"],
-        stream_name=os.environ["CW_STREAM_NAME"])
+        stream_name=os.environ["CW_STREAM_NAME"],
+    )
 
     if logging_config is not None:
-        log_format = logging_config['formatters']['cloudwatch']['format']
+        log_format = logging_config["formatters"]["cloudwatch"]["format"]
         handler.setFormatter(CloudWatchFormatter(log_format))
 
     root_logger.addHandler(handler)
@@ -101,11 +105,6 @@ def get_mac_address():
 
     # finally format it to the human readable format
     if mac_address is not None:
-        mac_address = ':'.join(
-            reversed([
-                hex((mac_address >> i * 8) & 0xFF)[2:]
-                for i in range(6)
-            ])
-        )
+        mac_address = ":".join(reversed([hex((mac_address >> i * 8) & 0xFF)[2:] for i in range(6)]))
 
     return mac_address

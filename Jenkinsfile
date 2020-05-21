@@ -25,6 +25,10 @@ def runStages() {
       sh "pip install -e .[dev]"
     }
 
+    gitUtils.stageWithContext("Black formatter") {
+      sh "black --line-length 100"
+    }
+
     gitUtils.stageWithContext("Pycodestyle") {
       sh "pycodestyle"
     }

@@ -32,14 +32,14 @@ def test_cluster_id_watcher_file_not_exist(caplog):
     input_msg_mock.value = {"identity": {}}
 
     extraction_mock = MagicMock()
-    extraction_mock.tmp_dir = '/tmp/to/non/existing/file/over/the/filesystem'
+    extraction_mock.tmp_dir = "/tmp/to/non/existing/file/over/the/filesystem"
 
     sut = ClusterIdWatcher()
     sut.on_recv(input_msg_mock)
 
     sut.on_extract(None, None, extraction_mock)
 
-    assert input_msg_mock.value['ClusterName'] is None
+    assert input_msg_mock.value["ClusterName"] is None
     assert "The archive doesn't contain a valid Cluster Id file" in caplog.text
 
 
@@ -57,14 +57,14 @@ def test_cluster_id_watcher_bad_content(caplog, value):
     input_msg_mock.value = {"identity": {}}
 
     extraction_mock = MagicMock()
-    extraction_mock.tmp_dir = '/tmp/mock/path'
+    extraction_mock.tmp_dir = "/tmp/mock/path"
 
     sut = ClusterIdWatcher()
     sut.on_recv(input_msg_mock)
 
     with patch("builtins.open", mock_open(read_data=value)):
         sut.on_extract(None, None, extraction_mock)
-        assert input_msg_mock.value['ClusterName'] is None
+        assert input_msg_mock.value["ClusterName"] is None
         assert "The cluster id is not an UUID" in caplog.text
 
 
@@ -74,7 +74,7 @@ def test_cluster_id_watcher_ok(caplog):
     input_msg_mock.value = {"identity": {}}
 
     extraction_mock = MagicMock()
-    extraction_mock.tmp_dir = '/tmp/mock/path'
+    extraction_mock.tmp_dir = "/tmp/mock/path"
 
     sut = ClusterIdWatcher()
     sut.on_recv(input_msg_mock)
@@ -83,5 +83,5 @@ def test_cluster_id_watcher_ok(caplog):
 
     with patch("builtins.open", mock_open(read_data=uuid_value)):
         sut.on_extract(None, None, extraction_mock)
-        assert input_msg_mock.value['ClusterName'] == uuid_value
+        assert input_msg_mock.value["ClusterName"] == uuid_value
         assert len(caplog.records) == 0
