@@ -42,11 +42,10 @@ class KafkaPublisher(Publisher):
         self.bootstrap_servers = bootstrap_servers
 
         if self.topic is None:
-            raise KeyError('outgoing_topic')
+            raise KeyError("outgoing_topic")
 
         self.producer = KafkaProducer(bootstrap_servers=self.bootstrap_servers, **kwargs)
-        LOG.info("Producing to topic '%s' on brokers %s",
-                 self.topic, self.bootstrap_servers)
+        LOG.info("Producing to topic '%s' on brokers %s", self.topic, self.bootstrap_servers)
 
     def publish(self, input_msg, response):
         """
@@ -67,24 +66,33 @@ class KafkaPublisher(Publisher):
                 "ClusterName": input_msg.value["ClusterName"],
                 "Report": json.loads(response),
                 "LastChecked": msg_timestamp,
-                "RequestId": input_msg.value.get("request_id")
+                "RequestId": input_msg.value.get("request_id"),
             }
 
             message = json.dumps(output_msg) + "\n"
 
             LOG.debug("Sending response to the %s topic.", self.topic)
             # Convert message string into a byte array.
-            self.producer.send(self.topic, message.encode('utf-8'))
+            self.producer.send(self.topic, message.encode("utf-8"))
             LOG.debug("Message has been sent successfully.")
-            LOG.debug("Message context: OrgId=%s, ClusterName=\"%s\", LastChecked=\"%s\"",
-                      output_msg["OrgID"], output_msg["ClusterName"], output_msg["LastChecked"])
+            LOG.debug(
+                'Message context: OrgId=%s, ClusterName="%s", LastChecked="%s"',
+                output_msg["OrgID"],
+                output_msg["ClusterName"],
+                output_msg["LastChecked"],
+            )
 
-            LOG.info("Status: Success; "
-                     "Topic: %s; "
-                     "Partition: %s; "
-                     "Offset: %s; "
-                     "LastChecked: %s",
-                     input_msg.topic, input_msg.partition, input_msg.offset, msg_timestamp)
+            LOG.info(
+                "Status: Success; "
+                "Topic: %s; "
+                "Partition: %s; "
+                "Offset: %s; "
+                "LastChecked: %s",
+                input_msg.topic,
+                input_msg.partition,
+                input_msg.offset,
+                msg_timestamp,
+            )
 
         except UnicodeEncodeError:
             raise DataPipelineError(f"Error encoding the response to publish: {message}")

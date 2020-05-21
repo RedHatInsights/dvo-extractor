@@ -34,40 +34,41 @@ class StatsWatcher(ConsumerWatcher):
         super().__init__()
 
         self._recv_total = Counter(
-            "ccx_consumer_received_total",
-            "Counter of received Kafka messages")
+            "ccx_consumer_received_total", "Counter of received Kafka messages"
+        )
 
-        self._downloaded_total = Counter(
-            "ccx_downloaded_total",
-            "Counter of downloaded items")
+        self._downloaded_total = Counter("ccx_downloaded_total", "Counter of downloaded items")
 
         self._processed_total = Counter(
-            "ccx_engine_processed_total",
-            "Counter of files processed by the OCP Engine")
+            "ccx_engine_processed_total", "Counter of files processed by the OCP Engine"
+        )
 
         self._published_total = Counter(
-            "ccx_published_total",
-            "Counter of reports successfully published")
+            "ccx_published_total", "Counter of reports successfully published"
+        )
 
         self._failures_total = Counter(
-            "ccx_failures_total",
-            "Counter of failures during the pipeline")
+            "ccx_failures_total", "Counter of failures during the pipeline"
+        )
 
         self._not_handling_total = Counter(
             "ccx_not_handled_total",
-            "Counter of received elements that are not handled by the pipeline")
+            "Counter of received elements that are not handled by the pipeline",
+        )
 
         self._download_duration = Histogram(
-            "ccx_download_duration_seconds",
-            "Histogram of archive download durations")
+            "ccx_download_duration_seconds", "Histogram of archive download durations"
+        )
 
         self._process_duration = Histogram(
             "ccx_process_duration_seconds",
-            "Histogram of durations of processing archives by the OCP engine")
+            "Histogram of durations of processing archives by the OCP engine",
+        )
 
         self._publish_duration = Histogram(
             "ccx_publish_duration_seconds",
-            "Histogram of durations of publishing the OCP engine results")
+            "Histogram of durations of publishing the OCP engine results",
+        )
 
         self._start_time = None
         self._downloaded_time = None

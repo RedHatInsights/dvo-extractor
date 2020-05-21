@@ -25,9 +25,11 @@ class DataPipelineError(Exception):
 
     def format(self, input_msg):
         """Format the error by adding information about input Kafka message."""
-        return (f"Status: Error; "
-                f"Topic: {input_msg.topic}; "
-                f"Partition: {input_msg.partition}; "
-                f"Offset: {input_msg.offset}; "
-                f"Cluster: {input_msg.value['ClusterName']}; "
-                f"Cause: {self}")
+        return (
+            f"Status: Error; "
+            f"Topic: {input_msg.topic}; "
+            f"Partition: {input_msg.partition}; "
+            f"Offset: {input_msg.offset}; "
+            f"Cluster: {input_msg.value['ClusterName']}; "
+            f"Cause: {self}"
+        )

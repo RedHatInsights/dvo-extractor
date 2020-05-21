@@ -33,14 +33,16 @@ class PayloadTrackerWatcher(ConsumerWatcher):
         self.topic = topic
 
         if not self.topic:
-            raise KeyError('topic')
+            raise KeyError("topic")
 
         self.kafka_prod = KafkaProducer(bootstrap_servers=bootstrap_servers, **kwargs)
         self.service_name = service_name
 
         LOG.info(
             "Sending status reports to Payload Tracker on topic %s as service %s",
-            self.topic, self.service_name)
+            self.topic,
+            self.service_name,
+        )
 
     def _publish_status(self, input_msg, status, status_msg=None):
         """Send an status update to payload tracker topic."""
@@ -54,7 +56,7 @@ class PayloadTrackerWatcher(ConsumerWatcher):
             "service": self.service_name,
             "request_id": request_id,
             "status": status,
-            "date": datetime.datetime.now().isoformat()
+            "date": datetime.datetime.now().isoformat(),
         }
 
         if status_msg:

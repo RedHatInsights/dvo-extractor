@@ -19,13 +19,10 @@ INPUT_MESSAGE_SCHEMA = {
     "type": "object",
     "properties": {
         "url": {"type": "string"},
-        "b64_identity": {
-            "type": "string",
-            "contentEncoding": "base64",
-        },
-        "timestamp": {"type": "string"}
+        "b64_identity": {"type": "string", "contentEncoding": "base64"},
+        "timestamp": {"type": "string"},
     },
-    "required": ["url", "b64_identity", "timestamp"]
+    "required": ["url", "b64_identity", "timestamp"],
 }
 
 IDENTITY_SCHEMA = {
@@ -38,10 +35,7 @@ IDENTITY_SCHEMA = {
                 "auth_type": {"type": "string"},
                 "internal": {
                     "type": "object",
-                    "properties": {
-                        "auth_time": {"type": "number"},
-                        "org_id": {"type": "string"},
-                    },
+                    "properties": {"auth_time": {"type": "number"}, "org_id": {"type": "string"}},
                     "required": ["org_id"],
                 },
                 "type": {"type": "string"},  # type is a property of the identity

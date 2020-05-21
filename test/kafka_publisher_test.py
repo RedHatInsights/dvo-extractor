@@ -24,24 +24,24 @@ class KafkaPublisherTest(unittest.TestCase):
         to avoid real usage of the library
         """
         producer_kwargs = {
-            "bootstrap_servers": ['kafka_server1'],
+            "bootstrap_servers": ["kafka_server1"],
             "outgoing_topic": "a topic name",
-            "client_id": "ccx-data-pipeline"
+            "client_id": "ccx-data-pipeline",
         }
 
-        with patch('ccx_data_pipeline.kafka_publisher.KafkaProducer') as kafka_producer_mock:
+        with patch("ccx_data_pipeline.kafka_publisher.KafkaProducer") as kafka_producer_mock:
             sut = KafkaPublisher(**producer_kwargs)
 
             kafka_producer_mock.assert_called_with(
-                bootstrap_servers=['kafka_server1'],
-                client_id="ccx-data-pipeline")
+                bootstrap_servers=["kafka_server1"], client_id="ccx-data-pipeline"
+            )
             self.assertEqual(sut.topic, "a topic name")
 
     def test_init_no_topic(self):
         """Test KafkaPublisher initializer without outgoing topic."""
         producer_kwargs = {
-            "bootstrap_servers": ['kafka_server1'],
-            "client_id": "ccx-data-pipeline"
+            "bootstrap_servers": ["kafka_server1"],
+            "client_id": "ccx-data-pipeline",
         }
 
         with self.assertRaises(TypeError):
@@ -56,30 +56,29 @@ class KafkaPublisherTest(unittest.TestCase):
         of the real library
         """
         producer_kwargs = {
-            "bootstrap_servers": ['kafka_server1'],
-            "client_id": "ccx-data-pipeline"
+            "bootstrap_servers": ["kafka_server1"],
+            "client_id": "ccx-data-pipeline",
         }
 
         topic_name = "KAFKATOPIC"
         values = {
             "ClusterName": "the cluster name",
             "identity": {"identity": {"internal": {"org_id": "5000"}}},
-            "timestamp": "2020-01-23T16:15:59.478901889Z"
+            "timestamp": "2020-01-23T16:15:59.478901889Z",
         }
         input_msg = _mock_consumer_record(values)
         message_to_publish = '{"key1": "value1"}'
         expected_message = (
             b'{"OrgID": 5000, "ClusterName": "the cluster name", '
             b'"Report": {"key1": "value1"}, "LastChecked": "2020-01-23T16:15:59.478901889Z", '
-            b'"RequestId": null}\n')
+            b'"RequestId": null}\n'
+        )
 
-        with patch('ccx_data_pipeline.kafka_publisher.KafkaProducer') as kafka_producer_init_mock:
+        with patch("ccx_data_pipeline.kafka_publisher.KafkaProducer") as kafka_producer_init_mock:
             producer_mock = MagicMock()
             kafka_producer_init_mock.return_value = producer_mock
 
-            sut = KafkaPublisher(
-                outgoing_topic=topic_name, **producer_kwargs
-            )
+            sut = KafkaPublisher(outgoing_topic=topic_name, **producer_kwargs)
 
             sut.publish(input_msg, message_to_publish)
             producer_mock.send.assert_called_with(topic_name, expected_message)
@@ -92,8 +91,8 @@ class KafkaPublisherTest(unittest.TestCase):
         of the real library
         """
         producer_kwargs = {
-            "bootstrap_servers": ['kafka_server1'],
-            "client_id": "ccx-data-pipeline"
+            "bootstrap_servers": ["kafka_server1"],
+            "client_id": "ccx-data-pipeline",
         }
 
         topic_name = "KAFKATOPIC"
@@ -108,15 +107,14 @@ class KafkaPublisherTest(unittest.TestCase):
         expected_message = (
             b'{"OrgID": 5000, "ClusterName": "the cluster name", '
             b'"Report": {"key1": "value1"}, "LastChecked": "2020-01-23T16:15:59.478901889Z", '
-            b'"RequestId": "REQUEST_ID"}\n')
+            b'"RequestId": "REQUEST_ID"}\n'
+        )
 
-        with patch('ccx_data_pipeline.kafka_publisher.KafkaProducer') as kafka_producer_init_mock:
+        with patch("ccx_data_pipeline.kafka_publisher.KafkaProducer") as kafka_producer_init_mock:
             producer_mock = MagicMock()
             kafka_producer_init_mock.return_value = producer_mock
 
-            sut = KafkaPublisher(
-                outgoing_topic=topic_name, **producer_kwargs
-            )
+            sut = KafkaPublisher(outgoing_topic=topic_name, **producer_kwargs)
 
             sut.publish(input_msg, message_to_publish)
             producer_mock.send.assert_called_with(topic_name, expected_message)
