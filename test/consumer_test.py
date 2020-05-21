@@ -6,8 +6,8 @@ import pytest
 
 from kafka import KafkaConsumer
 
-from controller.consumer import Consumer
-from controller.data_pipeline_error import DataPipelineError
+from ccx_data_pipeline.consumer import Consumer
+from ccx_data_pipeline.data_pipeline_error import DataPipelineError
 
 from .utils import mock_consumer_record
 

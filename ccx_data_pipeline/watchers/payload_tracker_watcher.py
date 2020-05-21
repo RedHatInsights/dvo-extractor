@@ -20,7 +20,7 @@ import logging
 
 from kafka import KafkaProducer
 
-from controller.watchers.consumer_watcher import ConsumerWatcher
+from ccx_data_pipeline.watchers.consumer_watcher import ConsumerWatcher
 
 LOG = logging.getLogger(__name__)
 

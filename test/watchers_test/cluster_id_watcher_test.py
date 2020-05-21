@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 
-from controller.watchers.cluster_id_watcher import ClusterIdWatcher
+from ccx_data_pipeline.watchers.cluster_id_watcher import ClusterIdWatcher
 
 
 def _mock_input_msg():

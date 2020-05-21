@@ -21,7 +21,7 @@ import sys
 from insights_messaging.appbuilder import AppBuilder
 import pkg_resources
 
-from controller.logging import setup_watchtower
+from ccx_data_pipeline.logging import setup_watchtower
 
 
 def parse_args():

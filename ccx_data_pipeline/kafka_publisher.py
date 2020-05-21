@@ -20,7 +20,7 @@ import json
 from kafka import KafkaProducer
 from insights_messaging.publishers import Publisher
 
-from controller.data_pipeline_error import DataPipelineError
+from ccx_data_pipeline.data_pipeline_error import DataPipelineError
 
 LOG = logging.getLogger(__name__)
 

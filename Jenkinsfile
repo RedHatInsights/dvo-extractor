@@ -30,7 +30,7 @@ def runStages() {
     }
 
     gitUtils.stageWithContext("Pydocstyle") {
-      sh "pydocstyle controller test"
+      sh "pydocstyle ccx_data_pipeline test"
     }
 
     gitUtils.stageWithContext("Run-unit-tests") {
@@ -38,7 +38,7 @@ def runStages() {
     }
 
     gitUtils.stageWithContext("Pylint") {
-      sh "pylint controller test"
+      sh "pylint ccx_data_pipeline test"
     }
 
 
