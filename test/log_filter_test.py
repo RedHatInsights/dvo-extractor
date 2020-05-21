@@ -5,25 +5,13 @@ import pytest
 
 from ccx_data_pipeline.log_filter import LogFilter
 
-_MODULES = [
-    "publisher",
-    "consumer"
-]
+_MODULES = ["publisher", "consumer"]
 
-_LEVELS = [
-    "ERROR"
-    "DEBUG"
-]
+_LEVELS = ["ERROR", "DEBUG"]
 
-_LINE_NUMBERS = [
-    1,
-    42
-]
+_LINE_NUMBERS = [1, 42]
 
-_MESSAGES = [
-    "Everything is working correctly",
-    "Something we wrong"
-]
+_MESSAGES = ["Everything is working correctly", "Something we wrong"]
 
 
 @pytest.mark.parametrize("module", _MODULES)
@@ -32,6 +20,7 @@ _MESSAGES = [
 @pytest.mark.parametrize("msg", _MESSAGES)
 def test_log_filter(module, level, lineno, msg):
     """Test that all messages get through the log filter."""
-    record = LogRecord(f"ccx_data_pipeline.{module}", level,
-                       f"{module}.py", lineno, msg, tuple(), Exception())
+    record = LogRecord(
+        f"ccx_data_pipeline.{module}", level, f"{module}.py", lineno, msg, tuple(), Exception(),
+    )
     assert LogFilter.filter(None, record) is True

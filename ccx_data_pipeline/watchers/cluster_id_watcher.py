@@ -42,17 +42,19 @@ class ClusterIdWatcher(EngineWatcher, ConsumerWatcher):
         id in the expected path.
         """
         if self.last_record is None:
-            LOG.warning("Unexpected data flow: watched extraction event without "
-                        "a previous receiving event")
+            LOG.warning(
+                "Unexpected data flow: watched extraction event without "
+                "a previous receiving event"
+            )
             return
 
         if self.last_record.value.get("ClusterName", None) is not None:
             return
 
-        id_file_path = os.path.join(extraction.tmp_dir, 'config', 'id')
+        id_file_path = os.path.join(extraction.tmp_dir, "config", "id")
 
         try:
-            with open(id_file_path, 'r') as id_file:
+            with open(id_file_path, "r") as id_file:
                 cluster_uuid = id_file.read()
 
                 try:
@@ -66,7 +68,8 @@ class ClusterIdWatcher(EngineWatcher, ConsumerWatcher):
         except FileNotFoundError:
             self.last_record.value["ClusterName"] = None
             LOG.warning(
-                "The archive doesn't contain a valid Cluster Id file. Skipping its extraction")
+                "The archive doesn't contain a valid Cluster Id file. Skipping its extraction"
+            )
 
         finally:
             self.last_record = None

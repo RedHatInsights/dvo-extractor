@@ -40,11 +40,16 @@ def print_version(use_stdout=False):
     else:
         show_func = logging.info
 
-    show_func("Python interpreter version: {}.{}.{}".format(
-        sys.version_info.major, sys.version_info.minor,
-        sys.version_info.micro))
-    show_func("ccx-data-pipeline version: {}".format(
-        pkg_resources.get_distribution("ccx-data-pipeline").version))
+    show_func(
+        "Python interpreter version: {}.{}.{}".format(
+            sys.version_info.major, sys.version_info.minor, sys.version_info.micro
+        )
+    )
+    show_func(
+        "ccx-data-pipeline version: {}".format(
+            pkg_resources.get_distribution("ccx-data-pipeline").version
+        )
+    )
 
 
 def ccx_data_pipeline():
@@ -57,7 +62,7 @@ def ccx_data_pipeline():
 
     with open(args.config) as file_:
         app_builder = AppBuilder(file_.read())
-        logging_config = app_builder.service['logging']
+        logging_config = app_builder.service["logging"]
         consumer = app_builder.build_app()
         setup_watchtower(logging_config)
         print_version()
