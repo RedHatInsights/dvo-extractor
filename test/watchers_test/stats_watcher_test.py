@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
-from controller.watchers.stats_watcher import StatsWatcher
+from ccx_data_pipeline.watchers.stats_watcher import StatsWatcher
 
 
 _INVALID_PORTS = [
@@ -30,7 +30,7 @@ _VALID_PORTS = [
 
 
 @pytest.mark.parametrize("value", _VALID_PORTS)
-@patch('controller.watchers.stats_watcher.start_http_server')
+@patch('ccx_data_pipeline.watchers.stats_watcher.start_http_server')
 def test_stats_watcher_initialize(start_http_server_mock, value):
     """Test valid values in the initialize `StatsWatcher`."""
     StatsWatcher(**value)

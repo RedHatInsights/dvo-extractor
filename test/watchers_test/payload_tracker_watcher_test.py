@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from freezegun import freeze_time
 
-from controller.watchers.payload_tracker_watcher import PayloadTrackerWatcher
+from ccx_data_pipeline.watchers.payload_tracker_watcher import PayloadTrackerWatcher
 
 from ..utils import mock_consumer_record
 
@@ -43,18 +43,18 @@ def test_payload_tracker_watcher_invalid_initialize_invalid_servers(bootstrap_va
 
 
 @freeze_time("2020-05-07T14:00:00")
-def test_payload_tracker_watcher_publish_status():
+@patch("ccx_data_pipeline.watchers.payload_tracker_watcher.KafkaProducer")
+def test_payload_tracker_watcher_publish_status(producer_init_mock):
     """Test publish_status method sends the expected value to Kafka."""
     mocked_values = {
         "request_id": "some request id"
     }
     mocked_input_message = mock_consumer_record(mocked_values)
 
-    with patch("controller.watchers.payload_tracker_watcher.KafkaProducer") as producer_init_mock:
-        producer_mock = _prepare_kafka_mock(producer_init_mock)
-        sut = PayloadTrackerWatcher(["bootstrap_server"], "valid_topic")
-        sut.on_recv(mocked_input_message)
-        producer_mock.send.assert_called_with(
-            "valid_topic",
-            b'{"service": "ccx-data-pipeline", "request_id": "some request id", '
-            b'"status": "received", "date": "2020-05-07T14:00:00"}')
+    producer_mock = _prepare_kafka_mock(producer_init_mock)
+    sut = PayloadTrackerWatcher(["bootstrap_server"], "valid_topic")
+    sut.on_recv(mocked_input_message)
+    producer_mock.send.assert_called_with(
+        "valid_topic",
+        b'{"service": "ccx-data-pipeline", "request_id": "some request id", '
+        b'"status": "received", "date": "2020-05-07T14:00:00"}')

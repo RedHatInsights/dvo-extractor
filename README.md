@@ -225,19 +225,19 @@ documentation:
 
 Some of the specific **ccx-data-pipeline** configuration points are in the `service` section, where
 the specific _consumer_, _downloader_ and _publisher_ are configured.
-- `consumer` name refers to the class `controller.consumer.Consumer`. The arguments passed to the initializer
+- `consumer` name refers to the class `ccx_data_pipeline.consumer.Consumer`. The arguments passed to the initializer
   are defined in the `kwargs` dictionary:
   initializer. The most relevants are:
   - `incoming_topic`: the Kafka topic to subscribe the consumer object.
   - `group_id`: Kafka group identifier. Several instances of the same pipeline will need to be into
     the same group in order to not process the same messages.
   - `bootstrap_servers`: a list of "IP:PORT" strings where the Kafka server is listening.
-- `publisher` name refers to the class `controller.publisher.Publisher` and it also allow to define the
+- `publisher` name refers to the class `ccx_data_pipeline.publisher.Publisher` and it also allow to define the
   arguments passed to the initializer modifying the `kwargs` dictionary:
   - `outgoing_topic`: a string indicating the topic where the reported results should be sent.
   - `bootstrap_servers`: same as in `consumer`, a list of Kafka servers to connect
 - `watchers`: it has a list of `Watcher` objects that will receive notifications of events during the
-  pipeline processing steps. The default configured one is `controller.consumer_watcher.ConsumerWatcher`
+  pipeline processing steps. The default configured one is `ccx_data_pipeline.consumer_watcher.ConsumerWatcher`
   that serve some statistics for [Prometheus service](https://prometheus.io/). The port where the
   `prometheus_client` library will listen for petitions is configurable using `kwargs` dictionary in the
   same way as `consumer` and `publisher`. The only recognized option is:

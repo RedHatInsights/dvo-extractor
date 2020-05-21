@@ -3,7 +3,7 @@
 from logging import LogRecord
 import pytest
 
-from controller.log_filter import LogFilter
+from ccx_data_pipeline.log_filter import LogFilter
 
 _MODULES = [
     "publisher",
@@ -32,6 +32,6 @@ _MESSAGES = [
 @pytest.mark.parametrize("msg", _MESSAGES)
 def test_log_filter(module, level, lineno, msg):
     """Test that all messages get through the log filter."""
-    record = LogRecord(f"controller.{module}", level,
+    record = LogRecord(f"ccx_data_pipeline.{module}", level,
                        f"{module}.py", lineno, msg, tuple(), Exception())
     assert LogFilter.filter(None, record) is True

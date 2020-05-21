@@ -24,8 +24,8 @@ import jsonschema
 from kafka.consumer.fetcher import ConsumerRecord
 from insights_messaging.consumers.kafka import Kafka
 
-from controller.data_pipeline_error import DataPipelineError
-from controller.schemas import INPUT_MESSAGE_SCHEMA, IDENTITY_SCHEMA
+from ccx_data_pipeline.data_pipeline_error import DataPipelineError
+from ccx_data_pipeline.schemas import INPUT_MESSAGE_SCHEMA, IDENTITY_SCHEMA
 
 LOG = logging.getLogger(__name__)
 

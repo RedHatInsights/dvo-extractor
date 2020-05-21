@@ -1,10 +1,10 @@
-"""Submodule for testing controller.logging."""
+"""Submodule for testing ccx_data_pipeline.logging."""
 
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from controller.logging import setup_watchtower
+from ccx_data_pipeline.logging import setup_watchtower
 
 
 _INCOMPLETE_CW_CONFIGURATION = [
@@ -59,19 +59,19 @@ _INCOMPLETE_CW_CONFIGURATION = [
 
 
 @pytest.mark.parametrize("fake_env", _INCOMPLETE_CW_CONFIGURATION)
-@patch("controller.logging.Session", lambda **kwargs: None)
-@patch("controller.logging.CloudWatchLogHandler", lambda **kwargs: None)
-@patch("controller.logging.logging.getLogger")
+@patch("ccx_data_pipeline.logging.Session", lambda **kwargs: None)
+@patch("ccx_data_pipeline.logging.CloudWatchLogHandler", lambda **kwargs: None)
+@patch("ccx_data_pipeline.logging.logging.getLogger")
 def test_setup_watchtower_misconfigured(get_logger_mock, fake_env):
     """Test that no watchtower is used when environment is not configured."""
-    with patch.dict("controller.logging.os.environ", fake_env, clear=True):
+    with patch.dict("ccx_data_pipeline.logging.os.environ", fake_env, clear=True):
         setup_watchtower()
         assert get_logger_mock.called is False
 
 
-@patch("controller.logging.Session")
-@patch("controller.logging.CloudWatchLogHandler")
-@patch("controller.logging.logging.getLogger")
+@patch("ccx_data_pipeline.logging.Session")
+@patch("ccx_data_pipeline.logging.CloudWatchLogHandler")
+@patch("ccx_data_pipeline.logging.logging.getLogger")
 def test_setup_watchtower(get_logger_mock, log_handler_init_mock, session_init_mock):
     """Test logger configuration. Mocking everything to avoid network failures."""
     # logging.getLogger return a mocked log
@@ -90,7 +90,7 @@ def test_setup_watchtower(get_logger_mock, log_handler_init_mock, session_init_m
         "CW_STREAM_NAME": "the stream",
     }
 
-    with patch.dict("controller.logging.os.environ", valid_env):
+    with patch.dict("ccx_data_pipeline.logging.os.environ", valid_env):
         setup_watchtower()
         session_init_mock.assert_called_with(
             aws_access_key_id=valid_env["CW_AWS_ACCESS_KEY_ID"],

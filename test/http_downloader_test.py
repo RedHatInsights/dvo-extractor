@@ -4,8 +4,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from controller.http_downloader import HTTPDownloader
-from controller.data_pipeline_error import DataPipelineError
+from ccx_data_pipeline.http_downloader import HTTPDownloader
+from ccx_data_pipeline.data_pipeline_error import DataPipelineError
 
 
 _REGEX_BAD_URL_FORMAT = r'^Invalid URL format: .*'

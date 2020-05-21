@@ -21,7 +21,7 @@ from tempfile import NamedTemporaryFile
 import requests
 
 
-from controller.data_pipeline_error import DataPipelineError
+from ccx_data_pipeline.data_pipeline_error import DataPipelineError
 
 
 # pylint: disable=too-few-public-methods

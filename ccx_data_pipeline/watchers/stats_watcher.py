@@ -19,7 +19,7 @@ import time
 
 from prometheus_client import Counter, Histogram, start_http_server, REGISTRY
 
-from controller.watchers.consumer_watcher import ConsumerWatcher
+from ccx_data_pipeline.watchers.consumer_watcher import ConsumerWatcher
 
 
 LOG = logging.getLogger(__name__)

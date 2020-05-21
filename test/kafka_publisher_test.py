@@ -1,11 +1,11 @@
-"""Module for testing the controller.kafka_publisher module."""
+"""Module for testing the ccx_data_pipeline.kafka_publisher module."""
 
 import unittest
 from unittest.mock import MagicMock, patch
 
 from kafka.consumer.fetcher import ConsumerRecord
 
-from controller.kafka_publisher import KafkaPublisher
+from ccx_data_pipeline.kafka_publisher import KafkaPublisher
 
 
 def _mock_consumer_record(value):
@@ -29,7 +29,7 @@ class KafkaPublisherTest(unittest.TestCase):
             "client_id": "ccx-data-pipeline"
         }
 
-        with patch('controller.kafka_publisher.KafkaProducer') as kafka_producer_mock:
+        with patch('ccx_data_pipeline.kafka_publisher.KafkaProducer') as kafka_producer_mock:
             sut = KafkaPublisher(**producer_kwargs)
 
             kafka_producer_mock.assert_called_with(
@@ -73,7 +73,7 @@ class KafkaPublisherTest(unittest.TestCase):
             b'"Report": {"key1": "value1"}, "LastChecked": "2020-01-23T16:15:59.478901889Z", '
             b'"RequestId": null}\n')
 
-        with patch('controller.kafka_publisher.KafkaProducer') as kafka_producer_init_mock:
+        with patch('ccx_data_pipeline.kafka_publisher.KafkaProducer') as kafka_producer_init_mock:
             producer_mock = MagicMock()
             kafka_producer_init_mock.return_value = producer_mock
 
@@ -110,7 +110,7 @@ class KafkaPublisherTest(unittest.TestCase):
             b'"Report": {"key1": "value1"}, "LastChecked": "2020-01-23T16:15:59.478901889Z", '
             b'"RequestId": "REQUEST_ID"}\n')
 
-        with patch('controller.kafka_publisher.KafkaProducer') as kafka_producer_init_mock:
+        with patch('ccx_data_pipeline.kafka_publisher.KafkaProducer') as kafka_producer_init_mock:
             producer_mock = MagicMock()
             kafka_producer_init_mock.return_value = producer_mock
 
