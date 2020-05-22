@@ -132,6 +132,9 @@ class Consumer(Kafka):
             )
             return False
 
+        if self.max_record_age == -1:
+            return True
+
         # Kafka record timestamp is int64 in milliseconds.
         if (input_msg.timestamp / 1000) < (time.time() - self.max_record_age):
             LOG.debug("Skipping old message (%s)", Consumer.get_stringfied_record(input_msg))

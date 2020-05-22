@@ -232,6 +232,10 @@ the specific _consumer_, _downloader_ and _publisher_ are configured.
   - `group_id`: Kafka group identifier. Several instances of the same pipeline will need to be into
     the same group in order to not process the same messages.
   - `bootstrap_servers`: a list of "IP:PORT" strings where the Kafka server is listening.
+  - `max_record_age`: an integer that defines the amount of seconds for ignoring older Kafka records. If a
+    received record is older than this amount of seconds, it will be ignored. By default, messages older than
+    2 hours will be ignored. To disable this functionality and process every record ignoring its age, use
+    `-1`.
 - `publisher` name refers to the class `ccx_data_pipeline.publisher.Publisher` and it also allow to define the
   arguments passed to the initializer modifying the `kwargs` dictionary:
   - `outgoing_topic`: a string indicating the topic where the reported results should be sent.
