@@ -27,6 +27,8 @@ LOG = logging.getLogger(__name__)
 class ClusterIdWatcher(EngineWatcher, ConsumerWatcher):
     """Mixed `Watcher` that is able to watch both `Consumer` and `Engine`."""
 
+    CLUSTER_ID_LENGTH = 36
+
     def __init__(self):
         """Initialize a `ClusterIdWatcher`."""
         self.last_record = None
@@ -55,7 +57,7 @@ class ClusterIdWatcher(EngineWatcher, ConsumerWatcher):
 
         try:
             with open(id_file_path, "r") as id_file:
-                cluster_uuid = id_file.read()
+                cluster_uuid = id_file.read(ClusterIdWatcher.CLUSTER_ID_LENGTH)
 
                 try:
                     UUID(cluster_uuid)
