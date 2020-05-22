@@ -48,6 +48,7 @@ def setup_watchtower(logging_config=None):
         boto3_session=session,
         log_group=os.environ["CW_LOG_GROUP"],
         stream_name=os.environ["CW_STREAM_NAME"],
+        create_log_group=False,
     )
 
     if logging_config is not None:
