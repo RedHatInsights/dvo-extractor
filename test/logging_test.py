@@ -101,4 +101,5 @@ def test_setup_watchtower(get_logger_mock, log_handler_init_mock, session_init_m
             boto3_session=session_mock,
             log_group=valid_env["CW_LOG_GROUP"],
             stream_name=valid_env["CW_STREAM_NAME"],
+            create_log_group=False,
         )
