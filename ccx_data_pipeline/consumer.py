@@ -21,8 +21,9 @@ import binascii
 import time
 
 import jsonschema
+from insights_messaging.consumers import Consumer as ICMConsumer
+from kafka import KafkaConsumer
 from kafka.consumer.fetcher import ConsumerRecord
-from insights_messaging.consumers.kafka import Kafka
 
 from ccx_data_pipeline.data_pipeline_error import DataPipelineError
 from ccx_data_pipeline.schemas import INPUT_MESSAGE_SCHEMA, IDENTITY_SCHEMA
@@ -30,7 +31,7 @@ from ccx_data_pipeline.schemas import INPUT_MESSAGE_SCHEMA, IDENTITY_SCHEMA
 LOG = logging.getLogger(__name__)
 
 
-class Consumer(Kafka):
+class Consumer(ICMConsumer):
     """
     Consumer implementation based on base Kafka class.
 
@@ -63,18 +64,27 @@ class Consumer(Kafka):
             group_id,
         )
 
-        super().__init__(
-            publisher,
-            downloader,
-            engine,
+        super().__init__(publisher, downloader, engine)
+        self.consumer = KafkaConsumer(
             incoming_topic,
-            group_id,
-            bootstrap_servers,
+            group_id=group_id,
+            bootstrap_servers=bootstrap_servers,
+            value_deserializer=self.deserialize,
             retry_backoff_ms=retry_backoff_ms,
             **kwargs,
         )
         self.max_record_age = max_record_age
         self.log_pattern = f"topic: {incoming_topic}, group_id: {group_id}"
+
+    # pylint: disable=broad-except
+    def run(self):
+        """Execute the consumer logic."""
+        for msg in self.consumer:
+            try:
+                if self.handles(msg):
+                    self.process(msg)
+            except Exception as ex:
+                LOG.exception(ex)
 
     def deserialize(self, bytes_):
         """

@@ -283,7 +283,7 @@ _INVALID_RECORD_VALUES = [
 
 @pytest.mark.parametrize("value", _INVALID_RECORD_VALUES)
 @patch(
-    "insights_messaging.consumers.kafka.KafkaConsumer.__init__", lambda *args, **kwargs: None,
+    "ccx_data_pipeline.consumer.KafkaConsumer.__init__", lambda *args, **kwargs: None,
 )
 def test_handles_invalid(value):
     """Test that `Consumer` refuses to handle malformed input messages."""
@@ -299,7 +299,7 @@ _VALID_RECORD_VALUES = [
 
 
 @pytest.mark.parametrize("value", _VALID_RECORD_VALUES)
-@patch("insights_messaging.consumers.kafka.Kafka.__init__", lambda *a, **k: None)
+@patch("insights_messaging.consumers.Consumer.__init__", lambda *a, **k: None)
 def test_handles_valid(value):
     """Test that `Consumer` accepts handling of correctly formatted input messages."""
     sut = Consumer(None, None, None)
@@ -331,10 +331,8 @@ _VALID_SERVERS = ["server", "great.server.net"]
 @pytest.mark.parametrize("server", _VALID_SERVERS)
 def test_consumer_init_direct(topic, group, server):
     """Test of our Consumer constructor, using direct configuration options."""
-    with patch("insights_messaging.consumers.kafka.Kafka.__init__") as mock_kafka_init:
+    with patch("insights_messaging.consumers.Consumer.__init__") as mock_consumer_init:
         with patch("os.environ", new=dict()):
             Consumer(None, None, None, group, topic, [server])
 
-            mock_kafka_init.assert_called_with(
-                None, None, None, topic, group, [server], retry_backoff_ms=1000
-            )
+            mock_consumer_init.assert_called_with(None, None, None)
