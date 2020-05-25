@@ -32,23 +32,17 @@ def parse_args():
     return parser.parse_args()
 
 
-def print_version(use_stdout=False):
+def print_version():
     """Log version information."""
-    if use_stdout:
-        show_func = print
-
-    else:
-        show_func = logging.info
-
-    show_func(
-        "Python interpreter version: {}.{}.{}".format(
-            sys.version_info.major, sys.version_info.minor, sys.version_info.micro
-        )
+    logger = logging.getLogger(__name__)
+    logger.info(
+        "Python interpreter version: %d.%d.%d",
+        sys.version_info.major,
+        sys.version_info.minor,
+        sys.version_info.micro,
     )
-    show_func(
-        "ccx-data-pipeline version: {}".format(
-            pkg_resources.get_distribution("ccx-data-pipeline").version
-        )
+    logger.info(
+        "ccx-data-pipeline version: %s", pkg_resources.get_distribution("ccx-data-pipeline").version
     )
 
 
@@ -57,14 +51,16 @@ def ccx_data_pipeline():
     args = parse_args()
 
     if args.version:
-        print_version(use_stdout=True)
+        logging.basicConfig(format="%(message)s", level=logging.INFO)
+        print_version()
         sys.exit(0)
 
     with open(args.config) as file_:
         app_builder = AppBuilder(file_.read())
         logging_config = app_builder.service["logging"]
+        logging.config.dictConfig(logging_config)
+        print_version()
         consumer = app_builder.build_app()
         setup_watchtower(logging_config)
-        print_version()
         consumer.run()
         sys.exit(0)
