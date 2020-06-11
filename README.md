@@ -4,10 +4,10 @@
 
 ## Description
 
-This service will receive records from a given Kafka topic, download the items
-from the S3 server and apply Insights rules to downloaded tarball.
+This service receives records from a given Kafka topic, downloads the items
+from the S3 server and applies Insights rules to downloaded tarball.
 
-JSON containing Insights rules results will be sent to a different Kafka topic
+JSON containing Insights rules results is sent to a different Kafka topic
 and logged in a way to be determined.
 
 Incoming and outgoing Kafka topics are configurable, these can be even handled
@@ -94,13 +94,13 @@ The attribute `b64_identity` contains another JSON encoded by BASE64 encoding. U
 
 ### Processing
 
-The ICM `Engine` class will take the downloaded tarball and, using **ccx-ocp-core** and **ccx-rules-ocp**, process it
-and generates a JSON report. This report will be handled and sent to a configured Kafka topic using a `KafkaPublisher`.
+The ICM `Engine` class takes the downloaded tarball and, using **ccx-ocp-core** and **ccx-rules-ocp**, processes it
+and generates a JSON report. This report is handled and sent to a configured Kafka topic using a `KafkaPublisher`.
 
 
 ### Reporting
 
-The JSON report generated in the previous step will be sent to a Kafka topic where other services can take this record
+The JSON report generated in the previous step is sent to a Kafka topic where other services can take this record
 and handle it properly. Generated JSON has format:
 
 ```
