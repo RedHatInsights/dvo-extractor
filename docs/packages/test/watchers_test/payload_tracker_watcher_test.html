@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>payload_tracker_watcher_test.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>payload_tracker_watcher_test.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>Module containing unit tests for the <code>ConsumerWatcher</code> class.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">MagicMock</span><span class="p">,</span> <span class="n">patch</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">freezegun</span> <span class="kn">import</span> <span class="n">freeze_time</span>
+
+<span class="kn">from</span> <span class="nn">ccx_data_pipeline.watchers.payload_tracker_watcher</span> <span class="kn">import</span> <span class="n">PayloadTrackerWatcher</span>
+
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">mock_consumer_record</span>
+
+
+<span class="n">_INVALID_SERVERS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="bp">None</span><span class="p">,</span>
+    <span class="p">[],</span>
+    <span class="p">{},</span>
+    <span class="mi">100</span><span class="p">,</span>
+    <span class="mf">100.5</span><span class="p">,</span>
+    <span class="s2">&quot;kafka_instance&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">_INVALID_TOPICS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="bp">None</span><span class="p">,</span>
+    <span class="p">[],</span>
+    <span class="p">{},</span>
+    <span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Create a producer mock from its mocked initialization.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">_prepare_kafka_mock</span><span class="p">(</span><span class="n">producer_init_mock</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">producer_mock</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+    <span class="n">producer_init_mock</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">producer_mock</span>
+    <span class="k">return</span> <span class="n">producer_mock</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Test passing invalid data types or values to the <code>PayloadTrackerWatcher</code> initializer.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;bootstrap_value&quot;</span><span class="p">,</span> <span class="n">_INVALID_SERVERS</span><span class="p">)</span>
+<span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;topic_value&quot;</span><span class="p">,</span> <span class="n">_INVALID_TOPICS</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_payload_tracker_watcher_invalid_initialize_invalid_servers</span><span class="p">(</span><span class="n">bootstrap_value</span><span class="p">,</span> <span class="n">topic_value</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">((</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">PermissionError</span><span class="p">,</span> <span class="ne">OverflowError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">)):</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">PayloadTrackerWatcher</span><span class="p">(</span><span class="n">bootstrap_value</span><span class="p">,</span> <span class="n">topic_value</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Test publish_status method sends the expected value to Kafka.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@freeze_time</span><span class="p">(</span><span class="s2">&quot;2020-05-07T14:00:00&quot;</span><span class="p">)</span>
+<span class="nd">@patch</span><span class="p">(</span><span class="s2">&quot;ccx_data_pipeline.watchers.payload_tracker_watcher.KafkaProducer&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_payload_tracker_watcher_publish_status</span><span class="p">(</span><span class="n">producer_init_mock</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">mocked_values</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;request_id&quot;</span><span class="p">:</span> <span class="s2">&quot;some request id&quot;</span><span class="p">}</span>
+    <span class="n">mocked_input_message</span> <span class="o">=</span> <span class="n">mock_consumer_record</span><span class="p">(</span><span class="n">mocked_values</span><span class="p">)</span>
+
+    <span class="n">producer_mock</span> <span class="o">=</span> <span class="n">_prepare_kafka_mock</span><span class="p">(</span><span class="n">producer_init_mock</span><span class="p">)</span>
+    <span class="n">sut</span> <span class="o">=</span> <span class="n">PayloadTrackerWatcher</span><span class="p">([</span><span class="s2">&quot;bootstrap_server&quot;</span><span class="p">],</span> <span class="s2">&quot;valid_topic&quot;</span><span class="p">)</span>
+    <span class="n">sut</span><span class="o">.</span><span class="n">on_recv</span><span class="p">(</span><span class="n">mocked_input_message</span><span class="p">)</span>
+    <span class="n">producer_mock</span><span class="o">.</span><span class="n">send</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span>
+        <span class="s2">&quot;valid_topic&quot;</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;{&quot;service&quot;: &quot;ccx-data-pipeline&quot;, &quot;request_id&quot;: &quot;some request id&quot;, &#39;</span>
+        <span class="sa">b</span><span class="s1">&#39;&quot;status&quot;: &quot;received&quot;, &quot;date&quot;: &quot;2020-05-07T14:00:00&quot;}&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
