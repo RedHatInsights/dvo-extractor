@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>consumer_test.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>consumer_test.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>Module containing unit tests for the <code>Consumer</code> class.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">patch</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="kn">from</span> <span class="nn">kafka</span> <span class="kn">import</span> <span class="n">KafkaConsumer</span>
+
+<span class="kn">from</span> <span class="nn">ccx_data_pipeline.consumer</span> <span class="kn">import</span> <span class="n">Consumer</span>
+<span class="kn">from</span> <span class="nn">ccx_data_pipeline.data_pipeline_error</span> <span class="kn">import</span> <span class="n">DataPipelineError</span>
+
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">mock_consumer_record</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Mock KafkaConsumer.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest.fixture</span><span class="p">(</span><span class="n">autouse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">mock_consumer</span><span class="p">(</span><span class="n">monkeypatch</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">KafkaConsumer</span><span class="p">,</span> <span class="s2">&quot;__init__&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">:</span> <span class="bp">None</span><span class="p">)</span>
+
+
+<span class="n">_REGEX_BAD_SCHEMA</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^Unable to extract URL from input message: &quot;</span>
+<span class="n">_INVALID_TYPE_VALUES</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="p">[],</span> <span class="p">{}]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Test that passing invalid data type to <code>deserialize</code> raises an exception.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">_INVALID_TYPE_VALUES</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_deserialize_invalid_type</span><span class="p">(</span><span class="n">value</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">deserialized</span> <span class="o">=</span> <span class="n">Consumer</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">Consumer</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">deserialized</span><span class="p">,</span> <span class="n">DataPipelineError</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">deserialized</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Unexpected input message type: &quot;</span><span class="p">)</span>
+
+
+<span class="n">_ERR_UNABLE_TO_DECODE</span> <span class="o">=</span> <span class="s2">&quot;Unable to decode received message: &quot;</span>
+<span class="n">_ERR_JSON_SCHEMA</span> <span class="o">=</span> <span class="s2">&quot;Invalid input message JSON schema: &quot;</span>
+<span class="n">_ERR_BASE64</span> <span class="o">=</span> <span class="s2">&quot;Base64 encoded identity could not be parsed: &quot;</span>
+
+<span class="n">_INVALID_MESSAGES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">_ERR_UNABLE_TO_DECODE</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;{}&quot;</span><span class="p">,</span> <span class="n">_ERR_JSON_SCHEMA</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;{&quot;noturl&quot;:&quot;https://s3.com/hash&quot;}&#39;</span><span class="p">,</span> <span class="n">_ERR_JSON_SCHEMA</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;{&quot;url&quot;:&quot;value&quot;&#39;</span><span class="p">,</span> <span class="n">_ERR_UNABLE_TO_DECODE</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;&quot;url&quot;:&quot;value&quot;}&#39;</span><span class="p">,</span> <span class="n">_ERR_UNABLE_TO_DECODE</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;&quot;url&quot;:&quot;value&quot;&#39;</span><span class="p">,</span> <span class="n">_ERR_UNABLE_TO_DECODE</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;&quot;{&quot;url&quot;:&quot;value&quot;}&quot;&#39;</span><span class="p">,</span> <span class="n">_ERR_UNABLE_TO_DECODE</span><span class="p">),</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>incorrect content of b64_identity (org_id missing)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="p">(</span>
+        <span class="s1">&#39;{&quot;url&quot;: &quot;https://s3.com/hash&quot;, &quot;b64_identity&quot;: &quot;eyJpZGVudGl0eSI6IHsiaW50ZXJuYWwiOiB7Im1pc3&#39;</span>
+        <span class="s1">&#39;Npbmdfb3JnX2lkIjogIjEyMzgzMDMyIn19fQ==&quot;, &quot;timestamp&quot;: &quot;2020-01-23T16:15:59.478901889Z&quot;}&#39;</span><span class="p">,</span>
+        <span class="n">_ERR_JSON_SCHEMA</span><span class="p">,</span>
+    <span class="p">),</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>incorrect format of base64 encoding</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="p">(</span>
+        <span class="s1">&#39;{&quot;url&quot;: &quot;https://s3.com/hash&quot;, &quot;b64_identity&quot;: &quot;eyJpZGVudGl0eSI6IHsiaW50ZXJuYWwiOiB7Im9yZ1&#39;</span>
+        <span class="s1">&#39;9pZCI6ICIxMjM4MzAzMiJ9f&quot;, &quot;timestamp&quot;: &quot;2020-01-23T16:15:59.478901889Z&quot;}&#39;</span><span class="p">,</span>
+        <span class="n">_ERR_BASE64</span><span class="p">,</span>
+    <span class="p">),</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>org_id not string</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="p">(</span>
+        <span class="s1">&#39;{&quot;url&quot;: &quot;https://s3.com/hash&quot;, &quot;b64_identity&quot;: &quot;eyJpZGVudGl0eSI6IHsKICAgICJhY2NvdW50X251bW&#39;</span>
+        <span class="s2">&quot;JlciI6ICI2MjEyMzc3IiwKICAgICJhdXRoX3R5cGUiOiAiYmFzaWMtYXV0aCIsCiAgICAiaW50ZXJuYWwiOiB7C&quot;</span>
+        <span class="s2">&quot;iAgICAgICAgImF1dGhfdGltZSI6IDE0MDAsCiAgICAgICAgIm9yZ19pZCI6IDEyMzgzMDMyCiAgICB9LAogICAg&quot;</span>
+        <span class="s2">&quot;InR5cGUiOiAiVXNlciIsCiAgICAidXNlciI6IHsKICAgICAgICAiZW1haWwiOiAiam5lZWRsZStxYUByZWRoYXQ&quot;</span>
+        <span class="s2">&quot;uY29tIiwKICAgICAgICAiZmlyc3RfbmFtZSI6ICJJbnNpZ2h0cyIsCiAgICAgICAgImlzX2FjdGl2ZSI6IHRydW&quot;</span>
+        <span class="s2">&quot;UsCiAgICAgICAgImlzX2ludGVybmFsIjogZmFsc2UsCiAgICAgICAgImlzX29yZ19hZG1pbiI6IHRydWUsCiAgI&quot;</span>
+        <span class="s2">&quot;CAgICAgImxhc3RfbmFtZSI6ICJRRSIsCiAgICAgICAgImxvY2FsZSI6ICJlbl9VUyIsCiAgICAgICAgInVzZXJu&quot;</span>
+        <span class="s1">&#39;YW1lIjogImluc2lnaHRzLXFlIgogICAgfQp9Cn0=&quot;, &quot;timestamp&quot;: &quot;2020-01-23T16:15:59.478901889Z&quot;}&#39;</span><span class="p">,</span>
+        <span class="n">_ERR_JSON_SCHEMA</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>Test that passing a malformed message to <code>deserialize</code> raises an exception.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;msg&quot;</span><span class="p">,</span> <span class="n">_INVALID_MESSAGES</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_deserialize_invalid_format_str</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">deserialized</span> <span class="o">=</span> <span class="n">Consumer</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">Consumer</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span> <span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">deserialized</span><span class="p">,</span> <span class="n">DataPipelineError</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">deserialized</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>Test that passing a malformed message to <code>deserialize</code> raises an exception.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;msg&quot;</span><span class="p">,</span> <span class="n">_INVALID_MESSAGES</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_deserialize_invalid_format_bytes</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">deserialized</span> <span class="o">=</span> <span class="n">Consumer</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">Consumer</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span> <span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">deserialized</span><span class="p">,</span> <span class="n">DataPipelineError</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">deserialized</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>Test that passing a malformed message to <code>deserialize</code> raises an exception.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;msg&quot;</span><span class="p">,</span> <span class="n">_INVALID_MESSAGES</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_deserialize_invalid_format_bytearray</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">deserialized</span> <span class="o">=</span> <span class="n">Consumer</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span>
+        <span class="n">Consumer</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">deserialized</span><span class="p">,</span> <span class="n">DataPipelineError</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">deserialized</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+
+<span class="n">_VALID_MESSAGES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span>
+        <span class="s1">&#39;{&quot;url&quot;: &quot;&quot;,&#39;</span>
+        <span class="s1">&#39;&quot;b64_identity&quot;: &quot;eyJpZGVudGl0eSI6IHsiaW50ZXJuYWwiOiB7Im9yZ19pZCI6ICIxMjM4MzAzMiJ9fX0=&quot;,&#39;</span>
+        <span class="s1">&#39;&quot;timestamp&quot;: &quot;2020-01-23T16:15:59.478901889Z&quot;}&#39;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;internal&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;org_id&quot;</span><span class="p">:</span> <span class="s2">&quot;12383032&quot;</span><span class="p">}}},</span>
+            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-23T16:15:59.478901889Z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ClusterName&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">),</span>
+    <span class="p">(</span>
+        <span class="s1">&#39;{&quot;url&quot;: &quot;https://s3.com/hash&quot;, &quot;unused-property&quot;: null, &#39;</span>
+        <span class="s1">&#39;&quot;b64_identity&quot;: &quot;eyJpZGVudGl0eSI6IHsiaW50ZXJuYWwiOiB7Im9yZ19pZCI6ICIxMjM4MzAzMiJ9fX0=&quot;,&#39;</span>
+        <span class="s1">&#39;&quot;timestamp&quot;: &quot;2020-01-23T16:15:59.478901889Z&quot;}&#39;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://s3.com/hash&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;unused-property&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+            <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;internal&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;org_id&quot;</span><span class="p">:</span> <span class="s2">&quot;12383032&quot;</span><span class="p">}}},</span>
+            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-23T16:15:59.478901889Z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ClusterName&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">),</span>
+    <span class="p">(</span>
+        <span class="s1">&#39;{&quot;account&quot;:12345678, &quot;url&quot;:&quot;any/url&quot;, &#39;</span>
+        <span class="s1">&#39;&quot;b64_identity&quot;: &quot;eyJpZGVudGl0eSI6IHsiaW50ZXJuYWwiOiB7Im9yZ19pZCI6ICIxMjM4MzAzMiJ9fX0=&quot;,&#39;</span>
+        <span class="s1">&#39;&quot;timestamp&quot;: &quot;2020-01-23T16:15:59.478901889Z&quot;}&#39;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;account&quot;</span><span class="p">:</span> <span class="mi">12345678</span><span class="p">,</span>
+            <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;any/url&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;internal&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;org_id&quot;</span><span class="p">:</span> <span class="s2">&quot;12383032&quot;</span><span class="p">}}},</span>
+            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-23T16:15:59.478901889Z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ClusterName&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">),</span>
+    <span class="p">(</span>
+        <span class="s1">&#39;{&quot;account&quot;:12345678, &quot;url&quot;:&quot;any/url&quot;, &#39;</span>
+        <span class="s1">&#39;&quot;b64_identity&quot;: &quot;eyJpZGVudGl0eSI6IHsKICAgICJhY2NvdW50X251bWJlciI6ICI2MjEyMzc3IiwKICAgICJhd&#39;</span>
+        <span class="s2">&quot;XRoX3R5cGUiOiAiYmFzaWMtYXV0aCIsCiAgICAiaW50ZXJuYWwiOiB7CiAgICAgICAgImF1dGhfdGltZSI6IDE0MDA&quot;</span>
+        <span class="s2">&quot;sCiAgICAgICAgIm9yZ19pZCI6ICIxMjM4MzAzMiIKICAgIH0sCiAgICAidHlwZSI6ICJVc2VyIiwKICAgICJ1c2VyI&quot;</span>
+        <span class="s2">&quot;jogewogICAgICAgICJlbWFpbCI6ICJqbmVlZGxlK3FhQHJlZGhhdC5jb20iLAogICAgICAgICJmaXJzdF9uYW1lIjo&quot;</span>
+        <span class="s2">&quot;gIkluc2lnaHRzIiwKICAgICAgICAiaXNfYWN0aXZlIjogdHJ1ZSwKICAgICAgICAiaXNfaW50ZXJuYWwiOiBmYWxzZ&quot;</span>
+        <span class="s2">&quot;SwKICAgICAgICAiaXNfb3JnX2FkbWluIjogdHJ1ZSwKICAgICAgICAibGFzdF9uYW1lIjogIlFFIiwKICAgICAgICA&quot;</span>
+        <span class="s1">&#39;ibG9jYWxlIjogImVuX1VTIiwKICAgICAgICAidXNlcm5hbWUiOiAiaW5zaWdodHMtcWUiCiAgICB9Cn0KfQ==&quot;,&#39;</span>
+        <span class="s1">&#39;&quot;timestamp&quot;: &quot;2020-01-23T16:15:59.478901889Z&quot;}&#39;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;account&quot;</span><span class="p">:</span> <span class="mi">12345678</span><span class="p">,</span>
+            <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;any/url&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;account_number&quot;</span><span class="p">:</span> <span class="s2">&quot;6212377&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;auth_type&quot;</span><span class="p">:</span> <span class="s2">&quot;basic-auth&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;internal&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;auth_time&quot;</span><span class="p">:</span> <span class="mi">1400</span><span class="p">,</span> <span class="s2">&quot;org_id&quot;</span><span class="p">:</span> <span class="s2">&quot;12383032&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;User&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;jneedle+qa@redhat.com&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;first_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Insights&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;is_active&quot;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                        <span class="s2">&quot;is_internal&quot;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+                        <span class="s2">&quot;is_org_admin&quot;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                        <span class="s2">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;QE&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;locale&quot;</span><span class="p">:</span> <span class="s2">&quot;en_US&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;insights-qe&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-23T16:15:59.478901889Z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ClusterName&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">),</span>
+    <span class="p">(</span>
+        <span class="s1">&#39;{&quot;account&quot;:12345678, &quot;url&quot;:&quot;any/url&quot;, &#39;</span>
+        <span class="s1">&#39;&quot;b64_identity&quot;: &quot;eyJpZGVudGl0eSI6IHsiYWNjb3VudF9udW1iZXIiOiAiNjIxMjM3NyIsICJhdXRoX3R5cGUiO&#39;</span>
+        <span class="s2">&quot;iAiYmFzaWMtYXV0aCIsICJpbnRlcm5hbCI6IHsiYXV0aF90aW1lIjogMC41NiwgIm9yZ19pZCI6ICIxMjM4MzAzMiJ&quot;</span>
+        <span class="s2">&quot;9LCAidHlwZSI6ICJVc2VyIiwgInVzZXIiOiB7ImVtYWlsIjogImpuZWVkbGUrcWFAcmVkaGF0LmNvbSIsICJmaXJzd&quot;</span>
+        <span class="s2">&quot;F9uYW1lIjogIkluc2lnaHRzIiwgImlzX2FjdGl2ZSI6IHRydWUsICJpc19pbnRlcm5hbCI6IGZhbHNlLCAiaXNfb3J&quot;</span>
+        <span class="s2">&quot;nX2FkbWluIjogdHJ1ZSwgImxhc3RfbmFtZSI6ICJRRSIsICJsb2NhbGUiOiAiZW5fVVMiLCAidXNlcm5hbWUiOiAia&quot;</span>
+        <span class="s1">&#39;W5zaWdodHMtcWUifX19&quot;,&#39;</span>
+        <span class="s1">&#39;&quot;timestamp&quot;: &quot;2020-01-23T16:15:59.478901889Z&quot;}&#39;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;account&quot;</span><span class="p">:</span> <span class="mi">12345678</span><span class="p">,</span>
+            <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;any/url&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;account_number&quot;</span><span class="p">:</span> <span class="s2">&quot;6212377&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;auth_type&quot;</span><span class="p">:</span> <span class="s2">&quot;basic-auth&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;internal&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;auth_time&quot;</span><span class="p">:</span> <span class="mf">0.56</span><span class="p">,</span> <span class="s2">&quot;org_id&quot;</span><span class="p">:</span> <span class="s2">&quot;12383032&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;User&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;jneedle+qa@redhat.com&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;first_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Insights&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;is_active&quot;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                        <span class="s2">&quot;is_internal&quot;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+                        <span class="s2">&quot;is_org_admin&quot;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                        <span class="s2">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;QE&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;locale&quot;</span><span class="p">:</span> <span class="s2">&quot;en_US&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;insights-qe&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-23T16:15:59.478901889Z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ClusterName&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">),</span>
+    <span class="p">(</span>
+        <span class="s1">&#39;{&quot;account&quot;:&quot;5869752&quot;,&quot;category&quot;:&quot;periodic&quot;,&#39;</span>
+        <span class="s1">&#39;&quot;metadata&quot;:{&quot;reporter&quot;:&quot;&quot;,&quot;stale_timestamp&quot;:&quot;0001-01-01T00:00:00Z&quot;},&#39;</span>
+        <span class="s1">&#39;&quot;request_id&quot;:&quot;1cafddc658c942be8660ea0341fe8027&quot;,&quot;principal&quot;:&quot;10918904&quot;,&#39;</span>
+        <span class="s1">&#39;&quot;service&quot;:&quot;openshift&quot;,&quot;size&quot;:15099,&#39;</span>
+        <span class="s1">&#39;&quot;url&quot;:&quot;https://insights-upload-perma.s3.amazonaws.com/1cafddc658c942be8660ea0341fe8027?&#39;</span>
+        <span class="s2">&quot;X-Amz-Algorithm=AWS4-HMAC-SHA256</span><span class="se">\u0026</span><span class="s2">X-Amz-Credential=AKIAJW4PUHKGSOIEEI7A</span><span class="si">%2F</span><span class="s2">20200313</span><span class="si">%2F</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;us-east-1</span><span class="si">%2F</span><span class="s2">s3</span><span class="si">%2F</span><span class="s2">aws4_request</span><span class="se">\u0026</span><span class="s2">X-Amz-Date=20200313T083008Z</span><span class="se">\u0026</span><span class="s2">X-Amz-Expires=86400&quot;</span>
+        <span class="s2">&quot;</span><span class="se">\u0026</span><span class="s2">X-Amz-SignedHeaders=host</span><span class="se">\u0026</span><span class="s2">&quot;</span>
+        <span class="s1">&#39;X-Amz-Signature=0db0ae5569ef7bf5e1eb59d64d8b420c323f43fa0154a6bfb81b8873b1d0e836&quot;,&#39;</span>
+        <span class="s1">&#39;&quot;b64_identity&quot;:&quot;eyJlbnRpdGxlbWVudHMiOnt9LCJpZGVudGl0eSI6eyJpbnRlcm5hbCI6eyJhdXRoX3RpbWUiOj&#39;</span>
+        <span class="s2">&quot;AuMjk5OTk5OTUyMzE2MjgsIm9yZ19pZCI6IjEwOTE4OTA0In0sImFjY291bnRfbnVtYmVyIjoiNTg2OTc1MiIsImF1&quot;</span>
+        <span class="s2">&quot;dGhfdHlwZSI6InVoYy1hdXRoIiwic3lzdGVtIjp7ImNsdXN0ZXJfaWQiOiIxODJjMTVkZi02MDE0LTQyZjgtYmRkMC&quot;</span>
+        <span class="s1">&#39;02OGMyYzViMGI4MWUifSwidHlwZSI6IlN5c3RlbSJ9fQ==&quot;,&#39;</span>
+        <span class="s1">&#39;&quot;timestamp&quot;:&quot;2020-03-13T08:30:08.968858699Z&quot;}&#39;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;account&quot;</span><span class="p">:</span> <span class="s2">&quot;5869752&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;periodic&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;reporter&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;stale_timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;0001-01-01T00:00:00Z&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;request_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1cafddc658c942be8660ea0341fe8027&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;principal&quot;</span><span class="p">:</span> <span class="s2">&quot;10918904&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;openshift&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">15099</span><span class="p">,</span>
+            <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">&quot;https://insights-upload-perma.s3.amazonaws.com/1cafddc658c942be8660ea0341fe8027?&quot;</span>
+                <span class="s2">&quot;X-Amz-Algorithm=AWS4-HMAC-SHA256</span><span class="se">\u0026</span><span class="s2">X-Amz-Credential=AKIAJW4PUHKGSOIEEI7A</span><span class="si">%2F</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;20200313</span><span class="si">%2F</span><span class="s2">us-east-1</span><span class="si">%2F</span><span class="s2">s3</span><span class="si">%2F</span><span class="s2">aws4_request</span><span class="se">\u0026</span><span class="s2">X-Amz-Date=20200313T083008Z</span><span class="se">\u0026</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;X-Amz-Expires=86400</span><span class="se">\u0026</span><span class="s2">X-Amz-SignedHeaders=host</span><span class="se">\u0026</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;X-Amz-Signature=0db0ae5569ef7bf5e1eb59d64d8b420c323f43fa0154a6bfb81b8873b1d0e836&quot;</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;entitlements&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;internal&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;auth_time&quot;</span><span class="p">:</span> <span class="mf">0.29999995231628</span><span class="p">,</span> <span class="s2">&quot;org_id&quot;</span><span class="p">:</span> <span class="s2">&quot;10918904&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;account_number&quot;</span><span class="p">:</span> <span class="s2">&quot;5869752&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;auth_type&quot;</span><span class="p">:</span> <span class="s2">&quot;uhc-auth&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;system&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;cluster_id&quot;</span><span class="p">:</span> <span class="s2">&quot;182c15df-6014-42f8-bdd0-68c2c5b0b81e&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;System&quot;</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-03-13T08:30:08.968858699Z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ClusterName&quot;</span><span class="p">:</span> <span class="s2">&quot;182c15df-6014-42f8-bdd0-68c2c5b0b81e&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">),</span>
+<span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p>Test that proper string JSON input messages are correctly deserialized.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;msg,value&quot;</span><span class="p">,</span> <span class="n">_VALID_MESSAGES</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_deserialize_valid_str</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">Consumer</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">Consumer</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span> <span class="n">msg</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>Test that proper bytes JSON input messages are correctly deserialized.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;msg,value&quot;</span><span class="p">,</span> <span class="n">_VALID_MESSAGES</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_deserialize_valid_bytes</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">retval</span> <span class="o">=</span> <span class="n">Consumer</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">Consumer</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span> <span class="n">msg</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">retval</span> <span class="o">==</span> <span class="n">value</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <p>Test that proper bytearray JSON input messages are correctly deserialized.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;msg,value&quot;</span><span class="p">,</span> <span class="n">_VALID_MESSAGES</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_deserialize_valid_bytearray</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">retval</span> <span class="o">=</span> <span class="n">Consumer</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">Consumer</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)))</span>
+    <span class="k">assert</span> <span class="n">retval</span> <span class="o">==</span> <span class="n">value</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      <p>This would have been a valid input, but it&rsquo;s supposed to be a <code>dict</code>, not <code>str</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">_DICT_STR</span> <span class="o">=</span> <span class="s1">&#39;{&quot;url&quot;: &quot;bucket/file&quot;}&#39;</span>
+
+<span class="n">_INVALID_RECORD_VALUES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">_DICT_STR</span><span class="p">,</span>
+    <span class="n">_DICT_STR</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span>
+    <span class="nb">bytearray</span><span class="p">(</span><span class="n">_DICT_STR</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)),</span>
+    <span class="p">[],</span>
+    <span class="p">{},</span>
+    <span class="p">{</span><span class="s2">&quot;noturl&quot;</span><span class="p">:</span> <span class="s2">&quot;bucket/file&quot;</span><span class="p">},</span>
+<span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-21'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-21'>#</a>
+      </div>
+      <p>Test that <code>Consumer</code> refuses to handle malformed input messages.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">_INVALID_RECORD_VALUES</span><span class="p">)</span>
+<span class="nd">@patch</span><span class="p">(</span>
+    <span class="s2">&quot;ccx_data_pipeline.consumer.KafkaConsumer.__init__&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_handles_invalid</span><span class="p">(</span><span class="n">value</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-22'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-22'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">consumer</span> <span class="o">=</span> <span class="n">Consumer</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">consumer</span><span class="o">.</span><span class="n">handles</span><span class="p">(</span><span class="n">mock_consumer_record</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+
+<span class="n">_VALID_RECORD_VALUES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;bucket/file&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://a-valid-domain.com/precious_url&quot;</span><span class="p">},</span>
+<span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-23'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-23'>#</a>
+      </div>
+      <p>Test that <code>Consumer</code> accepts handling of correctly formatted input messages.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">_VALID_RECORD_VALUES</span><span class="p">)</span>
+<span class="nd">@patch</span><span class="p">(</span><span class="s2">&quot;insights_messaging.consumers.Consumer.__init__&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">k</span><span class="p">:</span> <span class="bp">None</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_handles_valid</span><span class="p">(</span><span class="n">value</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-24'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-24'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sut</span> <span class="o">=</span> <span class="n">Consumer</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">sut</span><span class="o">.</span><span class="n">handles</span><span class="p">(</span><span class="n">mock_consumer_record</span><span class="p">(</span><span class="n">value</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-25'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-25'>#</a>
+      </div>
+      <p>Test that <code>Consumer.get_url</code> raises the appropriate exception.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">_INVALID_RECORD_VALUES</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_get_url_invalid</span><span class="p">(</span><span class="n">value</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-26'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-26'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">DataPipelineError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">_REGEX_BAD_SCHEMA</span><span class="p">):</span>
+        <span class="n">Consumer</span><span class="o">.</span><span class="n">get_url</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-27'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-27'>#</a>
+      </div>
+      <p>Test that <code>Consumer.get_url</code> returns the expected value.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">_VALID_RECORD_VALUES</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_get_url_valid</span><span class="p">(</span><span class="n">value</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-28'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-28'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">assert</span> <span class="n">Consumer</span><span class="o">.</span><span class="n">get_url</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">mock_consumer_record</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">==</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span>
+
+
+<span class="n">_VALID_TOPICS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;topic&quot;</span><span class="p">,</span> <span class="s2">&quot;funny-topic&quot;</span><span class="p">]</span>
+
+<span class="n">_VALID_GROUPS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;good-boys&quot;</span><span class="p">]</span>
+
+<span class="n">_VALID_SERVERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;server&quot;</span><span class="p">,</span> <span class="s2">&quot;great.server.net&quot;</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-29'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-29'>#</a>
+      </div>
+      <p>Test of our Consumer constructor, using direct configuration options.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;topic&quot;</span><span class="p">,</span> <span class="n">_VALID_TOPICS</span><span class="p">)</span>
+<span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="n">_VALID_GROUPS</span><span class="p">)</span>
+<span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;server&quot;</span><span class="p">,</span> <span class="n">_VALID_SERVERS</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_consumer_init_direct</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">server</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-30'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-30'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s2">&quot;insights_messaging.consumers.Consumer.__init__&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_consumer_init</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s2">&quot;os.environ&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+            <span class="n">Consumer</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="p">[</span><span class="n">server</span><span class="p">])</span>
+
+            <span class="n">mock_consumer_init</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

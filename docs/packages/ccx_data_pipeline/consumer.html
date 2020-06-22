@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>consumer.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>consumer.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>Copyright 2020 Red Hat Inc.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &ldquo;License&rdquo;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<pre><code> http://www.apache.org/licenses/LICENSE-2.0
+</code></pre>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &ldquo;AS IS&rdquo; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+Consumer implementation based on base Kafka class.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">binascii</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">jsonschema</span>
+<span class="kn">from</span> <span class="nn">insights_messaging.consumers</span> <span class="kn">import</span> <span class="n">Consumer</span> <span class="k">as</span> <span class="n">ICMConsumer</span>
+<span class="kn">from</span> <span class="nn">kafka</span> <span class="kn">import</span> <span class="n">KafkaConsumer</span>
+<span class="kn">from</span> <span class="nn">kafka.consumer.fetcher</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span>
+
+<span class="kn">from</span> <span class="nn">ccx_data_pipeline.data_pipeline_error</span> <span class="kn">import</span> <span class="n">DataPipelineError</span>
+<span class="kn">from</span> <span class="nn">ccx_data_pipeline.schemas</span> <span class="kn">import</span> <span class="n">INPUT_MESSAGE_SCHEMA</span><span class="p">,</span> <span class="n">IDENTITY_SCHEMA</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Consumer implementation based on base Kafka class.</p>
+<p>This consumer retrieves a message at a time from a configure source (which is Kafka),
+extracts an URL from it, downloads an archive using the configured downloader, and
+then passes the file to an internal engine for further processing.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">Consumer</span><span class="p">(</span><span class="n">ICMConsumer</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>pylint: disable=too-many-arguments,bad-continuation
+Construct a new external data pipeline Kafka consumer.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">publisher</span><span class="p">,</span>
+        <span class="n">downloader</span><span class="p">,</span>
+        <span class="n">engine</span><span class="p">,</span>
+        <span class="n">group_id</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">incoming_topic</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">bootstrap_servers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">max_record_age</span><span class="o">=</span><span class="mi">7200</span><span class="p">,</span>
+        <span class="n">retry_backoff_ms</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bootstrap_servers</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">bootstrap_servers</span> <span class="o">=</span> <span class="n">bootstrap_servers</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Consuming topic &#39;</span><span class="si">%s</span><span class="s2">&#39; from brokers </span><span class="si">%s</span><span class="s2"> as group &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+            <span class="n">incoming_topic</span><span class="p">,</span>
+            <span class="n">bootstrap_servers</span><span class="p">,</span>
+            <span class="n">group_id</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">publisher</span><span class="p">,</span> <span class="n">downloader</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="o">=</span> <span class="n">KafkaConsumer</span><span class="p">(</span>
+            <span class="n">incoming_topic</span><span class="p">,</span>
+            <span class="n">group_id</span><span class="o">=</span><span class="n">group_id</span><span class="p">,</span>
+            <span class="n">bootstrap_servers</span><span class="o">=</span><span class="n">bootstrap_servers</span><span class="p">,</span>
+            <span class="n">value_deserializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">deserialize</span><span class="p">,</span>
+            <span class="n">retry_backoff_ms</span><span class="o">=</span><span class="n">retry_backoff_ms</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_record_age</span> <span class="o">=</span> <span class="n">max_record_age</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_pattern</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;topic: {incoming_topic}, group_id: {group_id}&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>pylint: disable=broad-except
+Execute the consumer logic.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handles</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>Deserialize JSON message received from Kafka.</p>
+<p>Returns:
+    dict: Deserialized input message if successful.
+    DataPipelineError: Exception containing error message if anything failed.</p>
+<pre><code>The exception is returns instead of being thrown in order to prevent
+breaking the message handling / polling loop in `Consumer.run`.
+</code></pre>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">deserialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bytes_</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Deserializing incoming bytes (</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_pattern</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bytes_</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytearray</span><span class="p">)):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">bytes_</span><span class="p">)</span>
+                <span class="n">jsonschema</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">instance</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">INPUT_MESSAGE_SCHEMA</span><span class="p">)</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;JSON schema validated (</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_pattern</span><span class="p">)</span>
+                <span class="n">b64_identity</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;b64_identity&quot;</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b64_identity</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">b64_identity</span> <span class="o">=</span> <span class="n">b64_identity</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+
+                <span class="n">decoded_identity</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">b64_identity</span><span class="p">))</span>
+                <span class="n">jsonschema</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">instance</span><span class="o">=</span><span class="n">decoded_identity</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">IDENTITY_SCHEMA</span><span class="p">)</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Identity schema validated (</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_pattern</span><span class="p">)</span>
+
+                <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;ClusterName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">decoded_identity</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;identity&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cluster_id&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;identity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">decoded_identity</span>
+                <span class="k">del</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;b64_identity&quot;</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">msg</span>
+
+            <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Unable to decode received message: {ex}&quot;</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="n">jsonschema</span><span class="o">.</span><span class="n">ValidationError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Invalid input message JSON schema: {ex}&quot;</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="n">binascii</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Base64 encoded identity could not be parsed: {ex}&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Unexpected input message type: {bytes_.__class__.__name__}&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">_handles_timestamp_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_msg</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_msg</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Unexpected Kafka record timestamp type (expected &#39;int&#39;, got &#39;</span><span class="si">%s</span><span class="s2">&#39;)(</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="n">input_msg</span><span class="o">.</span><span class="n">timestamp</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                <span class="n">Consumer</span><span class="o">.</span><span class="n">get_stringfied_record</span><span class="p">(</span><span class="n">input_msg</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_record_age</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p>Kafka record timestamp is int64 in milliseconds.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="n">input_msg</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_record_age</span><span class="p">):</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Skipping old message (</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">Consumer</span><span class="o">.</span><span class="n">get_stringfied_record</span><span class="p">(</span><span class="n">input_msg</span><span class="p">))</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+        <span class="k">return</span> <span class="bp">True</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>Check format of the input message and decide if it can be handled by this consumer.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">handles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_msg</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_msg</span><span class="p">,</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;Unexpected input message type (expected &#39;ConsumerRecord&#39;, got </span><span class="si">%s</span><span class="s2">)(</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="n">input_msg</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                <span class="n">Consumer</span><span class="o">.</span><span class="n">get_stringfied_record</span><span class="p">(</span><span class="n">input_msg</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fire</span><span class="p">(</span><span class="s2">&quot;on_not_handled&quot;</span><span class="p">,</span> <span class="n">input_msg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">DataPipelineError</span><span class="p">):</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> (topic: &#39;</span><span class="si">%s</span><span class="s2">&#39;, partition: </span><span class="si">%d</span><span class="s2">, offset: </span><span class="si">%d</span><span class="s2">, timestamp: </span><span class="si">%d</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_msg</span><span class="p">),</span>
+                <span class="n">input_msg</span><span class="o">.</span><span class="n">topic</span><span class="p">,</span>
+                <span class="n">input_msg</span><span class="o">.</span><span class="n">partition</span><span class="p">,</span>
+                <span class="n">input_msg</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span>
+                <span class="n">input_msg</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handles_timestamp_check</span><span class="p">(</span><span class="n">input_msg</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">False</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p>---- Redundant checks. Already checked by JSON schema in <code>deserialize</code>. ----
+These checks are actually triggered by some of the unit tests for this method.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;Unexpected input message value type (expected &#39;dict&#39;, got &#39;</span><span class="si">%s</span><span class="s2">&#39;) (</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                <span class="n">Consumer</span><span class="o">.</span><span class="n">get_stringfied_record</span><span class="p">(</span><span class="n">input_msg</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fire</span><span class="p">(</span><span class="s2">&quot;on_not_handled&quot;</span><span class="p">,</span> <span class="n">input_msg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+        <span class="k">if</span> <span class="s2">&quot;url&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;Input message is missing a &#39;url&#39; field: </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="n">Consumer</span><span class="o">.</span><span class="n">get_stringfied_record</span><span class="p">(</span><span class="n">input_msg</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fire</span><span class="p">(</span><span class="s2">&quot;on_not_handled&quot;</span><span class="p">,</span> <span class="n">input_msg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">False</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <hr />
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">return</span> <span class="bp">True</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>Retrieve URL to storage (S3/Minio) from Kafka message.</p>
+<p>Same as previous 2 methods, when we receive and figure out the
+message format, we can modify this method</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">get_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_msg</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">try</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;Extracted URL from input message: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="n">url</span><span class="p">,</span>
+                <span class="n">Consumer</span><span class="o">.</span><span class="n">get_stringfied_record</span><span class="p">(</span><span class="n">input_msg</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">url</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <p>This should never happen, but let&rsquo;s check it just to be absolutely sure.
+The <code>handles</code> method should prevent this from
+being called if the input message format is wrong.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Unable to extract URL from input message: {ex}&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      <p>Retrieve a string with information about the received record ready to log.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_stringfied_record</span><span class="p">(</span><span class="n">input_record</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">f</span><span class="s2">&quot;topic: &#39;{input_record.topic}&#39;, partition: {input_record.partition}, &quot;</span>
+            <span class="n">f</span><span class="s2">&quot;offset: {input_record.offset}, timestamp: {input_record.timestamp}&quot;</span>
+        <span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

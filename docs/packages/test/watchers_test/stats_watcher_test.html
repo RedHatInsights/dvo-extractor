@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>stats_watcher_test.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>stats_watcher_test.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>Module containing unit tests for the <code>ConsumerWatcher</code> class.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">patch</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="kn">from</span> <span class="nn">ccx_data_pipeline.watchers.stats_watcher</span> <span class="kn">import</span> <span class="n">StatsWatcher</span>
+
+
+<span class="n">_INVALID_PORTS</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="s2">&quot;8000&quot;</span><span class="p">,</span> <span class="mf">8000.0</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">70000</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Test passing invalid data types or values to the <code>StatsWatcher</code> initializer fails.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">_INVALID_PORTS</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_stats_watcher_initialize_invalid_port</span><span class="p">(</span><span class="n">value</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">((</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">PermissionError</span><span class="p">,</span> <span class="ne">OverflowError</span><span class="p">)):</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">StatsWatcher</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+
+<span class="n">_VALID_PORTS</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(),</span> <span class="p">{</span><span class="s2">&quot;prometheus_port&quot;</span><span class="p">:</span> <span class="mi">9500</span><span class="p">}]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Test valid values in the initialize <code>StatsWatcher</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">_VALID_PORTS</span><span class="p">)</span>
+<span class="nd">@patch</span><span class="p">(</span><span class="s2">&quot;ccx_data_pipeline.watchers.stats_watcher.start_http_server&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_stats_watcher_initialize</span><span class="p">(</span><span class="n">start_http_server_mock</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">StatsWatcher</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prometheus_port&quot;</span><span class="p">,</span> <span class="mi">8000</span><span class="p">)</span>  <span class="c1"># 8000 is the default value</span>
+    <span class="n">start_http_server_mock</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
