@@ -22,6 +22,7 @@ def runStages() {
         sh "pip install git+https://${TOKEN}@github.com/RedHatInsights/ccx-ocp-core"
         sh "pip install git+https://${TOKEN}@github.com/RedHatInsights/ccx-rules-ocp"
       }
+      sh "pip install -r requirements.txt"
       sh "pip install -e .[dev]"
     }
 
