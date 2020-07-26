@@ -19,6 +19,7 @@ import os
 import platform
 import uuid
 
+from pythonjsonlogger import jsonlogger
 from boto3.session import Session
 from watchtower import CloudWatchLogHandler
 
@@ -58,7 +59,7 @@ def setup_watchtower(logging_config=None):
     root_logger.addHandler(handler)
 
 
-class CloudWatchFormatter(logging.Formatter):
+class CloudWatchFormatter(jsonlogger.JsonFormatter):
     """Class that implements formatter for logging to CloudWatch."""
 
     def __init__(self, *args, **kwargs):
