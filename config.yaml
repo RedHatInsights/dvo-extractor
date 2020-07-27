@@ -59,7 +59,7 @@ service:
         (): "pythonjsonlogger.jsonlogger.JsonFormatter"
         format: "%(filename)s %(lineno)d %(process)d %(levelname)s %(asctime)s %(name)s %(message)s"
       cloudwatch:
-        format: "LEVEL=%(levelname)s; FILENAME=%(filename)s; LINE=%(lineno)d; PID=%(process)d; TIME=%(asctime)s; NAME=%(name)s; HOST=%(hostname)s; MAC_ADDRESS=%(mac_address)s; MESSAGE=%(message)s;"
+        format: "%(filename)s %(levelname)s %(asctime)s %(name)s %(hostname)s %(mac_address)s %(message)s"
     filters:
       context_filter:
         (): "ccx_data_pipeline.log_filter.LogFilter"
