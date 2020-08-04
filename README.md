@@ -236,6 +236,11 @@ the specific _consumer_, _downloader_ and _publisher_ are configured.
     received record is older than this amount of seconds, it will be ignored. By default, messages older than
     2 hours will be ignored. To disable this functionality and process every record ignoring its age, use
     `-1`.
+- `downloader`: name refers to the class `ccx_data_pipeline.http_downloader.HTTPDownloader`. The only argument
+  that can be passed to the initializer is:
+  - `max_archive_size`: this is an optional argument. It will specify the maximum size of the archives that can
+    be processed by the pipeline. If the downloaded archive is bigger, it will be discarded. The parameter should
+    be an string in a human-readable format (it accepts units like KB, KiB, GB, GiB...
 - `publisher` name refers to the class `ccx_data_pipeline.publisher.Publisher` and it also allow to define the
   arguments passed to the initializer modifying the `kwargs` dictionary:
   - `outgoing_topic`: a string indicating the topic where the reported results should be sent.
