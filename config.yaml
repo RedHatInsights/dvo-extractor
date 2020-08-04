@@ -24,7 +24,7 @@ service:
   downloader:
     name: ccx_data_pipeline.http_downloader.HTTPDownloader
     kwargs:
-      max_archive_size: 100M
+      max_archive_size: 100MiB
 
   publisher:
     name: ccx_data_pipeline.kafka_publisher.KafkaPublisher

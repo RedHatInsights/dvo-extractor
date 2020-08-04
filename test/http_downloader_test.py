@@ -16,7 +16,8 @@ _INVALID_TYPE_URLS = [42, 2.71, True, list(), dict()]
 def test_get_invalid_type(url):
     """Test that passing invalid data type to `get` raises an exception."""
     with pytest.raises(TypeError):
-        with HTTPDownloader.get(None, url):
+        sut = HTTPDownloader()
+        with sut.get(url):
             pass
 
 
@@ -27,7 +28,8 @@ _INVALID_URLS = [None, "", "ftp://server", "bucket/file"]
 def test_get_invalid_url(url):
     """Test that passing invalid URL to `get` raises an exception."""
     with pytest.raises(DataPipelineError, match=_REGEX_BAD_URL_FORMAT):
-        with HTTPDownloader.get(None, url):
+        sut = HTTPDownloader()
+        with sut.get(url):
             pass
 
 
@@ -57,8 +59,9 @@ def test_get_valid_url(get_mock, url):
     response_mock = MagicMock()
     get_mock.return_value = response_mock
     response_mock.content = b"file content"
+    sut = HTTPDownloader()
 
-    with HTTPDownloader.get(None, url) as filename:
+    with sut.get(url) as filename:
         with open(filename, "rb") as file_desc:
             file_content = file_desc.read()
             assert file_content == response_mock.content
