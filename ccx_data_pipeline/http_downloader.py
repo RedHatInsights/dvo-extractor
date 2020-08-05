@@ -14,6 +14,7 @@
 
 """Module that defines a Downloader object to get HTTP urls."""
 
+import logging
 import re
 from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
@@ -22,6 +23,41 @@ import requests
 
 
 from ccx_data_pipeline.data_pipeline_error import DataPipelineError
+
+
+LOG = logging.getLogger(__name__)
+
+
+def parse_human_input(file_size):
+    """Parse an input in human-readable format and return a number of bytes."""
+    multipliers = {
+        "K": 10 ** 3,
+        "M": 10 ** 6,
+        "G": 10 ** 9,
+        "T": 10 ** 12,
+        "Ki": 2 ** 10,
+        "Mi": 2 ** 20,
+        "Gi": 2 ** 30,
+        "Ti": 2 ** 40,
+    }
+
+    match = re.match(r"^(?P<quantity>\d+(\.\d+)?)\s*(?P<units>[KMGT]?i?B?)?$", file_size)
+
+    if match is None:
+        raise ValueError(f"The file size cannot be parsed as a file size: {file_size}")
+
+    parsed = match.groupdict()
+    quantity = float(parsed.get("quantity"))
+
+    units = parsed.get("units")
+    units = units.rstrip("B") if units is not None else ""
+
+    if units != "" and units not in multipliers:
+        raise ValueError(f"The file size cannot be parsed because its units: {parsed.get('units')}")
+
+    multiplier = multipliers.get(units, 1)  # if multiplier == "", then 1
+    quantity = quantity * multiplier
+    return int(quantity)
 
 
 # pylint: disable=too-few-public-methods
@@ -35,7 +71,21 @@ class HTTPDownloader:
         r"X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=[^/]+$"
     )
 
-    # pylint: disable=no-self-use
+    def __init__(self, max_archive_size=None):
+        """`HTTPDownloader` initializer.
+
+        This method accepts a `max_archive_size` argument, that indicates the
+        maximum size allowed for the archives. If set, archives bigger than this
+        will be discarded.
+        """
+        if max_archive_size is not None:
+            self.max_archive_size = parse_human_input(max_archive_size)
+            LOG.info("Configured max_archive_size to %s bytes", self.max_archive_size)
+
+        else:
+            self.max_archive_size = None
+            LOG.warning("No max_archive_size defined. Be careful")
+
     @contextmanager
     def get(self, src):
         """Download a file from HTTP server and store it in a temporary file."""
@@ -45,9 +95,15 @@ class HTTPDownloader:
         try:
             response = requests.get(src)
             data = response.content
+            size = len(data)
 
-            if len(data) == 0:
+            if size == 0:
                 raise DataPipelineError(f"Empty input archive from {src}")
+
+            if self.max_archive_size is not None and size > self.max_archive_size:
+                raise DataPipelineError(
+                    f"The archive is too big ({size} > {self.max_archive_size}). Skipping"
+                )
 
             with NamedTemporaryFile() as file_data:
                 file_data.write(data)
