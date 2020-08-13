@@ -1,6 +1,6 @@
 ---
 layout: page
-nav_order: 4
+nav_order: 5
 ---
 # Local setup
 
@@ -31,3 +31,14 @@ curl -k -vvvv -F "upload=@/path/to/your/archive.zip;type=application/vnd.redhat.
 
 or you can use integration tests suite. More details are
 [here](https://gitlab.cee.redhat.com/insights-qe/iqe-ccx-plugin).
+
+
+## Logstash configuration
+
+In order to provide a local **LogStash** service than can be used for local
+testing, please follow the next steps:
+
+1. Clone repository https://github.com/deviantony/docker-elk
+2. Start the LogStash instance with `docker-compose up` in it's directory.
+
+Don't forget to use the latest docker version(fedora repository doesn't have the latest version).
