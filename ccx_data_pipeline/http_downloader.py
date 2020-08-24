@@ -113,4 +113,4 @@ class HTTPDownloader:
             response.close()
 
         except requests.exceptions.ConnectionError as err:
-            raise DataPipelineError(err)
+            raise DataPipelineError(err) from err

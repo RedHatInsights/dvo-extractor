@@ -43,14 +43,18 @@ Module that defines a Downloader object to get HTTP urls.</p>
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="kn">import</span> <span class="nn">re</span>
+      <div class="highlight"><pre><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
 <span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">NamedTemporaryFile</span>
 
 <span class="kn">import</span> <span class="nn">requests</span>
 
 
-<span class="kn">from</span> <span class="nn">ccx_data_pipeline.data_pipeline_error</span> <span class="kn">import</span> <span class="n">DataPipelineError</span></pre></div>
+<span class="kn">from</span> <span class="nn">ccx_data_pipeline.data_pipeline_error</span> <span class="kn">import</span> <span class="n">DataPipelineError</span>
+
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -59,11 +63,10 @@ Module that defines a Downloader object to get HTTP urls.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-2'>#</a>
       </div>
-      <p>pylint: disable=too-few-public-methods
-Downloader for HTTP uris.</p>
+      <p>Parse an input in human-readable format and return a number of bytes.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">class</span> <span class="nc">HTTPDownloader</span><span class="p">:</span></pre></div>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">parse_human_input</span><span class="p">(</span><span class="n">file_size</span><span class="p">):</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -75,7 +78,34 @@ Downloader for HTTP uris.</p>
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre></pre></div>
+      <div class="highlight"><pre>    <span class="n">multipliers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;K&quot;</span><span class="p">:</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;M&quot;</span><span class="p">:</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span><span class="p">,</span>
+        <span class="s2">&quot;G&quot;</span><span class="p">:</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">9</span><span class="p">,</span>
+        <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">12</span><span class="p">,</span>
+        <span class="s2">&quot;Ki&quot;</span><span class="p">:</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="s2">&quot;Mi&quot;</span><span class="p">:</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">20</span><span class="p">,</span>
+        <span class="s2">&quot;Gi&quot;</span><span class="p">:</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="s2">&quot;Ti&quot;</span><span class="p">:</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">40</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?P&lt;quantity&gt;\d+(\.\d+)?)\s*(?P&lt;units&gt;[KMGT]?i?B?)?$&quot;</span><span class="p">,</span> <span class="n">file_size</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The file size cannot be parsed as a file size: </span><span class="si">{</span><span class="n">file_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">parsed</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groupdict</span><span class="p">()</span>
+    <span class="n">quantity</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parsed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;quantity&quot;</span><span class="p">))</span>
+
+    <span class="n">units</span> <span class="o">=</span> <span class="n">parsed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">)</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">units</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">units</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">multipliers</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The file size cannot be parsed because its units: </span><span class="si">{</span><span class="n">parsed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">multiplier</span> <span class="o">=</span> <span class="n">multipliers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># if multiplier == &quot;&quot;, then 1</span>
+    <span class="n">quantity</span> <span class="o">=</span> <span class="n">quantity</span> <span class="o">*</span> <span class="n">multiplier</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">quantity</span><span class="p">)</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -83,6 +113,31 @@ Downloader for HTTP uris.</p>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>pylint: disable=too-few-public-methods
+Downloader for HTTP uris.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">HTTPDownloader</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
       </div>
       <p>https://<hostname>/service_id/file_id?<credentials and other params></p>
     </div>
@@ -95,13 +150,44 @@ Downloader for HTTP uris.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-5'>
+  <div class='section' id='section-7'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-5'>#</a>
+        <a class='octothorpe' href='#section-7'>#</a>
       </div>
-      <p>pylint: disable=no-self-use
-Download a file from HTTP server and store it in a temporary file.</p>
+      <p><code>HTTPDownloader</code> initializer.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_archive_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>This method accepts a <code>max_archive_size</code> argument, that indicates the
+maximum size allowed for the archives. If set, archives bigger than this
+will be discarded.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="n">max_archive_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_archive_size</span> <span class="o">=</span> <span class="n">parse_human_input</span><span class="p">(</span><span class="n">max_archive_size</span><span class="p">)</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Configured max_archive_size to </span><span class="si">%s</span><span class="s2"> bytes&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_archive_size</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_archive_size</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No max_archive_size defined. Be careful&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>Download a file from HTTP server and store it in a temporary file.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="nd">@contextmanager</span>
@@ -109,23 +195,29 @@ Download a file from HTTP server and store it in a temporary file.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-6'>
+  <div class='section' id='section-10'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-6'>#</a>
+        <a class='octothorpe' href='#section-10'>#</a>
       </div>
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre>        <span class="k">if</span> <span class="n">src</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">HTTPDownloader</span><span class="o">.</span><span class="n">HTTP_RE</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Invalid URL format: {src}&quot;</span><span class="p">)</span>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="n">src</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">HTTPDownloader</span><span class="o">.</span><span class="n">HTTP_RE</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid URL format: </span><span class="si">{</span><span class="n">src</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Empty input archive from {src}&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Empty input archive from </span><span class="si">{</span><span class="n">src</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_archive_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_archive_size</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The archive is too big (</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> &gt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_archive_size</span><span class="si">}</span><span class="s2">). Skipping&quot;</span>
+                <span class="p">)</span>
 
             <span class="k">with</span> <span class="n">NamedTemporaryFile</span><span class="p">()</span> <span class="k">as</span> <span class="n">file_data</span><span class="p">:</span>
                 <span class="n">file_data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -135,7 +227,7 @@ Download a file from HTTP server and store it in a temporary file.</p>
             <span class="n">response</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
 
 </pre></div>
     </div>

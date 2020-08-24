@@ -94,11 +94,11 @@ class KafkaPublisher(Publisher):
                 msg_timestamp,
             )
 
-        except UnicodeEncodeError:
-            raise DataPipelineError(f"Error encoding the response to publish: {message}")
+        except UnicodeEncodeError as err:
+            raise DataPipelineError(f"Error encoding the response to publish: {message}") from err
 
-        except ValueError:
-            raise DataPipelineError(f"Error extracting the OrgID: {org_id}")
+        except ValueError as err:
+            raise DataPipelineError(f"Error extracting the OrgID: {org_id}") from err
 
     def error(self, input_msg, ex):
         """Handle pipeline errors by logging them."""

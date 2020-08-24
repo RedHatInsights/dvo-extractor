@@ -106,7 +106,7 @@ The bytes are then sent to the output Kafka topic.</p>
       <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">topic</span> <span class="o">=</span> <span class="n">outgoing_topic</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap_servers</span> <span class="o">=</span> <span class="n">bootstrap_servers</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">topic</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">topic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;outgoing_topic&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">producer</span> <span class="o">=</span> <span class="n">KafkaProducer</span><span class="p">(</span><span class="n">bootstrap_servers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bootstrap_servers</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -196,11 +196,11 @@ Response is already a string, no need to JSON dump.</p>
                 <span class="n">msg_timestamp</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="k">except</span> <span class="ne">UnicodeEncodeError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Error encoding the response to publish: {message}&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">UnicodeEncodeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error encoding the response to publish: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
 
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Error extracting the OrgID: {org_id}&quot;</span><span class="p">)</span></pre></div>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error extracting the OrgID: </span><span class="si">{</span><span class="n">org_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>

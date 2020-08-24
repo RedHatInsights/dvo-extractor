@@ -48,6 +48,7 @@ Submodule to configure logging stuff that cannot be afford from configuration fi
 <span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
 
+<span class="kn">from</span> <span class="nn">pythonjsonlogger</span> <span class="kn">import</span> <span class="n">jsonlogger</span>
 <span class="kn">from</span> <span class="nn">boto3.session</span> <span class="kn">import</span> <span class="n">Session</span>
 <span class="kn">from</span> <span class="nn">watchtower</span> <span class="kn">import</span> <span class="n">CloudWatchLogHandler</span></pre></div>
     </div>
@@ -61,7 +62,7 @@ Submodule to configure logging stuff that cannot be afford from configuration fi
       <p>Setups the CloudWatch handler if the proper configuration is provided.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">def</span> <span class="nf">setup_watchtower</span><span class="p">(</span><span class="n">logging_config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></pre></div>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">setup_watchtower</span><span class="p">(</span><span class="n">logging_config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -96,10 +97,10 @@ Submodule to configure logging stuff that cannot be afford from configuration fi
         <span class="n">boto3_session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
         <span class="n">log_group</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CW_LOG_GROUP&quot;</span><span class="p">],</span>
         <span class="n">stream_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CW_STREAM_NAME&quot;</span><span class="p">],</span>
-        <span class="n">create_log_group</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+        <span class="n">create_log_group</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">logging_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">logging_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">log_format</span> <span class="o">=</span> <span class="n">logging_config</span><span class="p">[</span><span class="s2">&quot;formatters&quot;</span><span class="p">][</span><span class="s2">&quot;cloudwatch&quot;</span><span class="p">][</span><span class="s2">&quot;format&quot;</span><span class="p">]</span>
         <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">CloudWatchFormatter</span><span class="p">(</span><span class="n">log_format</span><span class="p">))</span>
 
@@ -115,7 +116,7 @@ Submodule to configure logging stuff that cannot be afford from configuration fi
       <p>Class that implements formatter for logging to CloudWatch.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">class</span> <span class="nc">CloudWatchFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">):</span></pre></div>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">CloudWatchFormatter</span><span class="p">(</span><span class="n">jsonlogger</span><span class="o">.</span><span class="n">JsonFormatter</span><span class="p">):</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -151,7 +152,7 @@ Submodule to configure logging stuff that cannot be afford from configuration fi
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre>        <span class="nb">super</span><span class="p">(</span><span class="n">CloudWatchFormatter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+      <div class="highlight"><pre>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">node</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mac_address</span> <span class="o">=</span> <span class="n">get_mac_address</span><span class="p">()</span></pre></div>
@@ -180,7 +181,7 @@ Submodule to configure logging stuff that cannot be afford from configuration fi
     <div class='code'>
       <div class="highlight"><pre>        <span class="n">record</span><span class="o">.</span><span class="n">mac_address</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mac_address</span>
         <span class="n">record</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hostname</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CloudWatchFormatter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">record</span><span class="p">)</span></pre></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">record</span><span class="p">)</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -279,7 +280,7 @@ return random.getrandbits(48) | (1 &lt;&lt; 40)
       <p>if this bit is 1, ignore, it&rsquo;s better than have bunch of random numbers in logs</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>        <span class="n">mac_address</span> <span class="o">=</span> <span class="bp">None</span></pre></div>
+      <div class="highlight"><pre>        <span class="n">mac_address</span> <span class="o">=</span> <span class="kc">None</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -291,7 +292,7 @@ return random.getrandbits(48) | (1 &lt;&lt; 40)
       <p>finally format it to the human readable format</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">mac_address</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">mac_address</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">mac_address</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">reversed</span><span class="p">([</span><span class="nb">hex</span><span class="p">((</span><span class="n">mac_address</span> <span class="o">&gt;&gt;</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]))</span>
 
     <span class="k">return</span> <span class="n">mac_address</span>

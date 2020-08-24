@@ -40,7 +40,7 @@ class Consumer(ICMConsumer):
     then passes the file to an internal engine for further processing.
     """
 
-    # pylint: disable=too-many-arguments,bad-continuation
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         publisher,
@@ -220,7 +220,7 @@ class Consumer(ICMConsumer):
         # The `handles` method should prevent this from
         # being called if the input message format is wrong.
         except Exception as ex:
-            raise DataPipelineError(f"Unable to extract URL from input message: {ex}")
+            raise DataPipelineError(f"Unable to extract URL from input message: {ex}") from ex
 
     @staticmethod
     def get_stringfied_record(input_record):

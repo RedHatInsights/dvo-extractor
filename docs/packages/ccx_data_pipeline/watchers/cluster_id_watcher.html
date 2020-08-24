@@ -98,7 +98,7 @@ Module including a mixed watcher to retrieve the cluster ID from the extracted f
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">last_record</span> <span class="o">=</span> <span class="bp">None</span></pre></div>
+      <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">last_record</span> <span class="o">=</span> <span class="kc">None</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -147,14 +147,14 @@ Module including a mixed watcher to retrieve the cluster ID from the extracted f
 id in the expected path.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_record</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_record</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;Unexpected data flow: watched extraction event without &quot;</span>
                 <span class="s2">&quot;a previous receiving event&quot;</span>
             <span class="p">)</span>
             <span class="k">return</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_record</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ClusterName&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_record</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ClusterName&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
 
         <span class="n">id_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">extraction</span><span class="o">.</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">)</span>
@@ -168,17 +168,17 @@ id in the expected path.</p>
                     <span class="bp">self</span><span class="o">.</span><span class="n">last_record</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;ClusterName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cluster_uuid</span>
 
                 <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">last_record</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;ClusterName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">last_record</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;ClusterName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
                     <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;The cluster id is not an UUID. Skipping its extraction&quot;</span><span class="p">)</span>
 
-        <span class="k">except</span> <span class="n">FileNotFoundError</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">last_record</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;ClusterName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_record</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;ClusterName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;The archive doesn&#39;t contain a valid Cluster Id file. Skipping its extraction&quot;</span>
             <span class="p">)</span>
 
         <span class="k">finally</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">last_record</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_record</span> <span class="o">=</span> <span class="kc">None</span>
 
 </pre></div>
     </div>

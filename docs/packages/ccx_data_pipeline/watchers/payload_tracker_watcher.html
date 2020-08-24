@@ -123,7 +123,7 @@ Module containing a <code>Watcher</code> to send updates to the <code>payload-tr
       <p>Send an status update to payload tracker topic.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">_publish_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_msg</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">status_msg</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></pre></div>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">_publish_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_msg</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">status_msg</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -137,7 +137,7 @@ Module containing a <code>Watcher</code> to send updates to the <code>payload-tr
     <div class='code'>
       <div class="highlight"><pre>        <span class="n">request_id</span> <span class="o">=</span> <span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;request_id&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">request_id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">request_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;The received record doesn&#39;t contain a request_id. It won&#39;t be reported&quot;</span><span class="p">)</span>
             <span class="k">return</span>
 

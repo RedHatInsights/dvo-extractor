@@ -64,7 +64,7 @@ class CloudWatchFormatter(jsonlogger.JsonFormatter):
 
     def __init__(self, *args, **kwargs):
         """Initialize CloudWatchFormatter."""
-        super(CloudWatchFormatter, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.hostname = platform.node()
         self.mac_address = get_mac_address()
@@ -73,7 +73,7 @@ class CloudWatchFormatter(jsonlogger.JsonFormatter):
         """Format the record."""
         record.mac_address = self.mac_address
         record.hostname = self.hostname
-        return super(CloudWatchFormatter, self).format(record)
+        return super().format(record)
 
 
 def get_mac_address():

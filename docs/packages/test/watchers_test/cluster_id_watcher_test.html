@@ -17,14 +17,21 @@
       <div class='octowrap'>
         <a class='octothorpe' href='#section-0'>#</a>
       </div>
-      <p>Module containing unit tests for the <code>ConsumerWatcher</code> class.</p>
+      <p>Copyright 2020 Red Hat, Inc</p>
+<p>Licensed under the Apache License, Version 2.0 (the &ldquo;License&rdquo;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<pre><code> http://www.apache.org/licenses/LICENSE-2.0
+</code></pre>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &ldquo;AS IS&rdquo; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+Module containing unit tests for the <code>ConsumerWatcher</code> class.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">MagicMock</span><span class="p">,</span> <span class="n">mock_open</span><span class="p">,</span> <span class="n">patch</span>
-
-<span class="kn">import</span> <span class="nn">pytest</span>
-
-<span class="kn">from</span> <span class="nn">ccx_data_pipeline.watchers.cluster_id_watcher</span> <span class="kn">import</span> <span class="n">ClusterIdWatcher</span></pre></div>
+      <div class="highlight"><pre><span></span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -36,7 +43,11 @@
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">def</span> <span class="nf">_mock_input_msg</span><span class="p">():</span></pre></div>
+      <div class="highlight"><pre><span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">MagicMock</span><span class="p">,</span> <span class="n">mock_open</span><span class="p">,</span> <span class="n">patch</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="kn">from</span> <span class="nn">ccx_data_pipeline.watchers.cluster_id_watcher</span> <span class="kn">import</span> <span class="n">ClusterIdWatcher</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -44,6 +55,18 @@
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">_mock_input_msg</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
       </div>
       <p>pylint: disable=too-few-public-methods
 Test double for InputMessage.</p>
@@ -53,10 +76,10 @@ Test double for InputMessage.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-3'>
+  <div class='section' id='section-4'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-3'>#</a>
+        <a class='octothorpe' href='#section-4'>#</a>
       </div>
       
     </div>
@@ -67,10 +90,10 @@ Test double for InputMessage.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-4'>
+  <div class='section' id='section-5'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-4'>#</a>
+        <a class='octothorpe' href='#section-5'>#</a>
       </div>
       <p>Test that an extraction event is received without a receiving one .</p>
     </div>
@@ -79,26 +102,26 @@ Test double for InputMessage.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-5'>
+  <div class='section' id='section-6'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-5'>#</a>
+        <a class='octothorpe' href='#section-6'>#</a>
       </div>
       
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="n">sut</span> <span class="o">=</span> <span class="n">ClusterIdWatcher</span><span class="p">()</span>
-    <span class="n">sut</span><span class="o">.</span><span class="n">on_extract</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">sut</span><span class="o">.</span><span class="n">on_extract</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="n">sut</span><span class="o">.</span><span class="n">last_record</span> <span class="ow">is</span> <span class="bp">None</span>
+    <span class="k">assert</span> <span class="n">sut</span><span class="o">.</span><span class="n">last_record</span> <span class="ow">is</span> <span class="kc">None</span>
     <span class="k">assert</span> <span class="s2">&quot;Unexpected data flow&quot;</span> <span class="ow">in</span> <span class="n">caplog</span><span class="o">.</span><span class="n">text</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-6'>
+  <div class='section' id='section-7'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-6'>#</a>
+        <a class='octothorpe' href='#section-7'>#</a>
       </div>
       <p>Test that the extracted archive doesn&rsquo;t contain a cluster id file.</p>
     </div>
@@ -107,10 +130,10 @@ Test double for InputMessage.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-7'>
+  <div class='section' id='section-8'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-7'>#</a>
+        <a class='octothorpe' href='#section-8'>#</a>
       </div>
       
     </div>
@@ -124,9 +147,9 @@ Test double for InputMessage.</p>
     <span class="n">sut</span> <span class="o">=</span> <span class="n">ClusterIdWatcher</span><span class="p">()</span>
     <span class="n">sut</span><span class="o">.</span><span class="n">on_recv</span><span class="p">(</span><span class="n">input_msg_mock</span><span class="p">)</span>
 
-    <span class="n">sut</span><span class="o">.</span><span class="n">on_extract</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">extraction_mock</span><span class="p">)</span>
+    <span class="n">sut</span><span class="o">.</span><span class="n">on_extract</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extraction_mock</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="n">input_msg_mock</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;ClusterName&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span>
+    <span class="k">assert</span> <span class="n">input_msg_mock</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;ClusterName&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
     <span class="k">assert</span> <span class="s2">&quot;The archive doesn&#39;t contain a valid Cluster Id file&quot;</span> <span class="ow">in</span> <span class="n">caplog</span><span class="o">.</span><span class="n">text</span>
 
 
@@ -138,23 +161,23 @@ Test double for InputMessage.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-8'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-8'>#</a>
-      </div>
-      <p>Test that the id file contains non UUID values.</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">_INCORRECT_UUIDS</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_cluster_id_watcher_bad_content</span><span class="p">(</span><span class="n">caplog</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
   <div class='section' id='section-9'>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>Test that the id file contains non UUID values.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">_INCORRECT_UUIDS</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_cluster_id_watcher_bad_content</span><span class="p">(</span><span class="n">caplog</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
       </div>
       
     </div>
@@ -169,16 +192,16 @@ Test double for InputMessage.</p>
     <span class="n">sut</span><span class="o">.</span><span class="n">on_recv</span><span class="p">(</span><span class="n">input_msg_mock</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s2">&quot;builtins.open&quot;</span><span class="p">,</span> <span class="n">mock_open</span><span class="p">(</span><span class="n">read_data</span><span class="o">=</span><span class="n">value</span><span class="p">)):</span>
-        <span class="n">sut</span><span class="o">.</span><span class="n">on_extract</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">extraction_mock</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">input_msg_mock</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;ClusterName&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span>
+        <span class="n">sut</span><span class="o">.</span><span class="n">on_extract</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extraction_mock</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">input_msg_mock</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;ClusterName&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="k">assert</span> <span class="s2">&quot;The cluster id is not an UUID&quot;</span> <span class="ow">in</span> <span class="n">caplog</span><span class="o">.</span><span class="n">text</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-10'>
+  <div class='section' id='section-11'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-10'>#</a>
+        <a class='octothorpe' href='#section-11'>#</a>
       </div>
       <p>Test that the id file contains non UUID values.</p>
     </div>
@@ -187,10 +210,10 @@ Test double for InputMessage.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-11'>
+  <div class='section' id='section-12'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-11'>#</a>
+        <a class='octothorpe' href='#section-12'>#</a>
       </div>
       
     </div>
@@ -207,7 +230,7 @@ Test double for InputMessage.</p>
     <span class="n">uuid_value</span> <span class="o">=</span> <span class="s2">&quot;aaaaaaaa-bbbb-cccc-dddd-000000000000&quot;</span>
 
     <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s2">&quot;builtins.open&quot;</span><span class="p">,</span> <span class="n">mock_open</span><span class="p">(</span><span class="n">read_data</span><span class="o">=</span><span class="n">uuid_value</span><span class="p">)):</span>
-        <span class="n">sut</span><span class="o">.</span><span class="n">on_extract</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">extraction_mock</span><span class="p">)</span>
+        <span class="n">sut</span><span class="o">.</span><span class="n">on_extract</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extraction_mock</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">input_msg_mock</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;ClusterName&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">uuid_value</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">caplog</span><span class="o">.</span><span class="n">records</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
 

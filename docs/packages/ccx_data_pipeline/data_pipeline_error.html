@@ -94,12 +94,12 @@ exceptions caused by internal and external code.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>        <span class="k">return</span> <span class="p">(</span>
-            <span class="n">f</span><span class="s2">&quot;Status: Error; &quot;</span>
-            <span class="n">f</span><span class="s2">&quot;Topic: {input_msg.topic}; &quot;</span>
-            <span class="n">f</span><span class="s2">&quot;Partition: {input_msg.partition}; &quot;</span>
-            <span class="n">f</span><span class="s2">&quot;Offset: {input_msg.offset}; &quot;</span>
-            <span class="n">f</span><span class="s2">&quot;Cluster: {input_msg.value[&#39;ClusterName&#39;]}; &quot;</span>
-            <span class="n">f</span><span class="s2">&quot;Cause: {self}&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Status: Error; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Topic: </span><span class="si">{</span><span class="n">input_msg</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Partition: </span><span class="si">{</span><span class="n">input_msg</span><span class="o">.</span><span class="n">partition</span><span class="si">}</span><span class="s2">; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Offset: </span><span class="si">{</span><span class="n">input_msg</span><span class="o">.</span><span class="n">offset</span><span class="si">}</span><span class="s2">; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Cluster: </span><span class="si">{</span><span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;ClusterName&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Cause: </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
 </pre></div>

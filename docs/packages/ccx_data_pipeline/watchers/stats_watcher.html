@@ -139,10 +139,10 @@ A Watcher that stores different Prometheus <code>Counter</code>s.</p>
             <span class="s2">&quot;Histogram of durations of publishing the OCP engine results&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_downloaded_time</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_processed_time</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_published_time</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_downloaded_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_processed_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_published_time</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">start_http_server</span><span class="p">(</span><span class="n">prometheus_port</span><span class="p">)</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;StatWatcher created and listening on port </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">prometheus_port</span><span class="p">)</span></pre></div>
@@ -279,10 +279,10 @@ A Watcher that stores different Prometheus <code>Counter</code>s.</p>
     <div class='code'>
       <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">_failures_total</span><span class="o">.</span><span class="n">inc</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_downloaded_time</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_downloaded_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_download_duration</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_process_duration</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processed_time</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processed_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_process_duration</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_downloaded_time</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_publish_duration</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></pre></div>
@@ -333,9 +333,9 @@ A Watcher that stores different Prometheus <code>Counter</code>s.</p>
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">_downloaded_time</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_processed_time</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_published_time</span> <span class="o">=</span> <span class="bp">None</span></pre></div>
+      <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">_downloaded_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_processed_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_published_time</span> <span class="o">=</span> <span class="kc">None</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
