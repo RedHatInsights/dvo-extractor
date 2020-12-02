@@ -144,6 +144,7 @@ Downloader for HTTP uris.</p>
     <div class='code'>
       <div class="highlight"><pre>    <span class="n">HTTP_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
         <span class="sa">r</span><span class="s2">&quot;^(?:https://[^/]+\.s3\.amazonaws\.com/[0-9a-zA-Z/\-]+|&quot;</span>
+        <span class="sa">r</span><span class="s2">&quot;https://s3\.[0-9a-zA-Z\-]+\.amazonaws\.com/[0-9a-zA-Z\-]+/[0-9a-zA-Z/\-]+|&quot;</span>
         <span class="sa">r</span><span class="s2">&quot;http://minio:9000/insights-upload-perma/[0-9a-zA-Z\.\-]+/[0-9a-zA-Z\-]+)\?&quot;</span>
         <span class="sa">r</span><span class="s2">&quot;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=[^/]+$&quot;</span>
     <span class="p">)</span></pre></div>
