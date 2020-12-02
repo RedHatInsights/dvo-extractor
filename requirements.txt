@@ -29,7 +29,7 @@ msgpack==1.0.0
 numpy==1.19.1
 pandas==1.0.5
 prometheus-api-client==0.3.1
-prometheus-client==0.8.0
+prometheus-client==0.7.1
 py==1.9.0
 pycparser==2.20
 pyrsistent==0.16.0
