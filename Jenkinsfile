@@ -12,8 +12,8 @@ def runStages() {
   openShiftUtils.withNode(
     image: "docker-registry.upshift.redhat.com/ccx-dev/ccx-e2e-base:latest",
     jenkinsSlaveImage: pipelineVars.centralCIjenkinsSlaveImage,
-    cloud: "jenkins-csb-ccx",
-    namespace: "jenkins-csb-ccx"
+    cloud: "openshift",
+    namespace: "ccx-explore"
   ) {
     checkout scm
 
