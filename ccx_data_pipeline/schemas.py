@@ -53,6 +53,8 @@ IDENTITY_SCHEMA = {
                     },
                 },
             },
+            "required": ["internal"],
         },
     },
+    "required": ["identity"],
 }
