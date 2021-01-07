@@ -18,12 +18,15 @@ def runStages() {
     checkout scm
 
     gitUtils.stageWithContext("Install-dependencies") {
+      sh "pip install -U pip setuptools wheel"
       withCredentials([string(credentialsId: "insights-droid-github-token", variable: "TOKEN")]) {
-        sh "pip install git+https://${TOKEN}@github.com/RedHatInsights/ccx-ocp-core"
-        sh "pip install git+https://${TOKEN}@github.com/RedHatInsights/ccx-rules-ocp"
+        sh "echo 'echo ${TOKEN}' > /tmp/git_askpass.sh"
+        sh "chmod +x /tmp/git_askpass.sh"
       }
-      sh "pip install -r requirements.txt"
-      sh "pip install -e .[dev]"
+      withEnv(["GIT_ASKPASS=/tmp/git_askpass.sh"]) {
+        sh "pip install -r requirements.txt"
+        sh "pip install -e .[dev]"
+      }
     }
 
     gitUtils.stageWithContext("Black formatter") {
