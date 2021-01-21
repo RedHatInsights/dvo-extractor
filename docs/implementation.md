@@ -13,6 +13,15 @@ corresponding S3 bucket.
 
 ### Format of the received Kafka records
 
+---
+**NOTE**
+
+Detailed information about the exact format of received Kafka records is
+available at
+https://redhatinsights.github.io/insights-data-schemas/platform_upload_buckit_messages.html
+
+---
+
 ```json5
 {
   "account": 123456, // (uint)
