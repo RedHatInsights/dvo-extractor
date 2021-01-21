@@ -3,6 +3,7 @@ layout: page
 nav_order: 8
 ---
 # References
+- [Insights Data Schemas](https://redhatinsights.github.io/insights-data-schemas/)
 - [Promoting pipeline
   documentation](https://github.com/RedHatInsights/e2e-deploy/blob/master/docs/pipeline.md)
 - ccx-data-pipeline namespaces:
