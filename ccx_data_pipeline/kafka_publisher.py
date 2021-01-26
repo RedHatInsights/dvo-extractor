@@ -40,12 +40,12 @@ class KafkaPublisher(Publisher):
         """Construct a new `KafkaPublisher` given `kwargs` from the config YAML."""
         self.topic = outgoing_topic
         self.bootstrap_servers = bootstrap_servers
-
         if self.topic is None:
             raise KeyError("outgoing_topic")
 
         self.producer = KafkaProducer(bootstrap_servers=self.bootstrap_servers, **kwargs)
         LOG.info("Producing to topic '%s' on brokers %s", self.topic, self.bootstrap_servers)
+        self.outdata_schema_version = 1
 
     def publish(self, input_msg, response):
         """
@@ -66,7 +66,8 @@ class KafkaPublisher(Publisher):
                 "ClusterName": input_msg.value["ClusterName"],
                 "Report": json.loads(response),
                 "LastChecked": msg_timestamp,
-                "RequestId": input_msg.value.get("request_id"),
+                "Version": self.outdata_schema_version,
+                "RequestId": input_msg.value.get("request_id")
             }
 
             message = json.dumps(output_msg) + "\n"
@@ -76,10 +77,11 @@ class KafkaPublisher(Publisher):
             self.producer.send(self.topic, message.encode("utf-8"))
             LOG.debug("Message has been sent successfully.")
             LOG.debug(
-                'Message context: OrgId=%s, ClusterName="%s", LastChecked="%s"',
+                'Message context: OrgId=%s, ClusterName="%s", LastChecked="%s, Version=%d"',
                 output_msg["OrgID"],
                 output_msg["ClusterName"],
                 output_msg["LastChecked"],
+                output_msg["Version"],
             )
 
             LOG.info(
