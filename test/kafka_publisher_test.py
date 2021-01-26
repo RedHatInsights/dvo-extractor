@@ -85,7 +85,7 @@ class KafkaPublisherTest(unittest.TestCase):
         expected_message = (
             b'{"OrgID": 5000, "ClusterName": "the cluster name", '
             b'"Report": {"key1": "value1"}, "LastChecked": "2020-01-23T16:15:59.478901889Z", '
-            b'"RequestId": null}\n'
+            b'"Version": 1, "RequestId": null}\n'
         )
 
         with patch("ccx_data_pipeline.kafka_publisher.KafkaProducer") as kafka_producer_init_mock:
@@ -121,7 +121,7 @@ class KafkaPublisherTest(unittest.TestCase):
         expected_message = (
             b'{"OrgID": 5000, "ClusterName": "the cluster name", '
             b'"Report": {"key1": "value1"}, "LastChecked": "2020-01-23T16:15:59.478901889Z", '
-            b'"RequestId": "REQUEST_ID"}\n'
+            b'"Version": 1, "RequestId": "REQUEST_ID"}\n'
         )
 
         with patch("ccx_data_pipeline.kafka_publisher.KafkaProducer") as kafka_producer_init_mock:
