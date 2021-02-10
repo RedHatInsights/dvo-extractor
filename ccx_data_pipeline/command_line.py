@@ -17,11 +17,13 @@
 import argparse
 import logging
 import sys
+import os
 
 from insights_messaging.appbuilder import AppBuilder
 import pkg_resources
 
 from ccx_data_pipeline.logging import setup_watchtower
+from ccx_data_pipeline.utils.sentry import init_sentry
 
 
 def parse_args():
@@ -56,6 +58,7 @@ def ccx_data_pipeline():
         sys.exit(0)
 
     with open(args.config) as file_:
+        init_sentry(os.environ.get("SENTRY_DSN", None))
         app_builder = AppBuilder(file_.read())
         logging_config = app_builder.service["logging"]
         logging.config.dictConfig(logging_config)
