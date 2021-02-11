@@ -57,8 +57,9 @@ def ccx_data_pipeline():
         print_version()
         sys.exit(0)
 
+    init_sentry(os.environ.get("SENTRY_DSN", None))
+
     with open(args.config) as file_:
-        init_sentry(os.environ.get("SENTRY_DSN", None))
         app_builder = AppBuilder(file_.read())
         logging_config = app_builder.service["logging"]
         logging.config.dictConfig(logging_config)
