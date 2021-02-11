@@ -254,5 +254,5 @@ class Consumer(ICMConsumer):
                     "%Y-%m-%d- %H:%M:%S", time.gmtime(self.last_received_message_time)
                 )
                 LOG.warning("No new messages in the queue since %s", last_received_time_str)
-                # To do the minimum interruptions possible, sleep for one hour
-                time.sleep(MAX_ELAPSED_TIME_BETWEEN_MESSAGES)
+            # To do the minimum interruptions possible, sleep for one hour
+            time.sleep(MAX_ELAPSED_TIME_BETWEEN_MESSAGES)
