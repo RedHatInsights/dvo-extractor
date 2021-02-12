@@ -1,4 +1,4 @@
-# Copyright 2020 Red Hat, Inc
+# Copyright 2021 Red Hat, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -381,13 +381,13 @@ def test_elapsed_time_thread_warning_when_no_message_received():
     with patch("ccx_data_pipeline.consumer.LOG", logger):
         sut = Consumer(None, None, None, "group", "topic", ["server"])
         assert sut.check_elapsed_time_thread
+        alert_time = time.strftime(
+            "%Y-%m-%d- %H:%M:%S", time.gmtime(sut.last_received_message_time)
+        )
+        alert_message = "No new messages in the queue since " + alert_time
         # Make sure the thread woke up at least once
         time.sleep(2 * MAX_ELAPSED_TIME_BETWEEN_MESSAGES_TEST)
-        assert (
-            "No new messages in the queue since "
-            + time.strftime("%Y-%m-%d- %H:%M:%S", time.gmtime(sut.last_received_message_time))
-            in buf.getvalue()
-        )
+        assert alert_message in buf.getvalue()
 
     logger.removeHandler(log_handler)
 
@@ -417,10 +417,8 @@ def test_elapsed_time_thread_no_warning_when_message_received():
         buf.truncate(0)  # Empty buffer to make sure this test does what it should do
         sut.last_received_message_time = time.time()
         assert "No new messages in the queue since " not in buf.getvalue()
-        time.sleep(MAX_ELAPSED_TIME_BETWEEN_MESSAGES_TEST / 2)  # Half the time
+        time.sleep(MAX_ELAPSED_TIME_BETWEEN_MESSAGES_TEST - 1)
         sut.last_received_message_time = time.time()
-        assert "No new messages in the queue since " not in buf.getvalue()
-        time.sleep(MAX_ELAPSED_TIME_BETWEEN_MESSAGES_TEST / 2)  # The other half
         assert "No new messages in the queue since " not in buf.getvalue()
 
     logger.removeHandler(log_handler)
