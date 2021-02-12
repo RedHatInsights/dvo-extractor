@@ -48,6 +48,17 @@ def print_version():
     )
 
 
+def apply_config(file_):
+    """Apply configuration file provided as argument and run consumer."""
+    app_builder = AppBuilder(file_.read())
+    logging_config = app_builder.service["logging"]
+    logging.config.dictConfig(logging_config)
+    print_version()
+    consumer = app_builder.build_app()
+    setup_watchtower(logging_config)
+    consumer.run()
+
+
 def ccx_data_pipeline():
     """Handle for ccx-data-pipeline command."""
     args = parse_args()
@@ -59,12 +70,12 @@ def ccx_data_pipeline():
 
     init_sentry(os.environ.get("SENTRY_DSN", None))
 
-    with open(args.config) as file_:
-        app_builder = AppBuilder(file_.read())
-        logging_config = app_builder.service["logging"]
-        logging.config.dictConfig(logging_config)
-        print_version()
-        consumer = app_builder.build_app()
-        setup_watchtower(logging_config)
-        consumer.run()
+    if args.config:
+        apply_config(args.config)
         sys.exit(0)
+    logger = logging.getLogger(__name__)
+    logger.error(
+        "Application configuration not provided. \
+        Use 'ccx-data-pipeline <config>' to run the application",
+    )
+    sys.exit(1)
