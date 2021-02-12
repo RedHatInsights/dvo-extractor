@@ -19,6 +19,7 @@ import logging
 import base64
 import binascii
 import time
+from threading import Thread
 
 import jsonschema
 from insights_messaging.consumers import Consumer as ICMConsumer
@@ -29,6 +30,7 @@ from ccx_data_pipeline.data_pipeline_error import DataPipelineError
 from ccx_data_pipeline.schemas import INPUT_MESSAGE_SCHEMA, IDENTITY_SCHEMA
 
 LOG = logging.getLogger(__name__)
+MAX_ELAPSED_TIME_BETWEEN_MESSAGES = 60 * 60
 
 
 class Consumer(ICMConsumer):
@@ -40,7 +42,6 @@ class Consumer(ICMConsumer):
     then passes the file to an internal engine for further processing.
     """
 
-    # pylint: disable=too-many-arguments
     def __init__(
         self,
         publisher,
@@ -53,6 +54,7 @@ class Consumer(ICMConsumer):
         retry_backoff_ms=1000,
         **kwargs,
     ):
+        # pylint: disable=too-many-arguments
         """Construct a new external data pipeline Kafka consumer."""
         if isinstance(bootstrap_servers, str):
             bootstrap_servers = bootstrap_servers.split(",")
@@ -76,6 +78,13 @@ class Consumer(ICMConsumer):
         self.max_record_age = max_record_age
         self.log_pattern = f"topic: {incoming_topic}, group_id: {group_id}"
 
+        self.last_received_message_time = time.time()
+
+        self.check_elapsed_time_thread = Thread(
+            target=self.check_last_message_received_time, daemon=True
+        )
+        self.check_elapsed_time_thread.start()
+
     # pylint: disable=broad-except
     def run(self):
         """Execute the consumer logic."""
@@ -94,7 +103,7 @@ class Consumer(ICMConsumer):
             dict: Deserialized input message if successful.
             DataPipelineError: Exception containing error message if anything failed.
 
-            The exception is returns instead of being thrown in order to prevent
+            The exception is returned instead of being thrown in order to prevent
             breaking the message handling / polling loop in `Consumer.run`.
         """
         LOG.debug("Deserializing incoming bytes (%s)", self.log_pattern)
@@ -197,6 +206,8 @@ class Consumer(ICMConsumer):
             self.fire("on_not_handled", input_msg)
             return False
         # ----------------------------------------------------------------------------
+        # Set timestamp of last processed message
+        self.last_received_message_time = time.time()
 
         return True
 
@@ -229,3 +240,19 @@ class Consumer(ICMConsumer):
             f"topic: '{input_record.topic}', partition: {input_record.partition}, "
             f"offset: {input_record.offset}, timestamp: {input_record.timestamp}"
         )
+
+    def check_last_message_received_time(self):
+        """
+        Verify elapsed time between received messages and warn if too long.
+
+        Checks if the last received message was received more than one hour ago
+        and sends an alert if it is the case
+        """
+        while True:
+            if time.time() - self.last_received_message_time >= MAX_ELAPSED_TIME_BETWEEN_MESSAGES:
+                last_received_time_str = time.strftime(
+                    "%Y-%m-%d- %H:%M:%S", time.gmtime(self.last_received_message_time)
+                )
+                LOG.warning("No new messages in the queue since %s", last_received_time_str)
+            # To do the minimum interruptions possible, sleep for one hour
+            time.sleep(MAX_ELAPSED_TIME_BETWEEN_MESSAGES)

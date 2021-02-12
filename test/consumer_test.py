@@ -1,4 +1,4 @@
-# Copyright 2020 Red Hat, Inc
+# Copyright 2021 Red Hat, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,10 @@
 # limitations under the License.
 
 """Module containing unit tests for the `Consumer` class."""
+
+import logging
+import io
+import time
 
 from unittest.mock import patch
 
@@ -350,3 +354,71 @@ def test_consumer_init_direct(topic, group, server):
             Consumer(None, None, None, group, topic, [server])
 
             mock_consumer_init.assert_called_with(None, None, None)
+
+
+MAX_ELAPSED_TIME_BETWEEN_MESSAGES_TEST = 2
+
+
+@patch("insights_messaging.consumers.Consumer.__init__", lambda *a, **k: None)
+@patch(
+    "ccx_data_pipeline.consumer.MAX_ELAPSED_TIME_BETWEEN_MESSAGES",
+    MAX_ELAPSED_TIME_BETWEEN_MESSAGES_TEST,
+)
+def test_elapsed_time_thread_warning_when_no_message_received():
+    """
+    Test elapsed time thread if no new message received on time.
+
+    Test that warnings are sent if no new messages are received before
+    the defined MAX_ELAPSED_TIME_BETWEEN_MESSAGES.
+    """
+    buf = io.StringIO()
+    log_handler = logging.StreamHandler(buf)
+
+    logger = logging.getLogger()
+    logger.level = logging.DEBUG
+    logger.addHandler(log_handler)
+
+    with patch("ccx_data_pipeline.consumer.LOG", logger):
+        sut = Consumer(None, None, None, "group", "topic", ["server"])
+        assert sut.check_elapsed_time_thread
+        alert_time = time.strftime(
+            "%Y-%m-%d- %H:%M:%S", time.gmtime(sut.last_received_message_time)
+        )
+        alert_message = "No new messages in the queue since " + alert_time
+        # Make sure the thread woke up at least once
+        time.sleep(2 * MAX_ELAPSED_TIME_BETWEEN_MESSAGES_TEST)
+        assert alert_message in buf.getvalue()
+
+    logger.removeHandler(log_handler)
+
+
+@patch("insights_messaging.consumers.Consumer.__init__", lambda *a, **k: None)
+@patch(
+    "ccx_data_pipeline.consumer.MAX_ELAPSED_TIME_BETWEEN_MESSAGES",
+    MAX_ELAPSED_TIME_BETWEEN_MESSAGES_TEST,
+)
+def test_elapsed_time_thread_no_warning_when_message_received():
+    """
+    Test elapsed time thread if new message received on time.
+
+    Test that no warnings are sent if a new message is received before
+    the defined MAX_ELAPSED_TIME_BETWEEN_MESSAGES.
+    """
+    buf = io.StringIO()
+    log_handler = logging.StreamHandler(buf)
+
+    logger = logging.getLogger()
+    logger.level = logging.DEBUG
+    logger.addHandler(log_handler)
+
+    with patch("ccx_data_pipeline.consumer.LOG", logger):
+        sut = Consumer(None, None, None)
+        assert sut.check_elapsed_time_thread
+        buf.truncate(0)  # Empty buffer to make sure this test does what it should do
+        sut.last_received_message_time = time.time()
+        assert "No new messages in the queue since " not in buf.getvalue()
+        time.sleep(MAX_ELAPSED_TIME_BETWEEN_MESSAGES_TEST - 1)
+        sut.last_received_message_time = time.time()
+        assert "No new messages in the queue since " not in buf.getvalue()
+
+    logger.removeHandler(log_handler)
