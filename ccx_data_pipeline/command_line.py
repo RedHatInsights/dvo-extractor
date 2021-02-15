@@ -48,15 +48,16 @@ def print_version():
     )
 
 
-def apply_config(file_):
+def apply_config(config):
     """Apply configuration file provided as argument and run consumer."""
-    app_builder = AppBuilder(file_.read())
-    logging_config = app_builder.service["logging"]
-    logging.config.dictConfig(logging_config)
-    print_version()
-    consumer = app_builder.build_app()
-    setup_watchtower(logging_config)
-    consumer.run()
+    with open(config) as file_:
+        app_builder = AppBuilder(file_.read())
+        logging_config = app_builder.service["logging"]
+        logging.config.dictConfig(logging_config)
+        print_version()
+        consumer = app_builder.build_app()
+        setup_watchtower(logging_config)
+        consumer.run()
 
 
 def ccx_data_pipeline():
