@@ -26,6 +26,11 @@ RUN pip install -U --no-cache-dir pip setuptools && \
     chmod -R g=u $HOME $VENV /etc/passwd && \
     chgrp -R 0 $HOME $VENV
 
+RUN curl -L -o /usr/bin/haberdasher \
+    https://github.com/RedHatInsights/haberdasher/releases/download/v0.1.3/haberdasher_linux_amd64 && \
+    chmod 755 /usr/bin/haberdasher
+
 USER 1001
 
+ENTRYPOINT ["/usr/bin/haberdasher"]
 CMD ["sh", "-c", "ccx-data-pipeline $CONFIG_PATH"]
