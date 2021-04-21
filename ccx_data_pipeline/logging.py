@@ -26,6 +26,10 @@ from watchtower import CloudWatchLogHandler
 
 def setup_watchtower(logging_config=None):
     """Setups the CloudWatch handler if the proper configuration is provided."""
+    enabled = os.getenv("LOGGING_TO_CW_ENABLED", 'False').lower() in ('true', '1', 't', 'yes')
+    if not enabled:
+        return
+
     aws_config_vars = (
         "CW_AWS_ACCESS_KEY_ID",
         "CW_AWS_SECRET_ACCESS_KEY",
