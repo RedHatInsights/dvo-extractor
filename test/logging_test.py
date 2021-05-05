@@ -102,6 +102,7 @@ def test_setup_watchtower(get_logger_mock, log_handler_init_mock, session_init_m
         "AWS_REGION_NAME": "a region",
         "CW_LOG_GROUP": "a group",
         "CW_STREAM_NAME": "the stream",
+        "LOGGING_TO_CW_ENABLED": "true"
     }
 
     with patch.dict("ccx_data_pipeline.logging.os.environ", valid_env):
