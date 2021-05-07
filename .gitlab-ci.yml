@@ -1,0 +1,44 @@
+stages:
+  - code-analysis
+  - unit-tests
+
+linting:
+  image: docker-registry.upshift.redhat.com/ccx-dev/ccx-builder-py:latest
+  stage: code-analysis
+  variables:
+    PIP_INDEX_URL: https://repository.engineering.redhat.com/nexus/repository/ccx/simple
+    PIP_INDEX: https://repository.engineering.redhat.com/nexus/repository/ccx-search/pypi
+  except:
+    - schedules
+  before_script:
+    - python3 -m venv .venv
+    - source .venv/bin/activate
+    - pip install -U pip setuptools wheel
+    - pip install -r requirements_int.txt
+    - pip install -e .[dev]
+  script:
+    - pre-commit run --all
+  after_script:
+    - git diff
+  tags:
+    - shared
+
+
+unit-py36:
+  image: docker-registry.upshift.redhat.com/ccx-dev/ccx-builder-py:latest
+  stage: unit-tests
+  variables:
+    PIP_INDEX_URL: https://repository.engineering.redhat.com/nexus/repository/ccx/simple
+    PIP_INDEX: https://repository.engineering.redhat.com/nexus/repository/ccx-search/pypi
+  except:
+    - schedules
+  before_script:
+    - python3 -m venv .venv
+    - source .venv/bin/activate
+    - pip install -U pip setuptools wheel
+    - pip install -r requirements_int.txt
+    - pip install -e .[dev]
+  script:
+    - pytest
+  tags:
+    - shared

@@ -301,7 +301,8 @@ _INVALID_RECORD_VALUES = [
 
 @pytest.mark.parametrize("value", _INVALID_RECORD_VALUES)
 @patch(
-    "ccx_data_pipeline.consumer.KafkaConsumer.__init__", lambda *args, **kwargs: None,
+    "ccx_data_pipeline.consumer.KafkaConsumer.__init__",
+    lambda *args, **kwargs: None,
 )
 def test_handles_invalid(value):
     """Test that `Consumer` refuses to handle malformed input messages."""

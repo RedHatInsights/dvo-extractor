@@ -35,6 +35,12 @@ _MESSAGES = ["Everything is working correctly", "Something we wrong"]
 def test_log_filter(module, level, lineno, msg):
     """Test that all messages get through the log filter."""
     record = LogRecord(
-        f"ccx_data_pipeline.{module}", level, f"{module}.py", lineno, msg, tuple(), Exception(),
+        f"ccx_data_pipeline.{module}",
+        level,
+        f"{module}.py",
+        lineno,
+        msg,
+        tuple(),
+        Exception(),
     )
     assert LogFilter.filter(None, record) is True
