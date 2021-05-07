@@ -67,7 +67,7 @@ class KafkaPublisher(Publisher):
                 "Report": json.loads(response),
                 "LastChecked": msg_timestamp,
                 "Version": self.outdata_schema_version,
-                "RequestId": input_msg.value.get("request_id")
+                "RequestId": input_msg.value.get("request_id"),
             }
 
             message = json.dumps(output_msg) + "\n"

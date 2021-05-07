@@ -25,4 +25,3 @@ Please describe how the change was tested locally. If, for some reason, the test
 * [ ] updated documentation wherever necessary
 * [ ] added or modified tests if necessary
 * [ ] updated schemas and validators in [insights-data-schemas](https://github.com/RedHatInsights/insights-data-schemas) in case of input/output change
-
