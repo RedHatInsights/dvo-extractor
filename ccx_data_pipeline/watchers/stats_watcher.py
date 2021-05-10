@@ -70,6 +70,11 @@ class StatsWatcher(ConsumerWatcher):
             "Histogram of durations of publishing the OCP engine results",
         )
 
+        self._processed_timeout_total = Counter(
+            "ccx_engine_processed_timeout_total",
+            "Counter of timeouts while processing archives",
+        )
+
         self._start_time = None
         self._downloaded_time = None
         self._processed_time = None
@@ -98,6 +103,10 @@ class StatsWatcher(ConsumerWatcher):
 
         self._processed_time = time.time()
         self._process_duration.observe(self._processed_time - self._downloaded_time)
+
+    def on_process_timeout(self):
+        """On process timeout event handler."""
+        self._processed_timeout_total.inc()
 
     def on_consumer_success(self, input_msg, broker, results):
         """On consumer success event handler."""
@@ -139,3 +148,4 @@ class StatsWatcher(ConsumerWatcher):
         REGISTRY.unregister(self._download_duration)
         REGISTRY.unregister(self._process_duration)
         REGISTRY.unregister(self._publish_duration)
+        REGISTRY.unregister(self._processed_timeout_total)

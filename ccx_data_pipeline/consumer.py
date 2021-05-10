@@ -17,9 +17,11 @@
 import json
 import logging
 import base64
+
 import binascii
 import time
 from threading import Thread
+from signal import signal, alarm, SIGALRM
 
 import jsonschema
 from insights_messaging.consumers import Consumer as ICMConsumer
@@ -29,8 +31,20 @@ from kafka.consumer.fetcher import ConsumerRecord
 from ccx_data_pipeline.data_pipeline_error import DataPipelineError
 from ccx_data_pipeline.schemas import INPUT_MESSAGE_SCHEMA, IDENTITY_SCHEMA
 
+
 LOG = logging.getLogger(__name__)
 MAX_ELAPSED_TIME_BETWEEN_MESSAGES = 60 * 60
+
+
+def handle_message_processing_timeout(signalnum, handler):
+    """
+    Handle alarm raised when message processing takes too much time.
+
+    An exception is raised, and is handled by the insights-core-messaging
+    Consumer's process method. This way, the currently monitored metrics are still
+    applied, and we can handle the behavior when TimeoutError is raised.
+    """
+    raise TimeoutError("Couldn't process message in the given time frame.")
 
 
 class Consumer(ICMConsumer):
@@ -52,6 +66,7 @@ class Consumer(ICMConsumer):
         bootstrap_servers=None,
         max_record_age=7200,
         retry_backoff_ms=1000,
+        processing_timeout_s=0,
         **kwargs,
     ):
         # pylint: disable=too-many-arguments
@@ -85,13 +100,29 @@ class Consumer(ICMConsumer):
         )
         self.check_elapsed_time_thread.start()
 
+        self.processing_timeout = processing_timeout_s
+        signal(SIGALRM, handle_message_processing_timeout)
+
     # pylint: disable=broad-except
     def run(self):
         """Execute the consumer logic."""
         for msg in self.consumer:
             try:
+                alarm(self.processing_timeout)
                 if self.handles(msg):
                     self.process(msg)
+                alarm(0)
+            except TimeoutError as ex:
+                LOG.exception(ex)
+                self.fire("on_process_timeout")
+                if not self.requerer:
+                    LOG.warning(
+                        "No Kafka requeuer configured. This message will be discarded: %s",
+                        Consumer.get_stringfied_record(msg),
+                    )
+                else:
+                    self.requeuer.requeue(msg, ex)
+
             except Exception as ex:
                 LOG.exception(ex)
 
