@@ -25,6 +25,7 @@ from signal import signal, alarm, SIGALRM
 
 import jsonschema
 from insights_messaging.consumers import Consumer as ICMConsumer
+
 from kafka import KafkaConsumer
 from kafka.consumer.fetcher import ConsumerRecord
 
@@ -67,6 +68,7 @@ class Consumer(ICMConsumer):
         max_record_age=7200,
         retry_backoff_ms=1000,
         processing_timeout_s=0,
+        requeuer=None,
         **kwargs,
     ):
         # pylint: disable=too-many-arguments
@@ -81,7 +83,8 @@ class Consumer(ICMConsumer):
             group_id,
         )
 
-        super().__init__(publisher, downloader, engine)
+        super().__init__(publisher, downloader, engine, requeuer=requeuer)
+
         self.consumer = KafkaConsumer(
             incoming_topic,
             group_id=group_id,
@@ -90,6 +93,7 @@ class Consumer(ICMConsumer):
             retry_backoff_ms=retry_backoff_ms,
             **kwargs,
         )
+
         self.max_record_age = max_record_age
         self.log_pattern = f"topic: {incoming_topic}, group_id: {group_id}"
 
@@ -101,11 +105,11 @@ class Consumer(ICMConsumer):
         self.check_elapsed_time_thread.start()
 
         self.processing_timeout = processing_timeout_s
-        signal(SIGALRM, handle_message_processing_timeout)
 
     # pylint: disable=broad-except
     def run(self):
         """Execute the consumer logic."""
+        signal(SIGALRM, handle_message_processing_timeout)
         for msg in self.consumer:
             try:
                 alarm(self.processing_timeout)
@@ -121,7 +125,7 @@ class Consumer(ICMConsumer):
                         Consumer.get_stringfied_record(msg),
                     )
                 else:
-                    self.requeuer.requeue(msg, ex)
+                    self.requerer.requeue(msg, ex)
 
             except Exception as ex:
                 LOG.exception(ex)
