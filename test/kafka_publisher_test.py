@@ -20,6 +20,7 @@ from unittest.mock import MagicMock, patch
 from kafka.consumer.fetcher import ConsumerRecord
 
 from ccx_data_pipeline.kafka_publisher import KafkaPublisher
+from ccx_data_pipeline.data_pipeline_error import DataPipelineError
 
 
 def _mock_consumer_record(value):
@@ -77,15 +78,15 @@ class KafkaPublisherTest(unittest.TestCase):
         topic_name = "KAFKATOPIC"
         values = {
             "ClusterName": "the cluster name",
-            "identity": {"identity": {"internal": {"org_id": "5000"}}},
+            "identity": {"identity": {"account_number": "3000", "internal": {"org_id": "5000"}}},
             "timestamp": "2020-01-23T16:15:59.478901889Z",
         }
         input_msg = _mock_consumer_record(values)
         message_to_publish = '{"key1": "value1"}'
         expected_message = (
-            b'{"OrgID": 5000, "ClusterName": "the cluster name", '
+            b'{"OrgID": 5000, "AccountNumber": 3000, "ClusterName": "the cluster name", '
             b'"Report": {"key1": "value1"}, "LastChecked": "2020-01-23T16:15:59.478901889Z", '
-            b'"Version": 1, "RequestId": null}\n'
+            b'"Version": 2, "RequestId": null}\n'
         )
 
         with patch("ccx_data_pipeline.kafka_publisher.KafkaProducer") as kafka_producer_init_mock:
@@ -112,16 +113,16 @@ class KafkaPublisherTest(unittest.TestCase):
         topic_name = "KAFKATOPIC"
         values = {
             "ClusterName": "the cluster name",
-            "identity": {"identity": {"internal": {"org_id": "5000"}}},
+            "identity": {"identity": {"account_number": "3000", "internal": {"org_id": "5000"}}},
             "timestamp": "2020-01-23T16:15:59.478901889Z",
             "request_id": "REQUEST_ID",
         }
         input_msg = _mock_consumer_record(values)
         message_to_publish = '{"key1": "value1"}'
         expected_message = (
-            b'{"OrgID": 5000, "ClusterName": "the cluster name", '
+            b'{"OrgID": 5000, "AccountNumber": 3000, "ClusterName": "the cluster name", '
             b'"Report": {"key1": "value1"}, "LastChecked": "2020-01-23T16:15:59.478901889Z", '
-            b'"Version": 1, "RequestId": "REQUEST_ID"}\n'
+            b'"Version": 2, "RequestId": "REQUEST_ID"}\n'
         )
 
         with patch("ccx_data_pipeline.kafka_publisher.KafkaProducer") as kafka_producer_init_mock:
@@ -132,3 +133,63 @@ class KafkaPublisherTest(unittest.TestCase):
 
             sut.publish(input_msg, message_to_publish)
             producer_mock.send.assert_called_with(topic_name, expected_message)
+
+    def test_publish_bad_orgID(self):
+        """
+        Test Producer.publish method with invalid orgID.
+
+        The kafka.KafkaProducer class is mocked in order to avoid the usage
+        of the real library
+        """
+        producer_kwargs = {
+            "bootstrap_servers": ["kafka_server1"],
+            "client_id": "ccx-data-pipeline",
+        }
+
+        topic_name = "KAFKATOPIC"
+        values = {
+            "ClusterName": "the cluster name",
+            "identity": {"identity": {"account_number": "3000", "internal": {"org_id": "NaN"}}},
+            "timestamp": "2020-01-23T16:15:59.478901889Z",
+        }
+        input_msg = _mock_consumer_record(values)
+        message_to_publish = '{"key1": "value1"}'
+
+        with patch("ccx_data_pipeline.kafka_publisher.KafkaProducer") as kafka_producer_init_mock:
+            producer_mock = MagicMock()
+            kafka_producer_init_mock.return_value = producer_mock
+
+            sut = KafkaPublisher(outgoing_topic=topic_name, **producer_kwargs)
+
+            with self.assertRaises(DataPipelineError):
+                sut.publish(input_msg, message_to_publish)
+
+    def test_publish_bad_accountNumber(self):
+        """
+        Test Producer.publish method with invalid orgID.
+
+        The kafka.KafkaProducer class is mocked in order to avoid the usage
+        of the real library
+        """
+        producer_kwargs = {
+            "bootstrap_servers": ["kafka_server1"],
+            "client_id": "ccx-data-pipeline",
+        }
+
+        topic_name = "KAFKATOPIC"
+        values = {
+            "ClusterName": "the cluster name",
+            "identity": {"identity": {"account_number": "NaN", "internal": {"org_id": "5000"}}},
+            "timestamp": "2020-01-23T16:15:59.478901889Z",
+        }
+        input_msg = _mock_consumer_record(values)
+        message_to_publish = '{"key1": "value1"}'
+
+        with patch("ccx_data_pipeline.kafka_publisher.KafkaProducer") as kafka_producer_init_mock:
+            producer_mock = MagicMock()
+            kafka_producer_init_mock.return_value = producer_mock
+
+            sut = KafkaPublisher(outgoing_topic=topic_name, **producer_kwargs)
+
+            with self.assertRaises(DataPipelineError):
+                sut.publish(input_msg, message_to_publish)
