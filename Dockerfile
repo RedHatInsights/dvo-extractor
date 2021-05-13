@@ -17,7 +17,7 @@ RUN dnf install --nodocs -y python3-pip unzip git-core && \
          -o /etc/pki/ca-trust/source/anchors/RH-IT-Root-CA.crt && \
     update-ca-trust && \
     pip install --no-cache-dir -U pip setuptools wheel && \
-    pip install --no-cache-dir -r requirements_int.txt && \
+    pip install --no-cache-dir -r requirements.txt && \
     dnf remove -y git-core && \
     dnf clean all && \
     chmod -R g=u $HOME $VENV /etc/passwd && \
