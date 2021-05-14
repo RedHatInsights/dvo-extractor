@@ -14,11 +14,11 @@
 
 """Module that implements a custom Kafka publisher."""
 
+import json
 import logging
 
-import json
-from kafka import KafkaProducer
 from insights_messaging.publishers import Publisher
+from kafka import KafkaProducer
 
 from ccx_data_pipeline.data_pipeline_error import DataPipelineError
 
@@ -45,7 +45,7 @@ class KafkaPublisher(Publisher):
 
         self.producer = KafkaProducer(bootstrap_servers=self.bootstrap_servers, **kwargs)
         LOG.info("Producing to topic '%s' on brokers %s", self.topic, self.bootstrap_servers)
-        self.outdata_schema_version = 1
+        self.outdata_schema_version = 2
 
     def publish(self, input_msg, response):
         """
@@ -56,13 +56,23 @@ class KafkaPublisher(Publisher):
         a byte array using UTF-8 encoding and the result of that will be sent
         to the producer to produce a message in the output Kafka topic.
         """
+        # Response is already a string, no need to JSON dump.
+        output_msg = {}
         try:
-            # Flush kafkacat buffer.
-            # Response is already a string, no need to JSON dump.
-            org_id = input_msg.value["identity"]["identity"]["internal"]["org_id"]
+            org_id = int(input_msg.value["identity"]["identity"]["internal"]["org_id"])
+        except ValueError as err:
+            raise DataPipelineError(f"Error extracting the OrgID: {err}") from err
+
+        try:
+            account_number = int(input_msg.value["identity"]["identity"]["account_number"])
+        except ValueError as err:
+            raise DataPipelineError(f"Error extracting the Account number: {err}") from err
+
+        try:
             msg_timestamp = input_msg.value["timestamp"]
             output_msg = {
-                "OrgID": int(org_id),
+                "OrgID": org_id,
+                "AccountNumber": account_number,
                 "ClusterName": input_msg.value["ClusterName"],
                 "Report": json.loads(response),
                 "LastChecked": msg_timestamp,
@@ -77,8 +87,10 @@ class KafkaPublisher(Publisher):
             self.producer.send(self.topic, message.encode("utf-8"))
             LOG.debug("Message has been sent successfully.")
             LOG.debug(
-                'Message context: OrgId=%s, ClusterName="%s", LastChecked="%s, Version=%d"',
+                "Message context: OrgId=%s, AccountNumber=%s, "
+                'ClusterName="%s", LastChecked="%s, Version=%d"',
                 output_msg["OrgID"],
+                output_msg["AccountNumber"],
                 output_msg["ClusterName"],
                 output_msg["LastChecked"],
                 output_msg["Version"],
@@ -98,9 +110,6 @@ class KafkaPublisher(Publisher):
 
         except UnicodeEncodeError as err:
             raise DataPipelineError(f"Error encoding the response to publish: {message}") from err
-
-        except ValueError as err:
-            raise DataPipelineError(f"Error extracting the OrgID: {org_id}") from err
 
     def error(self, input_msg, ex):
         """Handle pipeline errors by logging them."""
