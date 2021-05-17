@@ -11,6 +11,8 @@ objects:
     name: ccx-data-pipeline
   spec:
     envName: ${ENV_NAME}
+    dependencies:
+      - ingress
     deployments:
       - name: archives-handler
         minReplicas: ${{MIN_REPLICAS}}
@@ -25,18 +27,28 @@ objects:
           env:
             - name: CONFIG_PATH
               value: /data/config.yaml
+            - name: LOGGING_TO_CW_ENABLED
+              value: "False"
+            - name: CLOWDER_ENABLED
+              value: ${CLOWDER_ENABLED}
             - name: CDP_INCOMING_TOPIC
               value: platform.upload.buckit
             - name: CDP_GROUP_ID
               value: ccx_data_pipeline_app
-            - name: CDP_CONSUMER_SERVER
-              value: ${KAFKA_BOOTSTRAP_HOST}:${KAFKA_BOOTSTRAP_PORT}
+            - name: KAFKA_BOOTSTRAP_URL
+              value: mq-kafka:29092
             - name: CDP_OUTGOING_TOPIC
               value: ccx.ocp.results
-            - name: CDP_PUBLISHER_SERVER
-              value: ${KAFKA_BOOTSTRAP_HOST}:${KAFKA_BOOTSTRAP_PORT}
-            - name: LOGGING_TO_CW_ENABLED
-              value: "False"
+            - name: HABERDASHER_EMITTER
+              value: ${HABERDASHER_EMITTER}
+            - name: HABERDASHER_KAFKA_BOOTSTRAP
+              value: ${HABERDASHER_KAFKA_BOOTSTRAP}
+            - name: HABERDASHER_KAFKA_TOPIC
+              value: "platform.logging.logs"
+            - name: HABERDASHER_LABELS
+              value: '{"app": "ccx-data-pipeline"}'
+            - name: HABERDASHER_TAGS
+              value: '["ccx"]'
             - name: PAYLOAD_TRACKER_TOPIC
               value: platform.payload-status
             - name: SENTRY_DSN
@@ -69,6 +81,9 @@ objects:
       - replicas: 3
         partitions: 1
         topicName: ccx.ocp.results
+      - replicas: 3
+        partitions: 1
+        topicName: platform.payload-status
 
 - kind: ConfigMap
   apiVersion: v1
@@ -98,7 +113,7 @@ objects:
           kwargs:
             incoming_topic: $CDP_INCOMING_TOPIC
             group_id: $CDP_GROUP_ID
-            bootstrap_servers: $CDP_CONSUMER_SERVER
+            bootstrap_servers: $KAFKA_BOOTSTRAP_URL
             max_poll_records: 10
             max_poll_interval_ms: 600000
 
@@ -109,13 +124,13 @@ objects:
           name: ccx_data_pipeline.kafka_publisher.KafkaPublisher
           kwargs:
             outgoing_topic: $CDP_OUTGOING_TOPIC
-            bootstrap_servers: $CDP_PUBLISHER_SERVER
+            bootstrap_servers: $KAFKA_BOOTSTRAP_URL
         watchers:
           - name: ccx_data_pipeline.watchers.stats_watcher.StatsWatcher
           - name: ccx_data_pipeline.watchers.cluster_id_watcher.ClusterIdWatcher
           - name: ccx_data_pipeline.watchers.payload_tracker_watcher.PayloadTrackerWatcher
             kwargs:
-              bootstrap_servers: $CDP_PUBLISHER_SERVER
+              bootstrap_servers: $KAFKA_BOOTSTRAP_URL
               topic: $PAYLOAD_TRACKER_TOPIC
 
         logging:
@@ -163,3 +178,15 @@ parameters:
 - description: Minimum number of pods to use when autoscaling is enabled
   name: MIN_REPLICAS
   value: '2'
+- name: PAYLOAD_TRACKER_TOPIC
+  description: Kafka topic for publishing updated for the Payload Tracker service
+  value: platform.payload-status
+- name: HABERDASHER_EMITTER
+  description: Emitter for haberdasher logs [stderr|kafka]
+  value: stderr
+- name: HABERDASHER_KAFKA_BOOTSTRAP
+  description: Bootstrap server for haberdasher kafka emitter
+  value: "mq-kafka:29092"
+- name: HABERDASHER_KAFKA_TOPIC
+  description: Kafka topic for haberdasher kafka emitter
+  value: "platform.logging.logs"
