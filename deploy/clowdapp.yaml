@@ -5,6 +5,21 @@ metadata:
   name: ccx-data-pipeline
 objects:
 
+- kind: HorizontalPodAutoscaler
+  apiVersion: autoscaling/v1
+  metadata:
+    labels:
+      app: ccx-data-pipeline
+    name: ccx-data-pipeline
+  spec:
+    minReplicas: ${{MIN_REPLICAS}}
+    maxReplicas: ${{MAX_REPLICAS}}
+    scaleTargetRef:
+      apiVersion: v1
+      kind: Deployment
+      name: ccx-data-pipeline-archives-handler
+    targetCPUUtilizationPercentage: 50
+
 - apiVersion: cloud.redhat.com/v1alpha1
   kind: ClowdApp
   metadata:
@@ -178,6 +193,9 @@ parameters:
 - description: Minimum number of pods to use when autoscaling is enabled
   name: MIN_REPLICAS
   value: '2'
+- description: Minimum number of pods to use when autoscaling is enabled
+  name: MAX_REPLICAS
+  value: '16'
 - name: PAYLOAD_TRACKER_TOPIC
   description: Kafka topic for publishing updated for the Payload Tracker service
   value: platform.payload-status
