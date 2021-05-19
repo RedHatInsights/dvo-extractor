@@ -19,10 +19,12 @@ import logging
 import sys
 import os
 
+from app_common_python import isClowderEnabled
 from insights_messaging.appbuilder import AppBuilder
 import pkg_resources
 
 from ccx_data_pipeline.logging import setup_watchtower
+from ccx_data_pipeline.utils.clowder import apply_clowder_config
 from ccx_data_pipeline.utils.sentry import init_sentry
 
 
@@ -51,7 +53,11 @@ def print_version():
 def apply_config(config):
     """Apply configuration file provided as argument and run consumer."""
     with open(config) as file_:
-        app_builder = AppBuilder(file_.read())
+        if isClowderEnabled() and os.getenv("CLOWDER_ENABLED") in ["True", "true", "1", "yes"]:
+            manifest = apply_clowder_config(file_.read())
+        else:
+            manifest = file_.read()
+        app_builder = AppBuilder(manifest)
         logging_config = app_builder.service["logging"]
         logging.config.dictConfig(logging_config)
         print_version()

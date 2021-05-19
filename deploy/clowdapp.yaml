@@ -1,0 +1,210 @@
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: ccx-data-pipeline
+objects:
+
+- kind: HorizontalPodAutoscaler
+  apiVersion: autoscaling/v1
+  metadata:
+    labels:
+      app: ccx-data-pipeline
+    name: ccx-data-pipeline
+  spec:
+    minReplicas: ${{MIN_REPLICAS}}
+    maxReplicas: ${{MAX_REPLICAS}}
+    scaleTargetRef:
+      apiVersion: v1
+      kind: Deployment
+      name: ccx-data-pipeline-archives-handler
+    targetCPUUtilizationPercentage: 50
+
+- apiVersion: cloud.redhat.com/v1alpha1
+  kind: ClowdApp
+  metadata:
+    name: ccx-data-pipeline
+  spec:
+    envName: ${ENV_NAME}
+    dependencies:
+      - ingress
+    deployments:
+      - name: archives-handler
+        minReplicas: ${{MIN_REPLICAS}}
+        webServices:
+          public:
+            enabled: false
+          private:
+            enabled: false
+          metrics:
+            enabled: true
+        podSpec:
+          env:
+            - name: CONFIG_PATH
+              value: /data/config.yaml
+            - name: LOGGING_TO_CW_ENABLED
+              value: "False"
+            - name: CLOWDER_ENABLED
+              value: ${CLOWDER_ENABLED}
+            - name: CDP_INCOMING_TOPIC
+              value: platform.upload.buckit
+            - name: CDP_GROUP_ID
+              value: ccx_data_pipeline_app
+            - name: KAFKA_BOOTSTRAP_URL
+              value: mq-kafka:29092
+            - name: CDP_OUTGOING_TOPIC
+              value: ccx.ocp.results
+            - name: HABERDASHER_EMITTER
+              value: ${HABERDASHER_EMITTER}
+            - name: HABERDASHER_KAFKA_BOOTSTRAP
+              value: ${HABERDASHER_KAFKA_BOOTSTRAP}
+            - name: HABERDASHER_KAFKA_TOPIC
+              value: "platform.logging.logs"
+            - name: HABERDASHER_LABELS
+              value: '{"app": "ccx-data-pipeline"}'
+            - name: HABERDASHER_TAGS
+              value: '["ccx"]'
+            - name: PAYLOAD_TRACKER_TOPIC
+              value: platform.payload-status
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  key: SENTRY_DSN
+                  name: sentry-dsn
+                  optional: true
+            - name: SENTRY_CATCH_WARNINGS
+              value: '1'
+          image: ${IMAGE}:${IMAGE_TAG}
+          volumeMounts:
+            - mountPath: /data
+              name: ccx-data-pipeline-config
+          volumes:
+            - configMap:
+                name: ccx-data-pipeline-config-map
+              name: ccx-data-pipeline-config
+          resources:
+            requests:
+              cpu: 100m
+              memory: 300Mi
+            limits:
+              cpu: 250m
+              memory: 600Mi
+    kafkaTopics:
+      - replicas: 3
+        partitions: 16
+        topicName: platform.upload.buckit
+      - replicas: 3
+        partitions: 1
+        topicName: ccx.ocp.results
+      - replicas: 3
+        partitions: 1
+        topicName: platform.payload-status
+
+- kind: ConfigMap
+  apiVersion: v1
+  metadata:
+    labels:
+      app: ccx-data-pipeline
+    name: ccx-data-pipeline-config-map
+  data:
+    config.yaml: |-
+      plugins:
+        packages:
+          - insights.specs.default
+          - ccx_data_pipeline
+          - ccx_rules_ocp.external
+          - pythonjsonlogger
+          - pythonjsonlogger.jsonlogger
+        configs:
+          - name: ccx_ocp_core.config.telemeter.TelemeterServiceConfig
+            enabled: false
+      service:
+        extract_timeout:
+        extract_tmp_dir:
+        format: insights.formats._json.JsonFormat
+        target_components: []
+        consumer:
+          name: ccx_data_pipeline.consumer.Consumer
+          kwargs:
+            incoming_topic: $CDP_INCOMING_TOPIC
+            group_id: $CDP_GROUP_ID
+            bootstrap_servers: $KAFKA_BOOTSTRAP_URL
+            max_poll_records: 10
+            max_poll_interval_ms: 600000
+
+        downloader:
+          name: ccx_data_pipeline.http_downloader.HTTPDownloader
+
+        publisher:
+          name: ccx_data_pipeline.kafka_publisher.KafkaPublisher
+          kwargs:
+            outgoing_topic: $CDP_OUTGOING_TOPIC
+            bootstrap_servers: $KAFKA_BOOTSTRAP_URL
+        watchers:
+          - name: ccx_data_pipeline.watchers.stats_watcher.StatsWatcher
+          - name: ccx_data_pipeline.watchers.cluster_id_watcher.ClusterIdWatcher
+          - name: ccx_data_pipeline.watchers.payload_tracker_watcher.PayloadTrackerWatcher
+            kwargs:
+              bootstrap_servers: $KAFKA_BOOTSTRAP_URL
+              topic: $PAYLOAD_TRACKER_TOPIC
+
+        logging:
+          version: 1
+          disable_existing_loggers: false
+          handlers:
+            default:
+              level: DEBUG
+              class: logging.StreamHandler
+              stream: ext://sys.stdout
+              formatter: json
+          formatters:
+            brief:
+              format: "%(asctime)s %(levelname)s - %(filename)s:%(lineno)d - %(message)s"
+            json:
+              (): "pythonjsonlogger.jsonlogger.JsonFormatter"
+              format: "%(filename)s %(lineno)d %(process)d %(levelname)s %(asctime)s %(name)s %(message)s"
+            cloudwatch:
+              format: "%(filename)s %(levelname)s %(asctime)s %(name)s %(hostname)s %(mac_address)s %(message)s"
+
+          root:
+            handlers:
+              - default
+          loggers:
+            insights_messaging:
+              level: DEBUG
+            insights:
+              level: WARNING
+            ccx_data_pipeline:
+              level: DEBUG
+
+parameters:
+- description: Image name
+  name: IMAGE
+  value: quay.io/cloudservices/ccx-data-pipeline
+- description: Image tag
+  name: IMAGE_TAG
+  required: true
+- description: Determines Clowder deployment
+  name: CLOWDER_ENABLED
+  value: "true"
+- description: ClowdEnv Name
+  name: ENV_NAME
+  requred: true
+- description: Minimum number of pods to use when autoscaling is enabled
+  name: MIN_REPLICAS
+  value: '2'
+- description: Minimum number of pods to use when autoscaling is enabled
+  name: MAX_REPLICAS
+  value: '16'
+- name: PAYLOAD_TRACKER_TOPIC
+  description: Kafka topic for publishing updated for the Payload Tracker service
+  value: platform.payload-status
+- name: HABERDASHER_EMITTER
+  description: Emitter for haberdasher logs [stderr|kafka]
+  value: stderr
+- name: HABERDASHER_KAFKA_BOOTSTRAP
+  description: Bootstrap server for haberdasher kafka emitter
+  value: "mq-kafka:29092"
+- name: HABERDASHER_KAFKA_TOPIC
+  description: Kafka topic for haberdasher kafka emitter
+  value: "platform.logging.logs"
