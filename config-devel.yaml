@@ -20,8 +20,7 @@ service:
       incoming_topic: ${CDP_INCOMING_TOPIC:platform.upload.testareno}
       group_id: ${CDP_GROUP_ID:ccx_data_pipeline_app}
       bootstrap_servers: ${CDP_CONSUMER_SERVER:kafka:29092}
-      processing_timeout_s:
-      requeuer:
+      processing_timeout_s: 0
 
   downloader:
     name: ccx_data_pipeline.http_downloader.HTTPDownloader

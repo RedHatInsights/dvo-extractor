@@ -354,7 +354,7 @@ def test_consumer_init_direct(topic, group, server):
         with patch("os.environ", new=dict()):
             Consumer(None, None, None, group, topic, [server])
 
-            mock_consumer_init.assert_called_with(None, None, None, requeuer=None)
+            mock_consumer_init.assert_called_with(None, None, None)
 
 
 MAX_ELAPSED_TIME_BETWEEN_MESSAGES_TEST = 2
@@ -434,7 +434,6 @@ def test_process_message_timeout_no_kafka_requeuer():
     process_message_timeout_elapsed = 3
     process_message_timeout_not_elapsed = 1
     consumer_messages_to_process = _VALID_MESSAGES[0]
-    expected_warning_message = "No Kafka requeuer configured. This message will be discarded: None"
     expected_alert_message = "Couldn't process message in the given time frame."
 
     buf = io.StringIO()
@@ -448,7 +447,6 @@ def test_process_message_timeout_no_kafka_requeuer():
         sut = Consumer(None, None, None)
         sut.consumer = consumer_messages_to_process
         assert sut.processing_timeout == 0  # Should be 0 if not changed in config file
-        assert sut.requerer is None  # Attribute requerer should be set in parent class
 
         with patch(
             "ccx_data_pipeline.consumer.Consumer.process",
@@ -456,7 +454,6 @@ def test_process_message_timeout_no_kafka_requeuer():
         ):
             sut.run()
             assert expected_alert_message not in buf.getvalue()
-            assert expected_warning_message not in buf.getvalue()
 
         sut.processing_timeout = process_message_timeout
 
@@ -468,7 +465,6 @@ def test_process_message_timeout_no_kafka_requeuer():
         ):
             sut.run()
             assert expected_alert_message not in buf.getvalue()
-            assert expected_warning_message not in buf.getvalue()
 
         with patch(
             "ccx_data_pipeline.consumer.Consumer.process",
@@ -478,70 +474,5 @@ def test_process_message_timeout_no_kafka_requeuer():
         ):
             sut.run()
             assert expected_alert_message in buf.getvalue()
-            assert expected_warning_message in buf.getvalue()
-
-    logger.removeHandler(log_handler)
-
-
-@patch("ccx_data_pipeline.consumer.Consumer.handles", lambda *a, **k: True)
-@patch("ccx_data_pipeline.consumer.Consumer.fire", lambda *a, **k: None)
-@patch("ccx_data_pipeline.consumer.Consumer.get_stringfied_record", lambda *a, **k: None)
-def test_process_message_timeout_with_kafka_requeuer():
-    """Test timeout mechanism that wraps the process function."""
-
-    class Requeuer:
-        def requeue(self, msg, exception):
-            logger.debug("Message requeued correctly")
-
-    process_message_timeout = 2
-    process_message_timeout_elapsed = 3
-    process_message_timeout_not_elapsed = 1
-    consumer_messages_to_process = _VALID_MESSAGES[0]
-    expected_warning_message = "No Kafka requeuer configured. This message will be discarded: None"
-    expected_alert_message = "Couldn't process message in the given time frame."
-
-    buf = io.StringIO()
-    log_handler = logging.StreamHandler(buf)
-
-    logger = logging.getLogger()
-    logger.level = logging.DEBUG
-    logger.addHandler(log_handler)
-
-    with patch("ccx_data_pipeline.consumer.LOG", logger):
-        sut = Consumer(None, None, None, requeuer=Requeuer())
-        sut.consumer = consumer_messages_to_process
-        assert sut.processing_timeout == 0  # Should be 0 if not changed in config file
-        assert sut.requerer is not None  # Attribute requerer should be set in parent class
-
-        with patch(
-            "ccx_data_pipeline.consumer.Consumer.process",
-            lambda *a, **k: mock_consumer_process_no_action_catch_exception(0),
-        ):
-            sut.run()
-            assert expected_alert_message not in buf.getvalue()
-            assert expected_warning_message not in buf.getvalue()
-
-        sut.processing_timeout = process_message_timeout
-
-        with patch(
-            "ccx_data_pipeline.consumer.Consumer.process",
-            lambda *a, **k: mock_consumer_process_no_action_catch_exception(
-                process_message_timeout_not_elapsed
-            ),
-        ):
-            sut.run()
-            assert expected_alert_message not in buf.getvalue()
-            assert expected_warning_message not in buf.getvalue()
-
-        with patch(
-            "ccx_data_pipeline.consumer.Consumer.process",
-            lambda *a, **k: mock_consumer_process_no_action_catch_exception(
-                process_message_timeout_elapsed
-            ),
-        ):
-            sut.run()
-            assert expected_alert_message in buf.getvalue()
-            assert expected_warning_message not in buf.getvalue()
-            assert "Message requeued correctly" in buf.getvalue()
 
     logger.removeHandler(log_handler)

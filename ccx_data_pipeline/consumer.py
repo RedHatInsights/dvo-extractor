@@ -68,7 +68,6 @@ class Consumer(ICMConsumer):
         max_record_age=7200,
         retry_backoff_ms=1000,
         processing_timeout_s=0,
-        requeuer=None,
         **kwargs,
     ):
         # pylint: disable=too-many-arguments
@@ -83,7 +82,7 @@ class Consumer(ICMConsumer):
             group_id,
         )
 
-        super().__init__(publisher, downloader, engine, requeuer=requeuer)
+        super().__init__(publisher, downloader, engine)
 
         self.consumer = KafkaConsumer(
             incoming_topic,
@@ -91,7 +90,6 @@ class Consumer(ICMConsumer):
             bootstrap_servers=bootstrap_servers,
             value_deserializer=self.deserialize,
             retry_backoff_ms=retry_backoff_ms,
-            **kwargs,
         )
 
         self.max_record_age = max_record_age
@@ -119,14 +117,6 @@ class Consumer(ICMConsumer):
             except TimeoutError as ex:
                 LOG.exception(ex)
                 self.fire("on_process_timeout")
-                if not self.requerer:
-                    LOG.warning(
-                        "No Kafka requeuer configured. This message will be discarded: %s",
-                        Consumer.get_stringfied_record(msg),
-                    )
-                else:
-                    self.requerer.requeue(msg, ex)
-
             except Exception as ex:
                 LOG.exception(ex)
 
