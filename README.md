@@ -17,3 +17,11 @@ This report is published back in order to be consumed by other services.
 Documentation is hosted on Github Pages
 <https://redhatinsights.github.io/ccx-data-pipeline/>.
 Sources are located in [docs](https://github.com/RedHatInsights/ccx-data-pipeline/tree/master/docs).
+
+## Repositories
+
+Please note that repository available at address
+https://github.com/RedHatInsights/ccx-data-pipeline is read only and can not be
+changed directly. Its content is mirrored automatically from the origin
+repository whis is available at address
+https://gitlab.cee.redhat.com/ccx/ccx-data-pipeline/.
