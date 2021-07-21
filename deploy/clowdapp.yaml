@@ -15,7 +15,7 @@ objects:
     minReplicas: ${{MIN_REPLICAS}}
     maxReplicas: ${{MAX_REPLICAS}}
     scaleTargetRef:
-      apiVersion: v1
+      apiVersion: apps/v1
       kind: Deployment
       name: ccx-data-pipeline-archives-handler
     targetCPUUtilizationPercentage: 50
