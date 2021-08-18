@@ -65,6 +65,10 @@ class Consumer(ICMConsumer):
         group_id=None,
         incoming_topic=None,
         bootstrap_servers=None,
+        max_poll_records=None,
+        max_poll_interval_ms=None,
+        heartbeat_interval_ms=None,
+        session_timeout_ms=None,
         max_record_age=7200,
         retry_backoff_ms=1000,
         processing_timeout_s=0,
@@ -90,6 +94,10 @@ class Consumer(ICMConsumer):
             bootstrap_servers=bootstrap_servers,
             value_deserializer=self.deserialize,
             retry_backoff_ms=retry_backoff_ms,
+            max_poll_records=max_poll_records,
+            max_poll_interval_ms=max_poll_interval_ms,
+            heartbeat_interval_ms=heartbeat_interval_ms,
+            session_timeout_ms=session_timeout_ms,
         )
 
         self.max_record_age = max_record_age
