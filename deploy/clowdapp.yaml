@@ -131,7 +131,8 @@ objects:
             bootstrap_servers: $KAFKA_BOOTSTRAP_URL
             max_poll_records: 10
             max_poll_interval_ms: 600000
-
+            heartbeat_interval_ms: 10000
+            session_timeout_ms: 20000
         downloader:
           name: ccx_data_pipeline.http_downloader.HTTPDownloader
 
