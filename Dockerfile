@@ -23,11 +23,11 @@ RUN dnf install --nodocs -y python3-pip unzip git-core && \
     chmod -R g=u $HOME $VENV /etc/passwd && \
     chgrp -R 0 $HOME $VENV
 
-RUN curl -L -o /usr/bin/haberdasher \
-    https://github.com/RedHatInsights/haberdasher/releases/download/v0.1.3/haberdasher_linux_amd64 && \
-    chmod +x /usr/bin/haberdasher
+# RUN curl -L -o /usr/bin/haberdasher \
+#    https://github.com/RedHatInsights/haberdasher/releases/download/v0.1.3/haberdasher_linux_amd64 && \
+#    chmod +x /usr/bin/haberdasher
 
 USER 1001
 
-ENTRYPOINT ["/usr/bin/haberdasher"]
+# ENTRYPOINT ["/usr/bin/haberdasher"]
 CMD ["sh", "-c", "ccx-data-pipeline $CONFIG_PATH"]
