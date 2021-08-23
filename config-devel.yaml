@@ -21,7 +21,10 @@ service:
       group_id: ${CDP_GROUP_ID:ccx_data_pipeline_app}
       bootstrap_servers: ${CDP_CONSUMER_SERVER:kafka:29092}
       processing_timeout_s: 0
-
+      max_poll_records: 10
+      max_poll_interval_ms: 600000
+      heartbeat_interval_ms: 10000
+      session_timeout_ms: 20000
   downloader:
     name: ccx_data_pipeline.http_downloader.HTTPDownloader
     kwargs:
