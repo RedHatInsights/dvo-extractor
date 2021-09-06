@@ -178,6 +178,26 @@ objects:
             ccx_data_pipeline:
               level: DEBUG
 
+- kind: Service
+  apiVersion: v1
+  metadata:
+    annotations:
+      prometheus.io/path: /metrics
+      prometheus.io/port: "8000"
+      prometheus.io/scheme: http
+      prometheus.io/scrape: "true"
+    name: ccx-data-pipeline-prometheus-exporter
+    labels:
+      app: ccx-data-pipeline
+  spec:
+    ports:
+      - name: ccx-data-pipeline-port-metrics
+        port: 8000
+        protocol: TCP
+        targetPort: 9000
+    selector:
+      app: ccx-data-pipeline
+
 parameters:
 - description: Image name
   name: IMAGE
