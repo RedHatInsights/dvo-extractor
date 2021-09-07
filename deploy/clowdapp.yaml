@@ -194,7 +194,7 @@ objects:
       - name: ccx-data-pipeline-port-metrics
         port: 8000
         protocol: TCP
-        targetPort: 9000
+        targetPort: 8000
     selector:
       app: ccx-data-pipeline
 
