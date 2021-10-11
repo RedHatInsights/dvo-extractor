@@ -7,7 +7,7 @@ botocore==1.17.27
 CacheControl==0.12.6
 ccx-ocp-core==2021.09.29
 ccx-rules-ocm==0.0.1
-ccx-rules-ocp==2021.10.04
+ccx-rules-ocp==2021.09.29
 certifi==2020.6.20
 cffi==1.14.0
 chardet==3.0.4
