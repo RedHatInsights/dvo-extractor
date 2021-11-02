@@ -257,3 +257,8 @@ parameters:
 - name: HABERDASHER_KAFKA_TOPIC
   description: Kafka topic for haberdasher kafka emitter
   value: "platform.logging.logs"
+- name: CLOUDWATCH_DEBUG
+  value: "false"
+  required: true
+- name: IRSP_LOG_STREAM
+  value: $HOSTNAME
