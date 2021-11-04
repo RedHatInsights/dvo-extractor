@@ -261,4 +261,4 @@ parameters:
   value: "false"
   required: true
 - name: IRSP_LOG_STREAM
-  value: $HOSTNAME
+  value: "ccx-data-pipeline"
