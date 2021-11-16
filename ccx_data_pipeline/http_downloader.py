@@ -72,7 +72,7 @@ class HTTPDownloader:
         r"X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=[^/]+$"
     )
 
-    def __init__(self, max_archive_size=None):
+    def __init__(self, max_archive_size=None, allow_unsafe_links=False):
         """`HTTPDownloader` initializer.
 
         This method accepts a `max_archive_size` argument, that indicates the
@@ -87,11 +87,14 @@ class HTTPDownloader:
             self.max_archive_size = None
             LOG.warning("No max_archive_size defined. Be careful")
 
+        self.allow_unsafe_links = allow_unsafe_links
+
     @contextmanager
     def get(self, src):
         """Download a file from HTTP server and store it in a temporary file."""
-        if src is None or not HTTPDownloader.HTTP_RE.fullmatch(src):
-            raise DataPipelineError(f"Invalid URL format: {src}")
+        if not self.allow_unsafe_links:
+            if src is None or not HTTPDownloader.HTTP_RE.fullmatch(src):
+                raise DataPipelineError(f"Invalid URL format: {src}")
 
         try:
             response = requests.get(src)
