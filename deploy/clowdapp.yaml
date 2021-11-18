@@ -102,6 +102,8 @@ objects:
                   optional: true
             - name: SENTRY_CATCH_WARNINGS
               value: '1'
+            - name: ALLOW_UNSAFE_LINKS
+              value: ${ALLOW_UNSAFE_LINKS}
           image: ${IMAGE}:${IMAGE_TAG}
           volumeMounts:
             - mountPath: /data
@@ -163,6 +165,8 @@ objects:
             session_timeout_ms: 20000
         downloader:
           name: ccx_data_pipeline.http_downloader.HTTPDownloader
+          kwargs:
+            allow_unsafe_links: $ALLOW_UNSAFE_LINKS
 
         publisher:
           name: ccx_data_pipeline.kafka_publisher.KafkaPublisher
@@ -262,3 +266,5 @@ parameters:
   required: true
 - name: IRSP_LOG_STREAM
   value: "ccx-data-pipeline"
+- name: ALLOW_UNSAFE_LINKS
+  value: "False"
