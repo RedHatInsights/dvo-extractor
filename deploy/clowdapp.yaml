@@ -267,4 +267,4 @@ parameters:
 - name: IRSP_LOG_STREAM
   value: "ccx-data-pipeline"
 - name: ALLOW_UNSAFE_LINKS
-  value: "False"
+  value: ""
