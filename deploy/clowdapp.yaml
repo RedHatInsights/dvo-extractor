@@ -26,6 +26,8 @@ objects:
     name: ccx-data-pipeline
   spec:
     envName: ${ENV_NAME}
+    testing:
+      iqePlugin: ccx
     dependencies:
       - ingress
     deployments:
