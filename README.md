@@ -12,6 +12,19 @@ hit by the content of the archive.
 
 This report is published back in order to be consumed by other services.
 
+## Smoke Tests
+
+To run smoke tests automatically when you make a merge request you need to add
+@devtools-bot as a mainteiner of the cloned repository.
+
+1. Go to the cloned repository you create to contribute to this project,
+the link looks like so: `https://gitlab.cee.redhat.com/<your-gitlab-username>/ccx-data-pipeline/`
+2. on the top left corner click on: "Project information" and then "Members"
+3. add @devtools-bot and select the "Mainteiner" role
+
+You can skip steps 1 and 2 if you go to the link `https://gitlab.cee.redhat.com/<your-gitlab-username>/ccx-data-pipeline/-/project_members` directly.
+
+This will allow the smoke test to run automatically every merge request you make.
 ## Documentation
 
 Documentation is hosted on Github Pages
