@@ -1,6 +1,6 @@
 include:
   - project: ccx/ccx-gitlab-includes
-    ref: mzibrick_py_tests
+    ref: master
     file: /ccx-lib.yml
 
 
