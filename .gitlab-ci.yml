@@ -1,38 +1,44 @@
+include:
+  - project: ccx/ccx-gitlab-includes
+    ref: master
+    file: /ccx-lib.yml
+
+
 stages:
-  - code-analysis
-  - unit-tests
+  - lint
+  - test
+  - covcheck
+
 
 linting:
-  image: docker-registry.upshift.redhat.com/ccx-dev/ccx-builder-py:latest
-  stage: code-analysis
-  except:
-    - schedules
-  before_script:
-    - python3 -m venv .venv
-    - source .venv/bin/activate
-    - pip install -U pip setuptools wheel
-    - pip install -r requirements.txt
-    - pip install -e .[dev]
-  script:
-    - pre-commit run --all
-  after_script:
-    - git diff
-  tags:
-    - shared
+  extends: .pre-commit:lint
+  stage: lint
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
 
 
-unit-py36:
-  image: docker-registry.upshift.redhat.com/ccx-dev/ccx-builder-py:latest
-  stage: unit-tests
-  except:
-    - schedules
-  before_script:
-    - python3 -m venv .venv
-    - source .venv/bin/activate
-    - pip install -U pip setuptools wheel
-    - pip install -r requirements.txt
-    - pip install -e .[dev]
-  script:
-    - pytest
+pre-commit-autoupdate-check:
+  extends: .pre-commit:autoupdate-check
+  stage: lint
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+
+test-py38:
+  extends: .python:test
+  variables:
+    PYTHON_VENV_FROM: python3.8
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+
+coverage-checking:
+  extends: .coverage-check
+  stage: covcheck
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  allow_failure: true
   tags:
     - shared
