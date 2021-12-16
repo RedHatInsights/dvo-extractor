@@ -26,7 +26,7 @@ from signal import signal, alarm, SIGALRM
 import jsonschema
 from insights_messaging.consumers import Consumer as ICMConsumer
 
-from kafka import KafkaConsumer
+from kafka import KafkaConsumer, KafkaProducer
 from kafka.consumer.fetcher import ConsumerRecord
 
 from ccx_data_pipeline.data_pipeline_error import DataPipelineError
@@ -69,6 +69,7 @@ class Consumer(ICMConsumer):
         max_poll_interval_ms=None,
         heartbeat_interval_ms=None,
         session_timeout_ms=None,
+        dead_letter_queue_topic=None,
         max_record_age=7200,
         retry_backoff_ms=1000,
         processing_timeout_s=0,
@@ -112,6 +113,9 @@ class Consumer(ICMConsumer):
 
         self.processing_timeout = processing_timeout_s
 
+        self.dead_letter_queue_topic = dead_letter_queue_topic
+        self.producer = KafkaProducer(bootstrap_servers=bootstrap_servers)
+
     # pylint: disable=broad-except
     def run(self):
         """Execute the consumer logic."""
@@ -121,12 +125,24 @@ class Consumer(ICMConsumer):
                 alarm(self.processing_timeout)
                 if self.handles(msg):
                     self.process(msg)
+                else:
+                    self.process_dead_letter(msg)
                 alarm(0)
             except TimeoutError as ex:
                 LOG.exception(ex)
+                self.process_dead_letter(msg)
                 self.fire("on_process_timeout")
             except Exception as ex:
                 LOG.exception(ex)
+                self.process_dead_letter(msg)
+
+    def process_dead_letter(self, msg):
+        """Send unprocessed message to the dead letter queue topic."""
+        if isinstance(msg, ConsumerRecord):
+            self.producer.send(self.dead_letter_queue_topic, str(msg.value).encode("utf-8"))
+        else:
+            # just add at least some record in case that the message is not of the expected type
+            self.producer.send(self.dead_letter_queue_topic, str(msg).encode("utf-8"))
 
     def deserialize(self, bytes_):
         """

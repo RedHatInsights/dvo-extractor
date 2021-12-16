@@ -25,6 +25,7 @@ service:
       max_poll_interval_ms: 600000
       heartbeat_interval_ms: 10000
       session_timeout_ms: 20000
+      dead_letter_queue_topic: dead.letter.queue
   downloader:
     name: ccx_data_pipeline.http_downloader.HTTPDownloader
     kwargs:
