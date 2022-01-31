@@ -80,6 +80,8 @@ objects:
               value: platform.upload.buckit
             - name: CDP_GROUP_ID
               value: ccx_data_pipeline_app
+            - name: CDP_DEAD_LETTER_QUEUE_TOPIC
+              value: ccx.data.pipeline.dead.letter.queue
             - name: KAFKA_BOOTSTRAP_URL
               value: mq-kafka:29092
             - name: CDP_OUTGOING_TOPIC
@@ -165,6 +167,7 @@ objects:
             max_poll_interval_ms: 600000
             heartbeat_interval_ms: 10000
             session_timeout_ms: 20000
+            dead_letter_queue_topic: $CDP_DEAD_LETTER_QUEUE_TOPIC
         downloader:
           name: ccx_data_pipeline.http_downloader.HTTPDownloader
           kwargs:
