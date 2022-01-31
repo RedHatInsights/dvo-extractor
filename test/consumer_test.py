@@ -22,7 +22,7 @@ from unittest.mock import patch
 
 import pytest
 
-from kafka import KafkaConsumer
+from kafka import KafkaConsumer, KafkaProducer
 
 from ccx_data_pipeline.consumer import Consumer
 from ccx_data_pipeline.data_pipeline_error import DataPipelineError
@@ -34,6 +34,18 @@ from .utils import mock_consumer_record, mock_consumer_process_no_action_catch_e
 def mock_consumer(monkeypatch):
     """Mock KafkaConsumer."""
     monkeypatch.setattr(KafkaConsumer, "__init__", lambda *args, **kargs: None)
+
+
+@pytest.fixture(autouse=True)
+def mock_producer(monkeypatch):
+    """Mock KafkaProducer."""
+    monkeypatch.setattr(KafkaProducer, "__init__", lambda *args, **kargs: None)
+
+
+@pytest.fixture(autouse=True)
+def mock_producer_send(monkeypatch):
+    """Mock KafkaProducer send method."""
+    monkeypatch.setattr(KafkaProducer, "send", lambda *args, **kargs: None)
 
 
 _REGEX_BAD_SCHEMA = r"^Unable to extract URL from input message: "
