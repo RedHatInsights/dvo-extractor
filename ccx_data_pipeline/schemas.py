@@ -21,6 +21,14 @@ INPUT_MESSAGE_SCHEMA = {
         "url": {"type": "string"},
         "b64_identity": {"type": "string", "contentEncoding": "base64"},
         "timestamp": {"type": "string"},
+        "metadata": {
+            "type": "object",
+            "properties": {
+                "reporter": {"type": "string"},
+                "stale_timestamp": {"type": "string"},
+                "ccx_data": {"type": "object"},
+            },
+        },
     },
     "required": ["url", "b64_identity", "timestamp"],
 }
