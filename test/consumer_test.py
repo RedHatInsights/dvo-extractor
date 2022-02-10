@@ -275,7 +275,7 @@ _VALID_MESSAGES = [
     ),
     (
         '{"account":"5869752","category":"periodic",'
-        '"metadata":{"reporter":"","stale_timestamp":"0001-01-01T00:00:00Z","ccx_data":'
+        '"metadata":{"reporter":"","stale_timestamp":"0001-01-01T00:00:00Z","custom_metadata":'
         '{"key1":"value1","key2":"value2"}},'
         '"request_id":"1cafddc658c942be8660ea0341fe8027","principal":"10918904",'
         '"service":"openshift","size":15099,'
