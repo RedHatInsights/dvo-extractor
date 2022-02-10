@@ -178,6 +178,7 @@ class Consumer(ICMConsumer):
 
                 msg["identity"] = decoded_identity
                 if relevant_metadata:
+                    LOG.debug("Relevant metadata found: %s", relevant_metadata)
                     msg["ccx_metadata"] = relevant_metadata
 
                     if "metadata" in msg:
