@@ -163,6 +163,7 @@ class Consumer(ICMConsumer):
                 jsonschema.validate(instance=msg, schema=INPUT_MESSAGE_SCHEMA)
                 LOG.debug("JSON schema validated (%s)", self.log_pattern)
                 b64_identity = msg["b64_identity"]
+                relevant_metadata = msg.pop("metadata", dict()).get("custom_metadata", None)
 
                 if isinstance(b64_identity, str):
                     b64_identity = b64_identity.encode()
@@ -176,6 +177,13 @@ class Consumer(ICMConsumer):
                 )
 
                 msg["identity"] = decoded_identity
+                if relevant_metadata:
+                    LOG.debug("Relevant metadata found: %s", relevant_metadata)
+                    msg["ccx_metadata"] = relevant_metadata
+
+                    if "metadata" in msg:
+                        del msg["metadata"]
+
                 del msg["b64_identity"]
                 return msg
 

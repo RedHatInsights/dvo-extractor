@@ -80,6 +80,11 @@ class KafkaPublisher(Publisher):
                 "RequestId": input_msg.value.get("request_id"),
             }
 
+            if "ccx_metadata" in input_msg.value:
+                ccx_metadata = input_msg.value["ccx_metadata"]
+                LOG.debug('Adding "Metadata" to published message: %s', ccx_metadata)
+                output_msg["Metadata"] = ccx_metadata
+
             message = json.dumps(output_msg) + "\n"
 
             LOG.debug("Sending response to the %s topic.", self.topic)
