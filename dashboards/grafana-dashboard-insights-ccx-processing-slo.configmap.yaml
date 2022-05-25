@@ -1524,8 +1524,8 @@ data:
         },
         "timepicker": {},
         "timezone": "",
-        "title": "Service level objectives",
-        "uid": "Afpm4ku7k",
+        "title": "CCX Processing SLO",
+        "uid": "insights-ccx-processing-slo",
         "version": 6,
         "weekStart": ""
     }
