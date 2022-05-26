@@ -1526,7 +1526,7 @@ data:
         "timezone": "",
         "title": "CCX Processing SLO",
         "uid": "insights-ccx-processing-slo",
-        "version": 6,
+        "version": 7,
         "weekStart": ""
     }
 kind: ConfigMap
