@@ -1525,7 +1525,7 @@ data:
         "timepicker": {},
         "timezone": "",
         "title": "CCX Processing SLO",
-        "uid": "insights-ccx-processing-slo",
+        "uid": "ccxprocessingslo",
         "version": 7,
         "weekStart": ""
     }
