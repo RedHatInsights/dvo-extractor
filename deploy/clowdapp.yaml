@@ -86,16 +86,6 @@ objects:
               value: mq-kafka:29092
             - name: CDP_OUTGOING_TOPIC
               value: ccx.ocp.results
-            - name: HABERDASHER_EMITTER
-              value: ${HABERDASHER_EMITTER}
-            - name: HABERDASHER_KAFKA_BOOTSTRAP
-              value: ${HABERDASHER_KAFKA_BOOTSTRAP}
-            - name: HABERDASHER_KAFKA_TOPIC
-              value: "platform.logging.logs"
-            - name: HABERDASHER_LABELS
-              value: '{"app": "ccx-data-pipeline"}'
-            - name: HABERDASHER_TAGS
-              value: '["ccx"]'
             - name: PAYLOAD_TRACKER_TOPIC
               value: platform.payload-status
             - name: SENTRY_DSN
@@ -258,15 +248,6 @@ parameters:
 - name: PAYLOAD_TRACKER_TOPIC
   description: Kafka topic for publishing updated for the Payload Tracker service
   value: platform.payload-status
-- name: HABERDASHER_EMITTER
-  description: Emitter for haberdasher logs [stderr|kafka]
-  value: stderr
-- name: HABERDASHER_KAFKA_BOOTSTRAP
-  description: Bootstrap server for haberdasher kafka emitter
-  value: "mq-kafka:29092"
-- name: HABERDASHER_KAFKA_TOPIC
-  description: Kafka topic for haberdasher kafka emitter
-  value: "platform.logging.logs"
 - name: CLOUDWATCH_DEBUG
   value: "false"
   required: true
