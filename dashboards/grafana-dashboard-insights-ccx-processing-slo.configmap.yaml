@@ -248,7 +248,7 @@ data:
                             "uid": "${datasource}"
                         },
                         "exemplar": true,
-                        "expr": "count ( rate(api_endpoints_response_time_sum{namespace=\"$namespace\", service=\"ccx-smart-proxy\"}[1m]) > $slo_response_time_seconds ) \n/\nsum(rate(api_endpoints_response_time_count{namespace=\"$namespace\", service=\"ccx-smart-proxy\"}[1m]))",
+                        "expr": "count ( rate(api_endpoints_response_time_sum{namespace=\"$namespace\", service=\"ccx-smart-proxy\"}[1m]) > $slo_response_time_seconds ) OR on() vector(0) \n/\nsum(rate(api_endpoints_response_time_sum{namespace=\"$namespace\", service=\"ccx-smart-proxy\"}[1m]))",
                         "interval": "",
                         "legendFormat": "",
                         "refId": "A"
