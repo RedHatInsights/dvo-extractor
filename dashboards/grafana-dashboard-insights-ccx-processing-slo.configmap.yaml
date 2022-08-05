@@ -1014,130 +1014,294 @@ data:
             },
             {
                 "datasource": {
+                    "type": "prometheus",
                     "uid": "$datasource"
                 },
                 "fieldConfig": {
                     "defaults": {
-                        "color": {
-                            "mode": "palette-classic"
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisLabel": "Number of Events",
+                        "axisPlacement": "auto",
+                        "axisSoftMin": 0,
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                        "legend": false,
+                        "tooltip": false,
+                        "viz": false
                         },
-                        "custom": {
-                            "axisLabel": "Number of Events",
-                            "axisPlacement": "auto",
-                            "barAlignment": 0,
-                            "drawStyle": "line",
-                            "fillOpacity": 10,
-                            "gradientMode": "none",
-                            "hideFrom": {
-                                "legend": false,
-                                "tooltip": false,
-                                "viz": false
-                            },
-                            "lineInterpolation": "linear",
-                            "lineStyle": {
-                                "fill": "solid"
-                            },
-                            "lineWidth": 1,
-                            "pointSize": 5,
-                            "scaleDistribution": {
-                                "type": "linear"
-                            },
-                            "showPoints": "never",
-                            "spanNulls": true,
-                            "stacking": {
-                                "group": "A",
-                                "mode": "none"
-                            },
-                            "thresholdsStyle": {
-                                "mode": "off"
-                            }
+                        "lineInterpolation": "linear",
+                        "lineStyle": {
+                        "fill": "solid"
                         },
-                        "links": [],
-                        "mappings": [],
-                        "thresholds": {
-                            "mode": "absolute",
-                            "steps": [
-                                {
-                                    "color": "green",
-                                    "value": null
-                                },
-                                {
-                                    "color": "red",
-                                    "value": 80
-                                }
-                            ]
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                        "type": "linear"
                         },
-                        "unit": "short"
+                        "showPoints": "never",
+                        "spanNulls": true,
+                        "stacking": {
+                        "group": "A",
+                        "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                        "mode": "off"
+                        }
+                    },
+                    "links": [],
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                        {
+                            "color": "green",
+                            "value": null
+                        },
+                        {
+                            "color": "red",
+                            "value": 80
+                        }
+                        ]
+                    },
+                    "unit": "short"
                     },
                     "overrides": []
                 },
                 "gridPos": {
                     "h": 8,
-                    "w": 8,
-                    "x": 16,
+                    "w": 6,
+                    "x": 12,
                     "y": 17
                 },
                 "id": 4,
                 "links": [
                     {
-                        "url": "/"
+                    "url": "/"
                     }
                 ],
                 "options": {
                     "legend": {
-                        "calcs": [],
-                        "displayMode": "list",
-                        "placement": "bottom"
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom"
                     },
                     "tooltip": {
-                        "mode": "multi",
-                        "sort": "none"
+                    "mode": "multi",
+                    "sort": "none"
                     }
                 },
                 "pluginVersion": "8.4.1",
                 "targets": [
                     {
-                        "expr": "sum(increase(ccx_consumer_received_total{namespace=\"$namespace\"}[1m]))",
-                        "format": "time_series",
-                        "interval": "1m",
-                        "intervalFactor": 1,
-                        "legendFormat": "Received",
-                        "refId": "A"
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "sum(increase(ccx_consumer_received_total{namespace=\"$namespace\", service=\"ccx-data-pipeline-prometheus-exporter\"}[1m]))",
+                    "format": "time_series",
+                    "interval": "1m",
+                    "intervalFactor": 1,
+                    "legendFormat": "Received",
+                    "refId": "A"
                     },
                     {
-                        "expr": "sum(increase(ccx_downloaded_total{namespace=\"$namespace\"}[1m]))",
-                        "format": "time_series",
-                        "interval": "1m",
-                        "intervalFactor": 1,
-                        "legendFormat": "Downloaded",
-                        "refId": "B"
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(increase(ccx_downloaded_total{namespace=\"$namespace\", service=\"ccx-data-pipeline-prometheus-exporter\"}[1m]))",
+                    "format": "time_series",
+                    "interval": "1m",
+                    "intervalFactor": 1,
+                    "legendFormat": "Downloaded",
+                    "range": true,
+                    "refId": "B"
                     },
                     {
-                        "expr": "sum(increase(ccx_engine_processed_total{namespace=\"$namespace\"}[1m]))",
-                        "format": "time_series",
-                        "interval": "1m",
-                        "intervalFactor": 1,
-                        "legendFormat": "Processed",
-                        "refId": "C"
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "sum(increase(ccx_engine_processed_total{namespace=\"$namespace\", service=\"ccx-data-pipeline-prometheus-exporter\"}[1m]))",
+                    "format": "time_series",
+                    "interval": "1m",
+                    "intervalFactor": 1,
+                    "legendFormat": "Processed",
+                    "refId": "C"
                     },
                     {
-                        "expr": "sum(increase(ccx_published_total{namespace=\"$namespace\"}[1m]))",
-                        "format": "time_series",
-                        "interval": "1m",
-                        "intervalFactor": 1,
-                        "legendFormat": "Published",
-                        "refId": "D"
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "sum(increase(ccx_published_total{namespace=\"$namespace\", service=\"ccx-data-pipeline-prometheus-exporter\"}[1m]))",
+                    "format": "time_series",
+                    "interval": "1m",
+                    "intervalFactor": 1,
+                    "legendFormat": "Published",
+                    "refId": "D"
                     },
                     {
-                        "expr": "sum(increase(consumed_messages{namespace=\"$namespace\"}[1m]))",
-                        "format": "time_series",
-                        "interval": "1m",
-                        "intervalFactor": 1,
-                        "legendFormat": "Consumed",
-                        "refId": "E"
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "sum(increase(consumed_messages{namespace=\"$namespace\"}[1m]))",
+                    "format": "time_series",
+                    "interval": "1m",
+                    "intervalFactor": 1,
+                    "legendFormat": "Consumed",
+                    "refId": "E"
                     }
                 ],
                 "title": "CCX Data Pipeline - Successful Events per 1 Minute",
+                "type": "timeseries"
+            },
+            {
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "$datasource"
+                },
+                "fieldConfig": {
+                    "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisLabel": "Number of Events",
+                        "axisPlacement": "auto",
+                        "axisSoftMin": 0,
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                        "legend": false,
+                        "tooltip": false,
+                        "viz": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineStyle": {
+                        "fill": "solid"
+                        },
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                        "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": true,
+                        "stacking": {
+                        "group": "A",
+                        "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                        "mode": "off"
+                        }
+                    },
+                    "links": [],
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                        {
+                            "color": "green",
+                            "value": null
+                        },
+                        {
+                            "color": "red",
+                            "value": 80
+                        }
+                        ]
+                    },
+                    "unit": "short"
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 6,
+                    "x": 18,
+                    "y": 17
+                },
+                "id": 30,
+                "links": [
+                    {
+                    "url": "/"
+                    }
+                ],
+                "options": {
+                    "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom"
+                    },
+                    "tooltip": {
+                    "mode": "multi",
+                    "sort": "none"
+                    }
+                },
+                "pluginVersion": "8.4.1",
+                "targets": [
+                    {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "sum(increase(ccx_consumer_received_total{namespace=\"$namespace\", service=\"ccx-sha-extractor-prometheus-exporter\"}[1m]))",
+                    "format": "time_series",
+                    "interval": "1m",
+                    "intervalFactor": 1,
+                    "legendFormat": "Received",
+                    "refId": "A"
+                    },
+                    {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "sum(increase(ccx_downloaded_total{namespace=\"$namespace\", service=\"ccx-sha-extractor-prometheus-exporter\"}[1m]))",
+                    "format": "time_series",
+                    "interval": "1m",
+                    "intervalFactor": 1,
+                    "legendFormat": "Downloaded",
+                    "refId": "B"
+                    },
+                    {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "sum(increase(ccx_engine_processed_total{namespace=\"$namespace\", service=\"ccx-sha-extractor-prometheus-exporter\"}[1m]))",
+                    "format": "time_series",
+                    "interval": "1m",
+                    "intervalFactor": 1,
+                    "legendFormat": "Processed",
+                    "refId": "C"
+                    },
+                    {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "sum(increase(ccx_published_total{namespace=\"$namespace\", service=\"ccx-sha-extractor-prometheus-exporter\"}[1m]))",
+                    "format": "time_series",
+                    "interval": "1m",
+                    "intervalFactor": 1,
+                    "legendFormat": "Published",
+                    "refId": "D"
+                    },
+                    {
+                    "datasource": {
+                        "uid": "$datasource"
+                    },
+                    "expr": "sum(increase(consumed_messages{namespace=\"$namespace\"}[1m]))",
+                    "format": "time_series",
+                    "interval": "1m",
+                    "intervalFactor": 1,
+                    "legendFormat": "Consumed",
+                    "refId": "E"
+                    }
+                ],
+                "title": "CCX SHA Extractor - Successful Events per 1 Minute",
                 "type": "timeseries"
             },
             {
