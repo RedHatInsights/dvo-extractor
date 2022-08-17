@@ -13,19 +13,46 @@
 # limitations under the License.
 
 """Clowder integration functions."""
+from tempfile import NamedTemporaryFile
+
 import yaml
 from app_common_python import LoadedConfig
+from app_common_python.types import BrokerConfigAuthtypeEnum
 
 
 def apply_clowder_config(manifest):
     """Apply Clowder config values to ICM config manifest."""
     Loader = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
     config = yaml.load(manifest, Loader=Loader)
-    kafka_url = f"{LoadedConfig.kafka.brokers[0].hostname}:{LoadedConfig.kafka.brokers[0].port}"
-    config["service"]["consumer"]["kwargs"]["bootstrap_servers"] = kafka_url
-    config["service"]["publisher"]["kwargs"]["bootstrap_servers"] = kafka_url
+
+    clowder_broker_config = LoadedConfig.kafka.brokers[0]
+    kafka_url = f"{clowder_broker_config.hostname}:{clowder_broker_config.port}"
+
+    kafka_broker_config = {
+        "bootstrap_servers": kafka_url,
+    }
+
+    if clowder_broker_config.cacert:
+        # Current Kafka library is not able to handle the CA file, only a path to it
+        with NamedTemporaryFile("w", delete=False) as temp_file:
+            temp_file.write(clowder_broker_config.cacert)
+            kafka_broker_config["ssl_cafile"] = temp_file.name
+
+    if BrokerConfigAuthtypeEnum.valueAsString(clowder_broker_config.authtype) == "sasl":
+        kafka_broker_config.update(
+            {
+                "sasl_mechanism": clowder_broker_config.sasl.saslMechanism,
+                "sasl_plain_username": clowder_broker_config.sasl.username,
+                "sasl_plain_password": clowder_broker_config.sasl.password,
+                "security_protocol": clowder_broker_config.sasl.securityProtocol,
+            }
+        )
+
+    config["service"]["consumer"]["kwargs"].update(kafka_broker_config)
+    config["service"]["publisher"]["kwargs"].update(kafka_broker_config)
+
     pt_watcher = "ccx_data_pipeline.watchers.payload_tracker_watcher.PayloadTrackerWatcher"
     for watcher in config["service"]["watchers"]:
         if watcher["name"] == pt_watcher:
-            watcher["kwargs"]["bootstrap_servers"] = kafka_url
+            watcher["kwargs"].update(kafka_broker_config)
     return config

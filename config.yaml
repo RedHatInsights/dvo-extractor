@@ -1,12 +1,8 @@
 plugins:
   packages:
-    - insights.specs.default
-    - ccx_data_pipeline
     - ccx_rules_ocp.external
     - ccx_rules_ocm
     - ccx_rules_processing
-    - pythonjsonlogger
-    - pythonjsonlogger.jsonlogger
   configs:
     - name: ccx_ocp_core.config.telemeter.TelemeterServiceConfig
       enabled: false
@@ -21,6 +17,10 @@ service:
       incoming_topic: ${CDP_INCOMING_TOPIC:platform.upload.buckit}
       group_id: ${CDP_GROUP_ID:ccx_data_pipeline_app}
       bootstrap_servers: ${CDP_CONSUMER_SERVER:["10.34.129.172:9092"]}
+      security_protocol: SASL_SSL
+      sasl_mechanism: PLAIN
+      sasl_plain_username: ${CDP_CONSUMER_USERNAME}
+      sasl_plain_password: ${CDP_CONSUMER_USERPASS}
       processing_timeout_s: 0
       max_poll_records: 10
       max_poll_interval_ms: 600000
@@ -36,7 +36,11 @@ service:
     name: ccx_data_pipeline.kafka_publisher.KafkaPublisher
     kwargs:
       outgoing_topic: ${CDP_OUTGOING_TOPIC:ccx.ocp.results}
-      bootstrap_servers: ${CDP_PUBLISHER_SERVER:["10.34.129.172:9092"]}
+      bootstrap_servers: ${CDP_PUBLISHER_SERVER:10.34.129.172:9092}
+      security_protocol: SASL_SSL
+      sasl_mechanism: PLAIN
+      sasl_plain_username: ${CDP_PUBLISHER_USERNAME}
+      sasl_plain_password: ${CDP_PUBLISHER_USERPASS}
   watchers:
     - name: ccx_data_pipeline.watchers.stats_watcher.StatsWatcher
       kwargs:
