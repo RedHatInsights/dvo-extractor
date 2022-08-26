@@ -7,6 +7,7 @@ plugins:
     - ccx_rules_processing
     - pythonjsonlogger
     - pythonjsonlogger.jsonlogger
+    - ccx_messaging
   configs:
     - name: ccx_ocp_core.config.telemeter.TelemeterServiceConfig
       enabled: false
@@ -16,7 +17,7 @@ service:
   format: insights.formats._json.JsonFormat
   target_components: []
   consumer:
-    name: ccx_data_pipeline.consumer.Consumer
+    name: ccx_messaging.consumers.consumer.Consumer
     kwargs:
       incoming_topic: ${CDP_INCOMING_TOPIC:platform.upload.testareno}
       group_id: ${CDP_GROUP_ID:ccx_data_pipeline_app}
@@ -28,21 +29,21 @@ service:
       session_timeout_ms: 20000
       dead_letter_queue_topic: ${CDP_DEAD_LETTER_QUEUE_TOPIC:dead.letter.queue}
   downloader:
-    name: ccx_data_pipeline.http_downloader.HTTPDownloader
+    name: ccx_messaging.downloaders.http_downloader.HTTPDownloader
     kwargs:
       max_archive_size: 100 MiB
 
   publisher:
-    name: ccx_data_pipeline.kafka_publisher.KafkaPublisher
+    name: ccx_messaging.publishers.data_pipeline_publisher.DataPipelinePublisher
     kwargs:
       outgoing_topic: ${CDP_OUTGOING_TOPIC:ccx.ocp.results}
       bootstrap_servers: ${CDP_PRODUCER_SERVER:kafka:29092}
   watchers:
-    - name: ccx_data_pipeline.watchers.stats_watcher.StatsWatcher
+    - name: ccx_messaging.watchers.stats_watcher.StatsWatcher
       kwargs:
         prometheus_port: 8000
-    - name: ccx_data_pipeline.watchers.cluster_id_watcher.ClusterIdWatcher
-    - name: ccx_data_pipeline.watchers.payload_tracker_watcher.PayloadTrackerWatcher
+    - name: ccx_messaging.watchers.cluster_id_watcher.ClusterIdWatcher
+    - name: ccx_messaging.watchers.payload_tracker_watcher.PayloadTrackerWatcher
       kwargs:
         bootstrap_servers: ${CDP_PRODUCER_SERVER:kafka:29092}
         topic: platform.payload-status
@@ -85,4 +86,6 @@ service:
       insights:
         level: WARNING
       ccx_data_pipeline:
+        level: DEBUG
+      ccx_messaging:
         level: DEBUG
