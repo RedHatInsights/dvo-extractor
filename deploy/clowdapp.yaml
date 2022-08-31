@@ -140,6 +140,7 @@ objects:
           - ccx_rules_processing
           - pythonjsonlogger
           - pythonjsonlogger.jsonlogger
+          - ccx_messaging
         configs:
           - name: ccx_ocp_core.config.telemeter.TelemeterServiceConfig
             enabled: false
@@ -149,7 +150,7 @@ objects:
         format: insights.formats._json.JsonFormat
         target_components: []
         consumer:
-          name: ccx_data_pipeline.consumer.Consumer
+          name: ccx_messaging.consumers.consumer.Consumer
           kwargs:
             incoming_topic: $CDP_INCOMING_TOPIC
             group_id: $CDP_GROUP_ID
@@ -160,18 +161,18 @@ objects:
             session_timeout_ms: 20000
             dead_letter_queue_topic: $CDP_DEAD_LETTER_QUEUE_TOPIC
         downloader:
-          name: ccx_data_pipeline.http_downloader.HTTPDownloader
+          name: ccx_messaging.downloaders.http_downloader.HTTPDownloader
           kwargs:
             allow_unsafe_links: $ALLOW_UNSAFE_LINKS
 
         publisher:
-          name: ccx_data_pipeline.kafka_publisher.KafkaPublisher
+          name: ccx_messaging.publishers.data_pipeline_publisher.DataPipelinePublisher
           kwargs:
             outgoing_topic: $CDP_OUTGOING_TOPIC
             bootstrap_servers: $KAFKA_BOOTSTRAP_URL
         watchers:
-          - name: ccx_data_pipeline.watchers.stats_watcher.StatsWatcher
-          - name: ccx_data_pipeline.watchers.cluster_id_watcher.ClusterIdWatcher
+          - name: ccx_messaging.watchers.stats_watcher.StatsWatcher
+          - name: ccx_messaging.watchers.cluster_id_watcher.ClusterIdWatcher
           - name: ccx_data_pipeline.watchers.payload_tracker_watcher.PayloadTrackerWatcher
             kwargs:
               bootstrap_servers: $KAFKA_BOOTSTRAP_URL
@@ -205,7 +206,8 @@ objects:
               level: WARNING
             ccx_data_pipeline:
               level: DEBUG
-
+            ccx_messaging:
+              level: DEBUG
 - kind: Service
   apiVersion: v1
   metadata:
