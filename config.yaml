@@ -13,11 +13,12 @@ service:
   format: insights.formats._json.JsonFormat
   target_components: []
   consumer:
-    name: ccx_messaging.consumers.consumer.Consumer
+    name: ccx_messaging.consumers.AnemicConsumer
     kwargs:
-      incoming_topic: ${CDP_INCOMING_TOPIC:platform.upload.buckit}
+      incoming_topic: ${CDP_INCOMING_TOPIC:platform.upload.announce}
       group_id: ${CDP_GROUP_ID:ccx_data_pipeline_app}
       bootstrap_servers: ${CDP_CONSUMER_SERVER:["10.34.129.172:9092"]}
+      platform_service: openshift
       security_protocol: SASL_SSL
       sasl_mechanism: PLAIN
       sasl_plain_username: ${CDP_CONSUMER_USERNAME}
