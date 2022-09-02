@@ -76,20 +76,12 @@ objects:
                   optional: true
             - name: CLOWDER_ENABLED
               value: ${CLOWDER_ENABLED}
-            - name: CDP_INCOMING_TOPIC
-              value: ${CDP_INCOMING_TOPIC}
             - name: CDP_PLATFORM_SERVICE
               value: ${CDP_PLATFORM_SERVICE}
             - name: CDP_GROUP_ID
               value: ccx_data_pipeline_app
-            - name: CDP_DEAD_LETTER_QUEUE_TOPIC
-              value: ccx.data.pipeline.dead.letter.queue
             - name: KAFKA_BOOTSTRAP_URL
               value: mq-kafka:29092
-            - name: CDP_OUTGOING_TOPIC
-              value: ccx.ocp.results
-            - name: PAYLOAD_TRACKER_TOPIC
-              value: platform.payload-status
             - name: SENTRY_DSN
               valueFrom:
                 secretKeyRef:
@@ -121,10 +113,13 @@ objects:
         topicName: ${CDP_INCOMING_TOPIC}
       - replicas: 3
         partitions: 1
-        topicName: ccx.ocp.results
+        topicName: ${CDP_OUTGOING_TOPIC}
       - replicas: 3
         partitions: 1
-        topicName: platform.payload-status
+        topicName: ${PAYLOAD_TRACKER_TOPIC}
+      - replicas: 3
+        partitions: 1
+        topicName: ${CDP_DEAD_LETTER_QUEUE_TOPIC}
 
 - kind: ConfigMap
   apiVersion: v1
@@ -162,7 +157,7 @@ objects:
             max_poll_interval_ms: 600000
             heartbeat_interval_ms: 10000
             session_timeout_ms: 20000
-            dead_letter_queue_topic: $CDP_DEAD_LETTER_QUEUE_TOPIC
+            dead_letter_queue_topic: ${CDP_DEAD_LETTER_QUEUE_TOPIC}
         downloader:
           name: ccx_messaging.downloaders.http_downloader.HTTPDownloader
           kwargs:
@@ -259,9 +254,6 @@ parameters:
 - name: MEMORY_REQUEST
   value: 256Mi
 
-- name: PAYLOAD_TRACKER_TOPIC
-  description: Kafka topic for publishing updated for the Payload Tracker service
-  value: platform.payload-status
 - name: CLOUDWATCH_DEBUG
   value: "false"
   required: true
@@ -274,6 +266,18 @@ parameters:
   name: CDP_INCOMING_TOPIC
   value: platform.upload.announce
   required: true
+- description: Dead letter queue topic for unprocessed messages in the consumer
+  name: CDP_DEAD_LETTER_QUEUE_TOPIC
+  value: ccx.data.pipeline.dead.letter.queue
+- description: Output topic name for configured Kafka publisher
+  name: CDP_OUTGOING_TOPIC
+  value: ccx.ocp.results
+  required: true
+- description: Kafka topic for publishing updated for the Payload Tracker service
+  name: PAYLOAD_TRACKER_TOPIC
+  value: platform.payload-status
+  required: true
+
 - description: Service name for filtering received Kafka message from announce topic
   name: CDP_PLATFORM_SERVICE
   value: openshift
