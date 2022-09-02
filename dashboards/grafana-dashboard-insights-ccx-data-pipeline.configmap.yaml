@@ -1098,53 +1098,46 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"0.1\"})",
+              "expr": "sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"0.5\"})",
               "format": "time_series",
               "intervalFactor": 1,
-              "legendFormat": "( -Inf; 0.1 >",
+              "legendFormat": "( -Inf; 0.5 >",
               "refId": "A"
             },
             {
-              "expr": "sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"0.25\"}) - ignoring(le) sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"0.1\"})",
+              "expr": "sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"1.0\"}) - ignoring(le) sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"0.5\"})",
               "format": "time_series",
               "intervalFactor": 1,
-              "legendFormat": "( 0.1; 0.25 >",
+              "legendFormat": "( 0.5; 1.0 >",
               "refId": "B"
             },
             {
-              "expr": "sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"0.5\"}) - ignoring(le) sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"0.25\"})",
+              "expr": "sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"2.0\"}) - ignoring(le) sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"1.0\"})",
               "format": "time_series",
               "intervalFactor": 1,
-              "legendFormat": "( 0.25; 0.5 >",
+              "legendFormat": "( 1.0; 2.0 >",
               "refId": "C"
             },
             {
-              "expr": "sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"0.75\"}) - ignoring(le) sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"0.5\"})",
+              "expr": "sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"5.0\"}) - ignoring(le) sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"2.0\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "( 0.5; 0.75 >",
               "refId": "D"
             },
             {
-              "expr": "sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"1.0\"}) - ignoring(le) sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"0.75\"})",
+              "expr": "sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"10.0\"}) - ignoring(le) sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"5.0\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "( 0.75; 1.0 >",
               "refId": "E"
             },
             {
-              "expr": "sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"10.0\"}) - ignoring(le) sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"1.0\"})",
-              "format": "time_series",
-              "intervalFactor": 1,
-              "legendFormat": "( 1.0; 10.0 >",
-              "refId": "F"
-            },
-            {
               "expr": "sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"+Inf\"}) - ignoring(le) sum by (le) (ccx_process_duration_seconds_bucket{namespace=\"$namespace\", le=\"10.0\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "( 10.0; +Inf )",
-              "refId": "G"
+              "refId": "F"
             }
           ],
           "thresholds": [],
