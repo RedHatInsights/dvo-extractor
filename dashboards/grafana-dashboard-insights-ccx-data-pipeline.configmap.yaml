@@ -678,9 +678,9 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kafka_consumergroup_group_lag{topic=\"platform.upload.buckit\",group=\"ccx_data_pipeline_app\"}) by (group)",
+              "expr": "sum(kafka_consumergroup_group_lag{topic=\"platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) by (group)",
               "interval": "",
-              "legendFormat": "topic : platform.upload.buckit",
+              "legendFormat": "topic : platform.upload.announce",
               "refId": "A"
             }
           ],
@@ -775,7 +775,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kafka_consumergroup_group_lag{topic=\"platform.upload.buckit\",group=\"ccx_data_pipeline_app\"}) by (partition)",
+              "expr": "sum(kafka_consumergroup_group_lag{topic=\"platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) by (partition)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{partition}}",
@@ -786,7 +786,7 @@ data:
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Kafka lag for topic 'platform.upload.buckit' per partition",
+          "title": "Kafka lag for topic 'platform.upload.announce' per partition",
           "tooltip": {
             "shared": true,
             "sort": 0,

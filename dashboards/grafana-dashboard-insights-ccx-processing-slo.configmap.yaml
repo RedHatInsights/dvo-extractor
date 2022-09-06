@@ -176,7 +176,7 @@ data:
                             "uid": "${datasource}"
                         },
                         "exemplar": true,
-                        "expr": "sum(kafka_consumergroup_group_lag{topic=\"platform.upload.buckit\",group=\"ccx_data_pipeline_app\"}) + sum(kafka_consumergroup_group_lag{topic=\"ccx.ocp.results\", group=\"ccx_data_pipeline_app\"})",
+                        "expr": "sum(kafka_consumergroup_group_lag{topic=\"platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) + sum(kafka_consumergroup_group_lag{topic=\"ccx.ocp.results\", group=\"ccx_data_pipeline_app\"})",
                         "interval": "",
                         "legendFormat": "",
                         "refId": "A"
@@ -423,7 +423,7 @@ data:
                             "uid": "pKSsqZB7k"
                         },
                         "exemplar": true,
-                        "expr": "sum(kafka_consumergroup_group_lag{topic=\"platform.upload.buckit\",group=\"ccx_data_pipeline_app\"}) by (group, topic)",
+                        "expr": "sum(kafka_consumergroup_group_lag{topic=\"platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) by (group, topic)",
                         "interval": "",
                         "legendFormat": "ccx-data-pipeline ({{ topic }})",
                         "refId": "A"
@@ -489,7 +489,7 @@ data:
                                 "options": {
                                     "mode": "exclude",
                                     "names": [
-                                        "ccx-data-pipeline (platform.upload.buckit)"
+                                        "ccx-data-pipeline (platform.upload.announce)"
                                     ],
                                     "prefix": "All except:",
                                     "readOnly": true
@@ -538,7 +538,7 @@ data:
                             "uid": "pKSsqZB7k"
                         },
                         "exemplar": true,
-                        "expr": "sum(kafka_consumergroup_group_lag{topic=\"platform.upload.buckit\",group=\"ccx_data_pipeline_app\"}) by (group, topic)",
+                        "expr": "sum(kafka_consumergroup_group_lag{topic=\"platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) by (group, topic)",
                         "hide": false,
                         "interval": "",
                         "legendFormat": "ccx-data-pipeline ({{ topic }})",
@@ -593,7 +593,7 @@ data:
                                 "options": {
                                     "mode": "exclude",
                                     "names": [
-                                        "ccx-data-pipeline (platform.upload.buckit)"
+                                        "ccx-data-pipeline (platform.upload.announce)"
                                     ],
                                     "prefix": "All except:",
                                     "readOnly": true
