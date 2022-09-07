@@ -1,7 +1,3 @@
----
-layout: page
-nav_order: 2
----
 # Implementation
 
 ## Data consumer
@@ -13,16 +9,14 @@ corresponding S3 bucket.
 
 ### Format of the received Kafka records
 
----
-**NOTE**
-
+```{note}
 Detailed information about the exact format of received Kafka records is
 available at
 https://redhatinsights.github.io/insights-data-schemas/platform_upload_buckit_messages.html
+```
 
----
 
-```json5
+```json
 {
   "account": 123456, // (uint)
   "principal": 9, // (uint)
@@ -36,7 +30,7 @@ https://redhatinsights.github.io/insights-data-schemas/platform_upload_buckit_me
 The attribute `b64_identity` contains another JSON encoded by BASE64 encoding.
 User and org identities are stored here:
 
-```json5
+```json
     "identity": {
         "account_number": "6212377",
         "auth_type": "basic-auth",
@@ -87,7 +81,7 @@ the archive).
 
 The generated JSON has the following format:
 
-```json5
+```json
 {
   "OrgID": 123456, // (int) - number that we get from b64_identity field
   "ClusterName": "aaaaaaaa-bbbb-cccc-dddd-000000000000", // (string) - cluster UUID  that we read from URL
@@ -107,13 +101,10 @@ The fields come from:
 - `LastChecked`: this field is copied directly from the incoming Kafka record,
   as `timestamp` key.
 
----
-**NOTE**
-
+```{note}
 The `LastChecked` attribute is a timestamp containing the zone designator Z
 (aka "Zulu time" or more informally "Greenwich Mean Time")
-
----
+```
 
 ## Cluster name extraction internals
 

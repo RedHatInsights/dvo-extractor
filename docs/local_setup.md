@@ -1,7 +1,3 @@
----
-layout: page
-nav_order: 5
----
 # Local setup
 
 There is a `docker-compose` configuration that provisions a minimal stack of

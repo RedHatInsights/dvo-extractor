@@ -46,11 +46,15 @@ command_line submodule includes the handlers for CLI commands.</p>
       <div class="highlight"><pre><span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
 
+<span class="kn">from</span> <span class="nn">app_common_python</span> <span class="kn">import</span> <span class="n">isClowderEnabled</span>
+<span class="kn">from</span> <span class="nn">ccx_messaging.utils.clowder</span> <span class="kn">import</span> <span class="n">apply_clowder_config</span>
 <span class="kn">from</span> <span class="nn">insights_messaging.appbuilder</span> <span class="kn">import</span> <span class="n">AppBuilder</span>
 <span class="kn">import</span> <span class="nn">pkg_resources</span>
 
-<span class="kn">from</span> <span class="nn">ccx_data_pipeline.logging</span> <span class="kn">import</span> <span class="n">setup_watchtower</span></pre></div>
+<span class="kn">from</span> <span class="nn">ccx_data_pipeline.logging</span> <span class="kn">import</span> <span class="n">setup_watchtower</span>
+<span class="kn">from</span> <span class="nn">ccx_data_pipeline.utils.sentry</span> <span class="kn">import</span> <span class="n">init_sentry</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -119,10 +123,10 @@ command_line submodule includes the handlers for CLI commands.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-6'>#</a>
       </div>
-      <p>Handle for ccx-data-pipeline command.</p>
+      <p>Apply configuration file provided as argument and run consumer.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">def</span> <span class="nf">ccx_data_pipeline</span><span class="p">():</span></pre></div>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">apply_config</span><span class="p">(</span><span class="n">config</span><span class="p">):</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -134,6 +138,41 @@ command_line submodule includes the handlers for CLI commands.</p>
       
     </div>
     <div class='code'>
+      <div class="highlight"><pre>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">isClowderEnabled</span><span class="p">()</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;CLOWDER_ENABLED&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;True&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">]:</span>
+            <span class="n">manifest</span> <span class="o">=</span> <span class="n">apply_clowder_config</span><span class="p">(</span><span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">manifest</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">app_builder</span> <span class="o">=</span> <span class="n">AppBuilder</span><span class="p">(</span><span class="n">manifest</span><span class="p">)</span>
+        <span class="n">logging_config</span> <span class="o">=</span> <span class="n">app_builder</span><span class="o">.</span><span class="n">service</span><span class="p">[</span><span class="s2">&quot;logging&quot;</span><span class="p">]</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dictConfig</span><span class="p">(</span><span class="n">logging_config</span><span class="p">)</span>
+        <span class="n">print_version</span><span class="p">()</span>
+        <span class="n">consumer</span> <span class="o">=</span> <span class="n">app_builder</span><span class="o">.</span><span class="n">build_app</span><span class="p">()</span>
+        <span class="n">setup_watchtower</span><span class="p">(</span><span class="n">logging_config</span><span class="p">)</span>
+        <span class="n">consumer</span><span class="o">.</span><span class="n">run</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>Handle for ccx-data-pipeline command.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">ccx_data_pipeline</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
       <div class="highlight"><pre>    <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
@@ -141,15 +180,17 @@ command_line submodule includes the handlers for CLI commands.</p>
         <span class="n">print_version</span><span class="p">()</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_</span><span class="p">:</span>
-        <span class="n">app_builder</span> <span class="o">=</span> <span class="n">AppBuilder</span><span class="p">(</span><span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-        <span class="n">logging_config</span> <span class="o">=</span> <span class="n">app_builder</span><span class="o">.</span><span class="n">service</span><span class="p">[</span><span class="s2">&quot;logging&quot;</span><span class="p">]</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dictConfig</span><span class="p">(</span><span class="n">logging_config</span><span class="p">)</span>
-        <span class="n">print_version</span><span class="p">()</span>
-        <span class="n">consumer</span> <span class="o">=</span> <span class="n">app_builder</span><span class="o">.</span><span class="n">build_app</span><span class="p">()</span>
-        <span class="n">setup_watchtower</span><span class="p">(</span><span class="n">logging_config</span><span class="p">)</span>
-        <span class="n">consumer</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">init_sentry</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SENTRY_DSN&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+        <span class="n">apply_config</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+        <span class="s2">&quot;Application configuration not provided. </span><span class="se">\</span>
+<span class="s2">        Use &#39;ccx-data-pipeline &lt;config&gt;&#39; to run the application&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
 </pre></div>
     </div>

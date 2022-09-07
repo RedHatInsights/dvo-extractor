@@ -1,7 +1,3 @@
----
-layout: page
-nav_order: 6
----
 # Configuration
 
 The `config.yaml` is an standard **Insights Core Messaging** configuration file.

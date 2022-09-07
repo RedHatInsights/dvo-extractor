@@ -48,7 +48,8 @@ Module for testing the ccx_data_pipeline.kafka_publisher module.</p>
 
 <span class="kn">from</span> <span class="nn">kafka.consumer.fetcher</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span>
 
-<span class="kn">from</span> <span class="nn">ccx_data_pipeline.kafka_publisher</span> <span class="kn">import</span> <span class="n">KafkaPublisher</span></pre></div>
+<span class="kn">from</span> <span class="nn">ccx_data_pipeline.kafka_publisher</span> <span class="kn">import</span> <span class="n">KafkaPublisher</span>
+<span class="kn">from</span> <span class="nn">ccx_data_pipeline.data_pipeline_error</span> <span class="kn">import</span> <span class="n">DataPipelineError</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -198,15 +199,15 @@ of the real library</p>
         <span class="n">topic_name</span> <span class="o">=</span> <span class="s2">&quot;KAFKATOPIC&quot;</span>
         <span class="n">values</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;ClusterName&quot;</span><span class="p">:</span> <span class="s2">&quot;the cluster name&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;internal&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;org_id&quot;</span><span class="p">:</span> <span class="s2">&quot;5000&quot;</span><span class="p">}}},</span>
+            <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;account_number&quot;</span><span class="p">:</span> <span class="s2">&quot;3000&quot;</span><span class="p">,</span> <span class="s2">&quot;internal&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;org_id&quot;</span><span class="p">:</span> <span class="s2">&quot;5000&quot;</span><span class="p">}}},</span>
             <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-23T16:15:59.478901889Z&quot;</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">input_msg</span> <span class="o">=</span> <span class="n">_mock_consumer_record</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
         <span class="n">message_to_publish</span> <span class="o">=</span> <span class="s1">&#39;{&quot;key1&quot;: &quot;value1&quot;}&#39;</span>
         <span class="n">expected_message</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">b</span><span class="s1">&#39;{&quot;OrgID&quot;: 5000, &quot;ClusterName&quot;: &quot;the cluster name&quot;, &#39;</span>
+            <span class="sa">b</span><span class="s1">&#39;{&quot;OrgID&quot;: 5000, &quot;AccountNumber&quot;: 3000, &quot;ClusterName&quot;: &quot;the cluster name&quot;, &#39;</span>
             <span class="sa">b</span><span class="s1">&#39;&quot;Report&quot;: {&quot;key1&quot;: &quot;value1&quot;}, &quot;LastChecked&quot;: &quot;2020-01-23T16:15:59.478901889Z&quot;, &#39;</span>
-            <span class="sa">b</span><span class="s1">&#39;&quot;RequestId&quot;: null}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="sa">b</span><span class="s1">&#39;&quot;Version&quot;: 2, &quot;RequestId&quot;: null}</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="p">)</span>
 
         <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s2">&quot;ccx_data_pipeline.kafka_publisher.KafkaProducer&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">kafka_producer_init_mock</span><span class="p">:</span>
@@ -250,16 +251,164 @@ of the real library</p>
         <span class="n">topic_name</span> <span class="o">=</span> <span class="s2">&quot;KAFKATOPIC&quot;</span>
         <span class="n">values</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;ClusterName&quot;</span><span class="p">:</span> <span class="s2">&quot;the cluster name&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;internal&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;org_id&quot;</span><span class="p">:</span> <span class="s2">&quot;5000&quot;</span><span class="p">}}},</span>
+            <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;account_number&quot;</span><span class="p">:</span> <span class="s2">&quot;3000&quot;</span><span class="p">,</span> <span class="s2">&quot;internal&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;org_id&quot;</span><span class="p">:</span> <span class="s2">&quot;5000&quot;</span><span class="p">}}},</span>
             <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-23T16:15:59.478901889Z&quot;</span><span class="p">,</span>
             <span class="s2">&quot;request_id&quot;</span><span class="p">:</span> <span class="s2">&quot;REQUEST_ID&quot;</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">input_msg</span> <span class="o">=</span> <span class="n">_mock_consumer_record</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
         <span class="n">message_to_publish</span> <span class="o">=</span> <span class="s1">&#39;{&quot;key1&quot;: &quot;value1&quot;}&#39;</span>
         <span class="n">expected_message</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">b</span><span class="s1">&#39;{&quot;OrgID&quot;: 5000, &quot;ClusterName&quot;: &quot;the cluster name&quot;, &#39;</span>
+            <span class="sa">b</span><span class="s1">&#39;{&quot;OrgID&quot;: 5000, &quot;AccountNumber&quot;: 3000, &quot;ClusterName&quot;: &quot;the cluster name&quot;, &#39;</span>
             <span class="sa">b</span><span class="s1">&#39;&quot;Report&quot;: {&quot;key1&quot;: &quot;value1&quot;}, &quot;LastChecked&quot;: &quot;2020-01-23T16:15:59.478901889Z&quot;, &#39;</span>
-            <span class="sa">b</span><span class="s1">&#39;&quot;RequestId&quot;: &quot;REQUEST_ID&quot;}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="sa">b</span><span class="s1">&#39;&quot;Version&quot;: 2, &quot;RequestId&quot;: &quot;REQUEST_ID&quot;}</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s2">&quot;ccx_data_pipeline.kafka_publisher.KafkaProducer&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">kafka_producer_init_mock</span><span class="p">:</span>
+            <span class="n">producer_mock</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+            <span class="n">kafka_producer_init_mock</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">producer_mock</span>
+
+            <span class="n">sut</span> <span class="o">=</span> <span class="n">KafkaPublisher</span><span class="p">(</span><span class="n">outgoing_topic</span><span class="o">=</span><span class="n">topic_name</span><span class="p">,</span> <span class="o">**</span><span class="n">producer_kwargs</span><span class="p">)</span>
+
+            <span class="n">sut</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">input_msg</span><span class="p">,</span> <span class="n">message_to_publish</span><span class="p">)</span>
+            <span class="n">producer_mock</span><span class="o">.</span><span class="n">send</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">topic_name</span><span class="p">,</span> <span class="n">expected_message</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p>Test Producer.publish method with invalid orgID.</p>
+<p>The kafka.KafkaProducer class is mocked in order to avoid the usage
+of the real library</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">test_publish_bad_orgID</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">producer_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;bootstrap_servers&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;kafka_server1&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="s2">&quot;ccx-data-pipeline&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">topic_name</span> <span class="o">=</span> <span class="s2">&quot;KAFKATOPIC&quot;</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ClusterName&quot;</span><span class="p">:</span> <span class="s2">&quot;the cluster name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;account_number&quot;</span><span class="p">:</span> <span class="s2">&quot;3000&quot;</span><span class="p">,</span> <span class="s2">&quot;internal&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;org_id&quot;</span><span class="p">:</span> <span class="s2">&quot;NaN&quot;</span><span class="p">}}},</span>
+            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-23T16:15:59.478901889Z&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">input_msg</span> <span class="o">=</span> <span class="n">_mock_consumer_record</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">message_to_publish</span> <span class="o">=</span> <span class="s1">&#39;{&quot;key1&quot;: &quot;value1&quot;}&#39;</span>
+
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s2">&quot;ccx_data_pipeline.kafka_publisher.KafkaProducer&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">kafka_producer_init_mock</span><span class="p">:</span>
+            <span class="n">producer_mock</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+            <span class="n">kafka_producer_init_mock</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">producer_mock</span>
+
+            <span class="n">sut</span> <span class="o">=</span> <span class="n">KafkaPublisher</span><span class="p">(</span><span class="n">outgoing_topic</span><span class="o">=</span><span class="n">topic_name</span><span class="p">,</span> <span class="o">**</span><span class="n">producer_kwargs</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">DataPipelineError</span><span class="p">):</span>
+                <span class="n">sut</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">input_msg</span><span class="p">,</span> <span class="n">message_to_publish</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>Test Producer.publish method with invalid orgID.</p>
+<p>The kafka.KafkaProducer class is mocked in order to avoid the usage
+of the real library</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">test_publish_bad_accountNumber</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">producer_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;bootstrap_servers&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;kafka_server1&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="s2">&quot;ccx-data-pipeline&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">topic_name</span> <span class="o">=</span> <span class="s2">&quot;KAFKATOPIC&quot;</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ClusterName&quot;</span><span class="p">:</span> <span class="s2">&quot;the cluster name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;account_number&quot;</span><span class="p">:</span> <span class="s2">&quot;NaN&quot;</span><span class="p">,</span> <span class="s2">&quot;internal&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;org_id&quot;</span><span class="p">:</span> <span class="s2">&quot;5000&quot;</span><span class="p">}}},</span>
+            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-23T16:15:59.478901889Z&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">input_msg</span> <span class="o">=</span> <span class="n">_mock_consumer_record</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">message_to_publish</span> <span class="o">=</span> <span class="s1">&#39;{&quot;key1&quot;: &quot;value1&quot;}&#39;</span>
+
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s2">&quot;ccx_data_pipeline.kafka_publisher.KafkaProducer&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">kafka_producer_init_mock</span><span class="p">:</span>
+            <span class="n">producer_mock</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+            <span class="n">kafka_producer_init_mock</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">producer_mock</span>
+
+            <span class="n">sut</span> <span class="o">=</span> <span class="n">KafkaPublisher</span><span class="p">(</span><span class="n">outgoing_topic</span><span class="o">=</span><span class="n">topic_name</span><span class="p">,</span> <span class="o">**</span><span class="n">producer_kwargs</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">DataPipelineError</span><span class="p">):</span>
+                <span class="n">sut</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">input_msg</span><span class="p">,</span> <span class="n">message_to_publish</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <p>Test Producer.publish method with a ccx_metadata field in the input message.</p>
+<p>The kafka.KafkaProducer class is mocked in order to avoid the usage
+of the real library</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">test_publish_with_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">producer_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;bootstrap_servers&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;kafka_server1&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="s2">&quot;ccx-data-pipeline&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">topic_name</span> <span class="o">=</span> <span class="s2">&quot;KAFKATOPIC&quot;</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ClusterName&quot;</span><span class="p">:</span> <span class="s2">&quot;the cluster name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;account_number&quot;</span><span class="p">:</span> <span class="s2">&quot;3000&quot;</span><span class="p">,</span> <span class="s2">&quot;internal&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;org_id&quot;</span><span class="p">:</span> <span class="s2">&quot;5000&quot;</span><span class="p">}}},</span>
+            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-23T16:15:59.478901889Z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;request_id&quot;</span><span class="p">:</span> <span class="s2">&quot;REQUEST_ID&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ccx_metadata&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;metakey1&quot;</span><span class="p">:</span> <span class="s2">&quot;metavalue1&quot;</span><span class="p">},</span>
+        <span class="p">}</span>
+        <span class="n">input_msg</span> <span class="o">=</span> <span class="n">_mock_consumer_record</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">message_to_publish</span> <span class="o">=</span> <span class="s1">&#39;{&quot;key1&quot;: &quot;value1&quot;}&#39;</span>
+        <span class="n">expected_message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">b</span><span class="s1">&#39;{&quot;OrgID&quot;: 5000, &quot;AccountNumber&quot;: 3000, &quot;ClusterName&quot;: &quot;the cluster name&quot;, &#39;</span>
+            <span class="sa">b</span><span class="s1">&#39;&quot;Report&quot;: {&quot;key1&quot;: &quot;value1&quot;}, &quot;LastChecked&quot;: &quot;2020-01-23T16:15:59.478901889Z&quot;, &#39;</span>
+            <span class="sa">b</span><span class="s1">&#39;&quot;Version&quot;: 2, &quot;RequestId&quot;: &quot;REQUEST_ID&quot;, &quot;Metadata&quot;: {&quot;metakey1&quot;: &quot;metavalue1&quot;}}</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="p">)</span>
 
         <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s2">&quot;ccx_data_pipeline.kafka_publisher.KafkaProducer&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">kafka_producer_init_mock</span><span class="p">:</span>

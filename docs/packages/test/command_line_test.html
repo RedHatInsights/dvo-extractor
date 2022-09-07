@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>command_line_test.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>command_line_test.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>Copyright 2021 Red Hat, Inc</p>
+<p>Licensed under the Apache License, Version 2.0 (the &ldquo;License&rdquo;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<pre><code> http://www.apache.org/licenses/LICENSE-2.0
+</code></pre>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &ldquo;AS IS&rdquo; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+Module containing unit tests for the <code>Consumer</code> class.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+
+<span class="kn">import</span> <span class="nn">ccx_data_pipeline.command_line</span> <span class="k">as</span> <span class="nn">command_line</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Verify correct parsing of &ndash;version flag.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">test_command_line_args_valid_flag_version</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ccx-data-pipeline&quot;</span><span class="p">,</span> <span class="s2">&quot;--version&quot;</span><span class="p">]</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">command_line</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">parser</span><span class="o">.</span><span class="n">config</span>
+    <span class="k">assert</span> <span class="n">parser</span><span class="o">.</span><span class="n">version</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Verify correct parsing of positional argument <config>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">test_command_line_args_valid_config_value</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ccx-data-pipeline&quot;</span><span class="p">,</span> <span class="s2">&quot;path_to_config_file&quot;</span><span class="p">]</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">command_line</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">parser</span><span class="o">.</span><span class="n">version</span>
+    <span class="k">assert</span> <span class="n">parser</span><span class="o">.</span><span class="n">config</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>Verify app does not start if no config provided and exit with code 1.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">test_command_line_args_no_config_provided</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">SystemExit</span><span class="p">)</span> <span class="k">as</span> <span class="n">exception</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ccx-data-pipeline&quot;</span><span class="p">]</span>
+        <span class="n">command_line</span><span class="o">.</span><span class="n">ccx_data_pipeline</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">exception</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="ne">SystemExit</span>
+    <span class="k">assert</span> <span class="n">exception</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="mi">1</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>Verify help is shown if invalid argument provided.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">test_command_line_args_invalid_arg_provided</span><span class="p">(</span><span class="n">capsys</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ccx-data-pipeline&quot;</span><span class="p">,</span> <span class="s2">&quot;--config&quot;</span><span class="p">]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">SystemExit</span><span class="p">)</span> <span class="k">as</span> <span class="n">exception</span><span class="p">:</span>
+
+        <span class="n">parser</span> <span class="o">=</span> <span class="n">command_line</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+        <span class="k">assert</span> <span class="n">exception</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="ne">SystemExit</span>
+        <span class="k">assert</span> <span class="n">exception</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="mi">2</span>
+
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">parser</span><span class="o">.</span><span class="n">config</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">parser</span><span class="o">.</span><span class="n">version</span>
+
+        <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="s2">&quot;usage: ccx-data-pipeline&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+        <span class="k">assert</span> <span class="s2">&quot;error: unrecognized arguments&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
