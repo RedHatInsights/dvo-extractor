@@ -43,11 +43,11 @@ Module that implements a custom Kafka publisher.</p>
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="kn">import</span> <span class="nn">logging</span>
+      <div class="highlight"><pre><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">kafka</span> <span class="kn">import</span> <span class="n">KafkaProducer</span>
 <span class="kn">from</span> <span class="nn">insights_messaging.publishers</span> <span class="kn">import</span> <span class="n">Publisher</span>
+<span class="kn">from</span> <span class="nn">kafka</span> <span class="kn">import</span> <span class="n">KafkaProducer</span>
 
 <span class="kn">from</span> <span class="nn">ccx_data_pipeline.data_pipeline_error</span> <span class="kn">import</span> <span class="n">DataPipelineError</span>
 
@@ -105,12 +105,12 @@ The bytes are then sent to the output Kafka topic.</p>
     <div class='code'>
       <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">topic</span> <span class="o">=</span> <span class="n">outgoing_topic</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap_servers</span> <span class="o">=</span> <span class="n">bootstrap_servers</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">topic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;outgoing_topic&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">producer</span> <span class="o">=</span> <span class="n">KafkaProducer</span><span class="p">(</span><span class="n">bootstrap_servers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bootstrap_servers</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Producing to topic &#39;</span><span class="si">%s</span><span class="s2">&#39; on brokers </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">topic</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap_servers</span><span class="p">)</span></pre></div>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Producing to topic &#39;</span><span class="si">%s</span><span class="s2">&#39; on brokers </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">topic</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap_servers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outdata_schema_version</span> <span class="o">=</span> <span class="mi">2</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -135,10 +135,40 @@ to the producer to produce a message in the output Kafka topic.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-7'>#</a>
       </div>
-      
+      <p>Response is already a string, no need to JSON dump.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>        <span class="k">try</span><span class="p">:</span></pre></div>
+      <div class="highlight"><pre>        <span class="n">output_msg</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">org_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;identity&quot;</span><span class="p">][</span><span class="s2">&quot;identity&quot;</span><span class="p">][</span><span class="s2">&quot;internal&quot;</span><span class="p">][</span><span class="s2">&quot;org_id&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error extracting the OrgID: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">account_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;identity&quot;</span><span class="p">][</span><span class="s2">&quot;identity&quot;</span><span class="p">][</span><span class="s2">&quot;account_number&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error extracting the Account number: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">msg_timestamp</span> <span class="o">=</span> <span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span>
+            <span class="n">output_msg</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;OrgID&quot;</span><span class="p">:</span> <span class="n">org_id</span><span class="p">,</span>
+                <span class="s2">&quot;AccountNumber&quot;</span><span class="p">:</span> <span class="n">account_number</span><span class="p">,</span>
+                <span class="s2">&quot;ClusterName&quot;</span><span class="p">:</span> <span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;ClusterName&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Report&quot;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">),</span>
+                <span class="s2">&quot;LastChecked&quot;</span><span class="p">:</span> <span class="n">msg_timestamp</span><span class="p">,</span>
+                <span class="s2">&quot;Version&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">outdata_schema_version</span><span class="p">,</span>
+                <span class="s2">&quot;RequestId&quot;</span><span class="p">:</span> <span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;request_id&quot;</span><span class="p">),</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="s2">&quot;ccx_metadata&quot;</span> <span class="ow">in</span> <span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+                <span class="n">ccx_metadata</span> <span class="o">=</span> <span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;ccx_metadata&quot;</span><span class="p">]</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Adding &quot;Metadata&quot; to published message: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ccx_metadata</span><span class="p">)</span>
+                <span class="n">output_msg</span><span class="p">[</span><span class="s2">&quot;Metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ccx_metadata</span>
+
+            <span class="n">message</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">output_msg</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sending response to the </span><span class="si">%s</span><span class="s2"> topic.&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">topic</span><span class="p">)</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -147,41 +177,19 @@ to the producer to produce a message in the output Kafka topic.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-8'>#</a>
       </div>
-      <p>Flush kafkacat buffer.
-Response is already a string, no need to JSON dump.</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>            <span class="n">org_id</span> <span class="o">=</span> <span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;identity&quot;</span><span class="p">][</span><span class="s2">&quot;identity&quot;</span><span class="p">][</span><span class="s2">&quot;internal&quot;</span><span class="p">][</span><span class="s2">&quot;org_id&quot;</span><span class="p">]</span>
-            <span class="n">msg_timestamp</span> <span class="o">=</span> <span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span>
-            <span class="n">output_msg</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;OrgID&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">org_id</span><span class="p">),</span>
-                <span class="s2">&quot;ClusterName&quot;</span><span class="p">:</span> <span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;ClusterName&quot;</span><span class="p">],</span>
-                <span class="s2">&quot;Report&quot;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">),</span>
-                <span class="s2">&quot;LastChecked&quot;</span><span class="p">:</span> <span class="n">msg_timestamp</span><span class="p">,</span>
-                <span class="s2">&quot;RequestId&quot;</span><span class="p">:</span> <span class="n">input_msg</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;request_id&quot;</span><span class="p">),</span>
-            <span class="p">}</span>
-
-            <span class="n">message</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">output_msg</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sending response to the </span><span class="si">%s</span><span class="s2"> topic.&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">topic</span><span class="p">)</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-9'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-9'>#</a>
-      </div>
       <p>Convert message string into a byte array.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>            <span class="bp">self</span><span class="o">.</span><span class="n">producer</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topic</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
             <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Message has been sent successfully.&quot;</span><span class="p">)</span>
             <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s1">&#39;Message context: OrgId=</span><span class="si">%s</span><span class="s1">, ClusterName=&quot;</span><span class="si">%s</span><span class="s1">&quot;, LastChecked=&quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+                <span class="s2">&quot;Message context: OrgId=</span><span class="si">%s</span><span class="s2">, AccountNumber=</span><span class="si">%s</span><span class="s2">, &quot;</span>
+                <span class="s1">&#39;ClusterName=&quot;</span><span class="si">%s</span><span class="s1">&quot;, LastChecked=&quot;</span><span class="si">%s</span><span class="s1">, Version=</span><span class="si">%d</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
                 <span class="n">output_msg</span><span class="p">[</span><span class="s2">&quot;OrgID&quot;</span><span class="p">],</span>
+                <span class="n">output_msg</span><span class="p">[</span><span class="s2">&quot;AccountNumber&quot;</span><span class="p">],</span>
                 <span class="n">output_msg</span><span class="p">[</span><span class="s2">&quot;ClusterName&quot;</span><span class="p">],</span>
                 <span class="n">output_msg</span><span class="p">[</span><span class="s2">&quot;LastChecked&quot;</span><span class="p">],</span>
+                <span class="n">output_msg</span><span class="p">[</span><span class="s2">&quot;Version&quot;</span><span class="p">],</span>
             <span class="p">)</span>
 
             <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -197,17 +205,14 @@ Response is already a string, no need to JSON dump.</p>
             <span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">UnicodeEncodeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error encoding the response to publish: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
-
-        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error extracting the OrgID: </span><span class="si">{</span><span class="n">org_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span></pre></div>
+            <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error encoding the response to publish: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-10'>
+  <div class='section' id='section-9'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-10'>#</a>
+        <a class='octothorpe' href='#section-9'>#</a>
       </div>
       <p>Handle pipeline errors by logging them.</p>
     </div>
@@ -216,10 +221,10 @@ Response is already a string, no need to JSON dump.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-11'>
+  <div class='section' id='section-10'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-11'>#</a>
+        <a class='octothorpe' href='#section-10'>#</a>
       </div>
       <p>The super call is probably unnecessary because the default behavior
 is to do nothing, but let&rsquo;s call it in case it ever does anything.</p>

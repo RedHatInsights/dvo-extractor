@@ -82,7 +82,39 @@ Module with utilities for the tests.</p>
         <span class="kc">None</span><span class="p">,</span>
         <span class="kc">None</span><span class="p">,</span>
         <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Mock the process method of ICM consumer so it does nothing.</p>
+<p>This mocks the process method and removes all processing, but
+still catches the raised exceptions.
+If duration_s is provided, the process method is made to sleep
+for the given amount of seconds before returning, unless something
+raises an exception within that timeframe.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">mock_consumer_process_no_action_catch_exception</span><span class="p">(</span><span class="n">duration_s</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">try</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">duration_s</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">raise</span>
 
 </pre></div>
     </div>

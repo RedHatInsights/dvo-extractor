@@ -83,7 +83,13 @@ Module containing unit tests for the <code>LogFilter</code> class.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="n">record</span> <span class="o">=</span> <span class="n">LogRecord</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;ccx_data_pipeline.</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">.py&quot;</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(),</span> <span class="ne">Exception</span><span class="p">(),</span>
+        <span class="sa">f</span><span class="s2">&quot;ccx_data_pipeline.</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">level</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">.py&quot;</span><span class="p">,</span>
+        <span class="n">lineno</span><span class="p">,</span>
+        <span class="n">msg</span><span class="p">,</span>
+        <span class="nb">tuple</span><span class="p">(),</span>
+        <span class="ne">Exception</span><span class="p">(),</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="n">LogFilter</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">record</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
 

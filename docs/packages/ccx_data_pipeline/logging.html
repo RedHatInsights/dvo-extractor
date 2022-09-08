@@ -74,7 +74,11 @@ Submodule to configure logging stuff that cannot be afford from configuration fi
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre>    <span class="n">aws_config_vars</span> <span class="o">=</span> <span class="p">(</span>
+      <div class="highlight"><pre>    <span class="n">enabled</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;LOGGING_TO_CW_ENABLED&quot;</span><span class="p">,</span> <span class="s2">&quot;False&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">enabled</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="n">aws_config_vars</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">&quot;CW_AWS_ACCESS_KEY_ID&quot;</span><span class="p">,</span>
         <span class="s2">&quot;CW_AWS_SECRET_ACCESS_KEY&quot;</span><span class="p">,</span>
         <span class="s2">&quot;AWS_REGION_NAME&quot;</span><span class="p">,</span>

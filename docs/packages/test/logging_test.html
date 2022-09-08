@@ -197,6 +197,7 @@ Submodule for testing ccx_data_pipeline.logging.</p>
         <span class="s2">&quot;AWS_REGION_NAME&quot;</span><span class="p">:</span> <span class="s2">&quot;a region&quot;</span><span class="p">,</span>
         <span class="s2">&quot;CW_LOG_GROUP&quot;</span><span class="p">:</span> <span class="s2">&quot;a group&quot;</span><span class="p">,</span>
         <span class="s2">&quot;CW_STREAM_NAME&quot;</span><span class="p">:</span> <span class="s2">&quot;the stream&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LOGGING_TO_CW_ENABLED&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="s2">&quot;ccx_data_pipeline.logging.os.environ&quot;</span><span class="p">,</span> <span class="n">valid_env</span><span class="p">):</span>

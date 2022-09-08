@@ -79,14 +79,14 @@ Module that defines a Downloader object to get HTTP urls.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="n">multipliers</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;K&quot;</span><span class="p">:</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">3</span><span class="p">,</span>
-        <span class="s2">&quot;M&quot;</span><span class="p">:</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span><span class="p">,</span>
-        <span class="s2">&quot;G&quot;</span><span class="p">:</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">9</span><span class="p">,</span>
-        <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">12</span><span class="p">,</span>
-        <span class="s2">&quot;Ki&quot;</span><span class="p">:</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="s2">&quot;Mi&quot;</span><span class="p">:</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">20</span><span class="p">,</span>
-        <span class="s2">&quot;Gi&quot;</span><span class="p">:</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">30</span><span class="p">,</span>
-        <span class="s2">&quot;Ti&quot;</span><span class="p">:</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">40</span><span class="p">,</span>
+        <span class="s2">&quot;K&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;M&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="mi">6</span><span class="p">,</span>
+        <span class="s2">&quot;G&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="mi">9</span><span class="p">,</span>
+        <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="mi">12</span><span class="p">,</span>
+        <span class="s2">&quot;Ki&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">10</span><span class="p">,</span>
+        <span class="s2">&quot;Mi&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">20</span><span class="p">,</span>
+        <span class="s2">&quot;Gi&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">30</span><span class="p">,</span>
+        <span class="s2">&quot;Ti&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">40</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?P&lt;quantity&gt;\d+(\.\d+)?)\s*(?P&lt;units&gt;[KMGT]?i?B?)?$&quot;</span><span class="p">,</span> <span class="n">file_size</span><span class="p">)</span>
@@ -159,7 +159,7 @@ Downloader for HTTP uris.</p>
       <p><code>HTTPDownloader</code> initializer.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_archive_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span></pre></div>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_archive_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_unsafe_links</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -179,7 +179,9 @@ will be discarded.</p>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">max_archive_size</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No max_archive_size defined. Be careful&quot;</span><span class="p">)</span></pre></div>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No max_archive_size defined. Be careful&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">allow_unsafe_links</span> <span class="o">=</span> <span class="n">allow_unsafe_links</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -204,8 +206,9 @@ will be discarded.</p>
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre>        <span class="k">if</span> <span class="n">src</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">HTTPDownloader</span><span class="o">.</span><span class="n">HTTP_RE</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid URL format: </span><span class="si">{</span><span class="n">src</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">allow_unsafe_links</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">src</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">HTTPDownloader</span><span class="o">.</span><span class="n">HTTP_RE</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">DataPipelineError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid URL format: </span><span class="si">{</span><span class="n">src</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>

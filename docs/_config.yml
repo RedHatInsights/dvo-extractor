@@ -1,24 +1,28 @@
-title: CCX Data Pipeline
-description: Service for gathering and analyzing Insights archives
-baseurl: "/ccx-data-pipeline"
-url: "https://redhatinsights.github.io"
+# Book settings
+# Learn more at https://jupyterbook.org/customize/config.html
 
-heading_anchors: true
-search_enabled: false
+title: CCX Data Pipeline Archives Handler
+author: CCX Processing Team
+logo: logo.png
 
-aux_links:
-  "Github repository":
-    - "https://github.com/RedHatInsights/ccx-data-pipeline"
+# Force re-execution of notebooks on each build.
+# See https://jupyterbook.org/content/execute.html
+execute:
+  execute_notebooks: force
 
-footer_content: "Copyright &copy; 2020 Red Hat, Inc.</a>"
+# Define the name of the latex output file for PDF builds
+latex:
+  latex_documents:
+    targetname: book.tex
 
-# Build settings
-markdown: kramdown
-remote_theme: pmarsceill/just-the-docs
-plugins:
-  - jekyll-remote-theme
+# Information about where the book exists on the web
+repository:
+  url: https://gitlab.cee.redhat.com/ccx/ccx-data-pipeline
+  path_to_book: docs
+  branch: master
 
-exclude:
-  - Gemfile
-  - Gemfile.lock
-  - vendor/
+# Add GitHub buttons to your book
+# See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository
+html:
+  use_issues_button: false
+  use_repository_button: true
