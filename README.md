@@ -2,7 +2,7 @@
 
 [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 
-[![GitHub Pages](https://img.shields.io/badge/%20-GitHub%20Pages-informational)](https://redhatinsights.github.io/ccx-data-pipeline/)
+[![GitLab Pages](https://img.shields.io/badge/%20-GitLab%20Pages-informational)](https://ccx.pages.redhat.com/ccx-data-pipeline/)
 
 ## Description
 
@@ -25,16 +25,9 @@ the link looks like so: `https://gitlab.cee.redhat.com/<your-gitlab-username>/cc
 You can skip steps 1 and 2 if you go to the link `https://gitlab.cee.redhat.com/<your-gitlab-username>/ccx-data-pipeline/-/project_members` directly.
 
 This will allow the smoke test to run automatically every merge request you make.
+
 ## Documentation
 
-Documentation is hosted on Github Pages
-<https://redhatinsights.github.io/ccx-data-pipeline/>.
-Sources are located in [docs](https://github.com/RedHatInsights/ccx-data-pipeline/tree/master/docs).
-
-## Repositories
-
-Please note that repository available at address
-https://github.com/RedHatInsights/ccx-data-pipeline is read only and can not be
-changed directly. Its content is mirrored automatically from the origin
-repository whis is available at address
-https://gitlab.cee.redhat.com/ccx/ccx-data-pipeline/.
+Documentation is hosted on Gitlab Pages
+<https://ccx.pages.redhat.com/ccx-data-pipeline/>.
+Sources are located in [docs](https://gitlab.cee.redhat.com/ccx/ccx-data-pipeline/-/tree/master/docs).
