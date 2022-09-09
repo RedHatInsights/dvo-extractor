@@ -11,9 +11,10 @@ Some of the specific **ccx-data-pipeline** configuration points are in the
 `service` section, where the specific _consumer_, _downloader_ and _publisher_
 are configured.
 
-- `consumer` name refers to the class `ccx_data_pipeline.consumer.Consumer`. The
-  arguments passed to the initializer are defined in the `kwargs` dictionary
-  initializer. The most relevants are:
+- `consumer` name refers to the class
+  `ccx_messaging.consumers.consumer.AnemicConsumer`. The arguments passed
+  to the initializer are defined in the `kwargs` dictionary initializer.
+  The most relevants are:
   - `incoming_topic`: the Kafka topic to subscribe the consumer object.
   - `group_id`: Kafka group identifier. Several instances of the same pipeline
     will need to be into the same group in order to not process the same
@@ -26,24 +27,26 @@ are configured.
     ignored. To disable this functionality and process every record ignoring its
     age, use `-1`.
 - `downloader`: name refers to the class
-  `ccx_data_pipeline.http_downloader.HTTPDownloader`. The only argument that can
-  be passed to the initializer is:
+  `ccx_messaging.downloaders.http_downloader.HTTPDownloader`. Some of the accepted
+  argument are:
   - `max_archive_size`: this is an optional argument. It will specify the
     maximum size of the archives that can be processed by the pipeline. If the
     downloaded archive is bigger, it will be discarded. The parameter should be
     an string in a human-readable format (it accepts units like KB, KiB, GB,
     GiB...
-- `publisher` name refers to the class `ccx_data_pipeline.publisher.Publisher`
-  and it also allow to define the arguments passed to the initializer modifying
-  the `kwargs` dictionary:
+  - `allow_unsafe_link`: it is used mostly in test environments in order to avoid
+    checking the URL of the archive to allow downloads from not recognized URLs.
+- `publisher` name refers to the class
+  `ccx_messaging.publishers.data_pipeline_publisher.DataPipelinePublisher` and it
+  also allow to define the arguments passed to the initializer modifying the
+  `kwargs` dictionary:
   - `outgoing_topic`: a string indicating the topic where the reported results
     should be sent.
   - `bootstrap_servers`: same as in `consumer`, a list of Kafka servers to
     connect
 - `watchers`: it has a list of `Watcher` objects that will receive notifications
-  of events during the
-  pipeline processing steps. The default configured one is
-  `ccx_data_pipeline.consumer_watcher.ConsumerWatcher` that serve some
+  of events during the pipeline processing steps. The default configured one is
+  `ccx_messaging.watchers.stats_watcher.StatsWatcher` that serve some
   statistics for [Prometheus service](https://prometheus.io/). The port where
   the `prometheus_client` library will listen for petitions is configurable
   using `kwargs` dictionary in the same way as `consumer` and `publisher`. The

@@ -106,7 +106,7 @@ The consumer, publisher and Payload Tracker watcher (if enabled)
 configurations should be updated with the following Kafka
 configurations from Clowder:
 
-- Kafka broker URL (hostname asnd port)
+- Kafka broker URL (hostname and port)
 - Kafka Security protocol
 - Kafka SASL mechanism
 - Kafka SASL username
