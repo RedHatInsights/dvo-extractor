@@ -10,5 +10,6 @@ chapters:
 - file: logging
 - file: local_setup
 - file: configuration
+- file: clowder
 - file: deploy
 - file: references
