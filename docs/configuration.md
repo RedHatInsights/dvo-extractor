@@ -26,6 +26,7 @@ are configured.
     seconds, it will be ignored. By default, messages older than 2 hours will be
     ignored. To disable this functionality and process every record ignoring its
     age, use `-1`.
+  - `platform_service`: Used by `AnemicConsumer` to filter the received messages.
 - `downloader`: name refers to the class
   `ccx_messaging.downloaders.http_downloader.HTTPDownloader`. Some of the accepted
   argument are:

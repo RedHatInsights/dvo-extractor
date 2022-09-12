@@ -16,7 +16,7 @@ the default configuration
 
 The platform mounts a directory in every pod (currently in `/cdapp`),
 that contains several files. The Clowder configuration is in one of
-them an it is a JSON file. See an example above:
+them and it's a JSON file. See an example bellow:
 
 ```json
 {
@@ -92,7 +92,7 @@ them an it is a JSON file. See an example above:
 
 In order to unify the way the services access this configuration
 file, the platform provides several libraries in different programming
-languages in order to parse the configuration file and provide a data
+languages in order to parse the configuration file and provides a data
 structure with all the important values already parsed.
 
 In our case, all the hard work is done in our
@@ -120,7 +120,7 @@ declare which Kafka topics it needs to work. The topic names are
 usually the same in the Clowder configurations and the "real world",
 but with the Kafka migration to Managed Kafka over RHOSAK, the topic
 names can be prepended with a prefix, so the library needs to take
-care about the requested topic name and its correspondent topic name
+care of the requested topic name and its correspondent topic name
 in the broker.
 
 So, the topics used by consumer, publisher and Payload Tracker
