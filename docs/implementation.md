@@ -4,16 +4,17 @@
 
 Every time a new record is sent by Kafka to the subscribed topic, the
 `ccx_messaging.consumers.consumer.Consumer` or
-`ccx_messaging.consumer.AnemicConsumer` will handle and process it,
-storing the needed information from the record and returning the URL to
-the archive in the corresponding S3 bucket.
+`ccx_messaging.consumer.AnemicConsumer` will deserialize it and check
+the destination service. In case it matches with the configured one, it
+will handle and process it, storing the needed information from the record
+and returning the URL to the archive in the corresponding S3 bucket.
 
 ### Format of the received Kafka records
 
 ```{note}
 Detailed information about the exact format of received Kafka records is
 available at
-https://redhatinsights.github.io/insights-data-schemas/platform_upload_buckit_messages.html
+https://redhatinsights.github.io/insights-data-schemas/platform_upload_announce_messages.html.
 ```
 
 
