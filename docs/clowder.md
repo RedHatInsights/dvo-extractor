@@ -1,129 +1,30 @@
 # Clowder configuration
 
-As this service is deployed using the console.redhat.com AppSRE
-platform, some specific values for infrastructure services are
-provided via Clowder configuration.
+As the rest of the services deployed in the Console RedHat platform, the
+CCX Data Pipeline Archives Handler should update its configuration using
+the relevant values extracted from the Clowder configuration file.
 
-## Which values can be expected in a Clowder configuration file
-
-In the case of CCX Data Pipeline Archives Handler, the only
-infrastructure to take into account is the Kafka broker. The hostname,
-port, securty protocol, SSL certificate (if any) and SASL
-credentials are provided via Clowder, so the service **overwrites**
-the default configuration 
-
-## How does the platform provide the Clowder configuration?
-
-The platform mounts a directory in every pod (currently in `/cdapp`),
-that contains several files. The Clowder configuration is in one of
-them and it's a JSON file. See an example bellow:
-
-```json
-{
-  "BOPURL": "http://env-ephemeral-r5rhif-mbop.ephemeral-XXXXXX.svc:8090",
-  "endpoints": [
-    {
-      "app": "ingress",
-      "hostname": "ingress-service.ephemeral-r5rhif.svc",
-      "name": "service",
-      "port": 8000
-    }
-  ],
-  "featureFlags": {
-    "hostname": "env-ephemeral-r5rhif-featureflags.ephemeral-r5rhif.svc",
-    "port": 4242,
-    "scheme": "http"
-  },
-  "kafka": {
-    "brokers": [
-      {
-        "hostname": "test-kafka-cbt-e---jei-s--i---a.bf2.kafka.rhcloud.com",
-        "port": 443,
-        "authtype": "sasl",
-        "sasl": {
-          "username": "b99710cf-f92c-41b5-9f74-41dcab32a013",
-          "password": "C9wbMeJGwkUx8VGD1nQWw7Wr8YhhW2T7"
-        }
-      }
-    ],
-    "topics": [
-      {
-        "name": "platform.upload.buckit",
-        "requestedName": "platform.upload.buckit"
-      },
-      {
-        "name": "ccx.ocp.results",
-        "requestedName": "ccx.ocp.results"
-      },
-      {
-        "name": "platform.payload-status",
-        "requestedName": "platform.payload-status"
-      }
-    ]
-  },
-  "logging": {
-    "cloudwatch": {
-      "accessKeyId": "",
-      "logGroup": "",
-      "region": "",
-      "secretAccessKey": ""
-    },
-    "type": "null"
-  },
-  "metadata": {
-    "deployments": [
-      {
-        "image": "quay.io/cloudservices/ccx-data-pipeline:0a0f400",
-        "name": "archives-handler"
-      }
-    ],
-    "envName": "env-ephemeral-r5rhif",
-    "name": "ccx-data-pipeline"
-  },
-  "metricsPath": "/metrics",
-  "metricsPort": 9000,
-  "privatePort": 10000,
-  "publicPort": 8000,
-  "webPort": 8000
-}
-```
+For a general overview about Clowder configuration file and how it is used
+in the external data pipeline, please refer to
+[Clowder configuration](https://ccx.pages.redhat.com/ccx-docs/customer/clowder.html)
+in CCX Docs.
 
 ## How can we deal with the Clowder configuration file?
 
-In order to unify the way the services access this configuration
-file, the platform provides several libraries in different programming
-languages in order to parse the configuration file and provides a data
-structure with all the important values already parsed.
+As the service is implemented in Python, we take advantage of using
+[app-common-python](https://github.com/RedHatInsights/app-common-python/).
+It provides to the service all the needed values for configuring Kafka
+access and the topics name mapping.
 
-In our case, all the hard work is done in our
-`ccx_messaging.utils.clowder` library, which uses the platform
-library to read the Clowder configuration file and mix it with the
-values provided to the [service configuration](configuration).
+To accomplish the task of mixing together both configuration inputs and
+apply the resulting one, the hard work is done in our
+`ccx_messaging.utils.clowder`.
 
 # CCX Data Pipeline specific relevant values
 
-The consumer, publisher and Payload Tracker watcher (if enabled)
-configurations should be updated with the following Kafka
-configurations from Clowder:
+For this service, the relevant values are referred to be the Kafka access
+parameters and the Kafka topics name mapping.
 
-- Kafka broker URL (hostname and port)
-- Kafka Security protocol
-- Kafka SASL mechanism
-- Kafka SASL username
-- Kafka SASL password
-- Kafka SSL certificate (if any is provided)
-
-## Kafka topics
-
-When a service is defined to be used in the platform, it should
-declare which Kafka topics it needs to work. The platform will create
-the topics if needed and it will give a name in the Kafka instance
-that can differ from the requested one.
-
-For that reason, the services running in the platform should look into
-the Clowder configuration for the mapping between requested topic
-names and the real ones created by the platform, so the service should
-use the later in order to consume or publish messages into them.
-
-For the CCX Data Pipeline Archives Handler, the consumer, the publisher and the Payload Tracker watcher configurations should be
-updated to use the real name instead of the requested name.
+The entities that should be configured with the injected values are the
+consumer, publisher and, if configured to use them, Payload Tracker Watcher
+and Dead Letter Queue publisher.
