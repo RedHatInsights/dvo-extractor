@@ -116,13 +116,14 @@ configurations from Clowder:
 ## Kafka topics
 
 When a service is defined to be used in the platform, it should
-declare which Kafka topics it needs to work. The topic names are
-usually the same in the Clowder configurations and the "real world",
-but with the Kafka migration to Managed Kafka over RHOSAK, the topic
-names can be prepended with a prefix, so the library needs to take
-care of the requested topic name and its correspondent topic name
-in the broker.
+declare which Kafka topics it needs to work. The platform will create
+the topics if needed and it will give a name in the Kafka instance
+that can differ from the requested one.
 
-So, the topics used by consumer, publisher and Payload Tracker
-watcher will be updated too in order to use the real names instead of
-the requested names.
+For that reason, the services running in the platform should look into
+the Clowder configuration for the mapping between requested topic
+names and the real ones created by the platform, so the service should
+use the later in order to consume or publish messages into them.
+
+For the CCX Data Pipeline Archives Handler, the consumer, the publisher and the Payload Tracker watcher configurations should be
+updated to use the real name instead of the requested name.
