@@ -1,0 +1,140 @@
+# Copyright 2022 Red Hat, Inc
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: ext-pipeline-benchmark
+objects:
+- apiVersion: cloud.redhat.com/v1alpha1
+  kind: ClowdApp
+  metadata:
+    name: ext-pipeline-benchmark
+  spec:
+    envName: ${ENV_NAME}
+    dependencies:
+      - ccx-data-pipeline
+    jobs:
+    - name: not-ccx-headers
+      parallelism: 1
+      completions: 1
+      activeDeadlineSeconds: ${{ACTIVE_DEADLINE_SECONDS}}
+      backoffLimit: 1 # Clowder doesn't support this setting as a parameter - https://coreos.slack.com/archives/CCRND57FW/p1657620480174029?thread_ts=1657619229.653889&cid=CCRND57FW
+      podSpec:
+        image: ${IMAGE}:${IMAGE_TAG}
+        command: 
+          - python 
+        args:
+          - "/ccx-data-pipeline/test/benchmark_test.py"
+        restartPolicy: Never
+        resources:
+          requests:
+            cpu: ${CPU_REQUEST}
+            memory: ${MEMORY_REQUEST}
+          limits:
+            cpu: ${CPU_LIMIT}
+            memory: ${MEMORY_LIMIT}
+        env:
+          - name: ENV_NAME
+            value: ${ENV_NAME}
+          - name: MESSAGES_NO
+            value: ${MESSAGES_NO}
+          - name: MESSAGE_SIZE
+            value: ${MESSAGE_SIZE}
+          - name: KAFKA_INGRESS_TOPIC
+            value: ${CDP_INCOMING_TOPIC}
+          - name: KAFKA_BOOTSTRAP_URL
+            value: mq-kafka:29092
+          - name: CLOWDER_ENABLED
+            value: ${CLOWDER_ENABLED}
+    kafkaTopics:
+      - replicas: 3
+        partitions: 16
+        topicName: ${CDP_INCOMING_TOPIC}
+      - replicas: 3
+        partitions: 1
+        topicName: ${CDP_OUTGOING_TOPIC}
+      - replicas: 3
+        partitions: 1
+        topicName: ${PAYLOAD_TRACKER_TOPIC}
+      - replicas: 3
+        partitions: 1
+        topicName: ${CDP_DEAD_LETTER_QUEUE_TOPIC}
+
+- apiVersion: cloud.redhat.com/v1alpha1
+  kind: ClowdJobInvocation
+  metadata:
+    labels:
+      app: ext-pipeline-benchmark
+    name: benchmark-job-launcher-${CJI_RANDOM_SUFFIX}
+  spec:
+    appName: ext-pipeline-benchmark
+    jobs:
+      - not-ccx-headers
+
+parameters:
+- name: CLOWDER_ENABLED
+  description: Determines if this is a Clowder deployment
+  value: "true"
+- description: Image name
+  name: IMAGE
+  value: quay.io/cloudservices/ccx-data-pipeline
+- description: Image tag
+  name: IMAGE_TAG
+  required: true
+- description: ClowdEnv Name
+  name: ENV_NAME
+  requred: true
+- name: CPU_LIMIT
+  value: 200m
+- name: MEMORY_LIMIT
+  value: 512Mi
+- name: CPU_REQUEST
+  value: 100m
+- name: MEMORY_REQUEST
+  value: 256Mi
+- name: ACTIVE_DEADLINE_SECONDS
+  description: The maximum duration the job can run. 
+  value: "300" # 5 minutes
+- name: MESSAGES_NO
+  value: "1000"
+  description: The number of messages to be sent in the test
+- name: MESSAGE_SIZE
+  value: "10000"
+  description: The size in bytes of each message that will be send in the test
+- name: CJI_RANDOM_SUFFIX
+  description: A suffix for generating random CJI
+  from: '[a-z]{8}'
+  generate: expression
+
+- description: Input topic name for configured Kafka consumer
+  name: CDP_INCOMING_TOPIC
+  value: platform.upload.announce
+  required: true
+- description: Dead letter queue topic for unprocessed messages in the consumer
+  name: CDP_DEAD_LETTER_QUEUE_TOPIC
+  value: ccx.data.pipeline.dead.letter.queue
+- description: Output topic name for configured Kafka publisher
+  name: CDP_OUTGOING_TOPIC
+  value: ccx.ocp.results
+  required: true
+- description: Kafka topic for publishing updated for the Payload Tracker service
+  name: PAYLOAD_TRACKER_TOPIC
+  value: platform.payload-status
+  required: true
+- description: Service name for filtering received Kafka message from announce topic
+  name: CDP_PLATFORM_SERVICE
+  value: openshift
+  required: true

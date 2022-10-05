@@ -26,6 +26,32 @@ You can skip steps 1 and 2 if you go to the link `https://gitlab.cee.redhat.com/
 
 This will allow the smoke test to run automatically every merge request you make.
 
+## Benchmark tests
+
+In `test/benchmark_test.py` file there are benchmark tests to measure the service
+performance. To perform those test the pipeline must be running, either 
+[locally](https://ccx.pages.redhat.com/ccx-docs/howto/local_edp.html) or
+in an [ephemeral cluster](https://ccx.pages.redhat.com/ccx-docs/howto/ephemeral_env.html).
+If you're running tests locally you can tweak the tests configuration by setting the
+proper environment variables (a list with description can be found in `deploy/benchmark.yaml`).
+To run the test in an ephemeral cluster you need to add the following service to 
+your `test.yaml` file:
+
+```
+- name: ext-pipeline-benchmark
+      host: gitlab
+      repo: ccx/ccx-data-pipeline
+      path: deploy/benchmark.yaml
+      ref: master
+      parameters:
+        IMAGE: quay.io/cloudservices/ccx-data-pipeline
+        IMAGE_TAG: latest
+```
+
+The last step is to launch the test and read the output:
+
+`python test/benchmark_test.py`
+
 ## Documentation
 
 Documentation is hosted on Gitlab Pages
