@@ -93,6 +93,16 @@ objects:
             - name: ALLOW_UNSAFE_LINKS
               value: ${ALLOW_UNSAFE_LINKS}
           image: ${IMAGE}:${IMAGE_TAG}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /metrics
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 2
           volumeMounts:
             - mountPath: /data
               name: ccx-data-pipeline-config
