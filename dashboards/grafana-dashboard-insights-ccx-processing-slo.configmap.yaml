@@ -194,7 +194,7 @@ data:
                 "fieldConfig": {
                     "defaults": {
                         "color": {
-                            "mode": "thresholds"
+                            "mode": "continuous-GrYlRd"
                         },
                         "mappings": [],
                         "noValue": "0%",
@@ -319,7 +319,7 @@ data:
                             "uid": "${datasource}"
                         },
                         "exemplar": true,
-                        "expr": "sum(rate(api_endpoints_status_codes{service=\"ccx-smart-proxy\", status_code!=\"500\"}[5m]))\n/\nsum(rate(api_endpoints_requests{service=\"ccx-smart-proxy\"}[5m]))",
+                        "expr": "sum(rate(api_endpoints_status_codes{service=\"ccx-smart-proxy\", status_code!=\"500\"}[5m]))\n/\nsum(rate(api_endpoints_status_codes{service=\"ccx-smart-proxy\"}[5m]))",
                         "interval": "",
                         "legendFormat": "",
                         "refId": "A"
