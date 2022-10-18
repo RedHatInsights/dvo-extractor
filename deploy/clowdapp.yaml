@@ -251,7 +251,7 @@ parameters:
   requred: true
 - description: Minimum number of pods to use when autoscaling is enabled
   name: MIN_REPLICAS
-  value: '2'
+  value: '3'
 - description: Minimum number of pods to use when autoscaling is enabled
   name: MAX_REPLICAS
   value: '16'
