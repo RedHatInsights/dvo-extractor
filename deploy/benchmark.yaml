@@ -34,10 +34,10 @@ objects:
       backoffLimit: 1 # Clowder doesn't support this setting as a parameter - https://coreos.slack.com/archives/CCRND57FW/p1657620480174029?thread_ts=1657619229.653889&cid=CCRND57FW
       podSpec:
         image: ${IMAGE}:${IMAGE_TAG}
-        command: 
-          - python 
+        command:
+          - python
         args:
-          - "/ccx-data-pipeline/test/benchmark_test.py"
+          - "/ccx-data-pipeline/test/benchmark.py"
         restartPolicy: Never
         resources:
           requests:
@@ -106,7 +106,7 @@ parameters:
 - name: MEMORY_REQUEST
   value: 256Mi
 - name: ACTIVE_DEADLINE_SECONDS
-  description: The maximum duration the job can run. 
+  description: The maximum duration the job can run.
   value: "300" # 5 minutes
 - name: MESSAGES_NO
   value: "1000"
