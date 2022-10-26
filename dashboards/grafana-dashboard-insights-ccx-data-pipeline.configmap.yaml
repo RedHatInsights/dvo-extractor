@@ -678,9 +678,9 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kafka_consumergroup_group_lag{topic=\"platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) by (group)",
+              "expr": "sum(kafka_consumergroup_group_lag{topic=~\".*platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) by (group, topic)",
               "interval": "",
-              "legendFormat": "topic : platform.upload.announce",
+              "legendFormat": "topic : {{topic}} group: {{group}}",
               "refId": "A"
             }
           ],
@@ -775,7 +775,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kafka_consumergroup_group_lag{topic=\"platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) by (partition)",
+              "expr": "sum(kafka_consumergroup_group_lag{topic=~\".*platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) by (partition)",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{partition}}",
