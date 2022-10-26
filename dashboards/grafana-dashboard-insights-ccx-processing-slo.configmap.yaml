@@ -48,7 +48,7 @@ data:
                     "type": "prometheus",
                     "uid": "${datasource}"
                 },
-                "description": "archives processed in less than 5s",
+                "description": "Total time for processing an archive since it gets to the pipeline until the report is stored in the database",
                 "fieldConfig": {
                     "defaults": {
                         "color": {
@@ -72,7 +72,7 @@ data:
                                 }
                             ]
                         },
-                        "unit": "percentunit"
+                        "unit": "s"
                     },
                     "overrides": []
                 },
@@ -105,7 +105,7 @@ data:
                             "uid": "${datasource}"
                         },
                         "exemplar": true,
-                        "expr": "(((\n  sum(\n    increase(successful_messages_processing_time_sum{service=\"ccx-insights-results-db-writer-prometheus-exporter\"}[1m])\n  )\n  /\n  sum(\n    increase(successful_messages_processing_time_count{service=\"ccx-insights-results-db-writer-prometheus-exporter\"}[1m])\n  )\n) + (\n  sum(\n    increase(ccx_process_duration_seconds_count{service=\"ccx-data-pipeline-prometheus-exporter\"}[1m])\n  )\n  /\n  sum(\n    increase(ccx_process_duration_seconds_count{service=\"ccx-data-pipeline-prometheus-exporter\"}[1m])\n  )\n)) < 5) /\n((\n  sum(\n    increase(successful_messages_processing_time_sum{service=\"ccx-insights-results-db-writer-prometheus-exporter\"}[1m])\n  )\n  /\n  sum(\n    increase(successful_messages_processing_time_count{service=\"ccx-insights-results-db-writer-prometheus-exporter\"}[1m])\n  )\n) + (\n  sum(\n    increase(ccx_process_duration_seconds_count{service=\"ccx-data-pipeline-prometheus-exporter\"}[1m])\n  )\n  /\n  sum(\n    increase(ccx_process_duration_seconds_count{service=\"ccx-data-pipeline-prometheus-exporter\"}[1m])\n  )\n))\n",
+                        "expr": "(\n  sum(\n    increase(successful_messages_processing_time_sum{service=\"ccx-insights-results-db-writer-prometheus-exporter\",namespace=\"$namespace\"}[1m])\n  )\n  /\n  sum(\n    increase(successful_messages_processing_time_count{service=\"ccx-insights-results-db-writer-prometheus-exporter\",namespace=\"$namespace\"}[1m])\n  )\n) + (\n  sum(\n    increase(ccx_process_duration_seconds_count{service=\"ccx-data-pipeline-prometheus-exporter\",namespace=\"$namespace\"}[1m])\n  )\n  /\n  sum(\n    increase(ccx_process_duration_seconds_count{service=\"ccx-data-pipeline-prometheus-exporter\",namespace=\"$namespace\"}[1m])\n  )\n)",
                         "interval": "",
                         "legendFormat": "",
                         "refId": "A"
@@ -143,7 +143,7 @@ data:
                                 }
                             ]
                         },
-                        "unit": "percentunit"
+                        "unit": "none"
                     },
                     "overrides": []
                 },
@@ -176,7 +176,7 @@ data:
                             "uid": "${datasource}"
                         },
                         "exemplar": true,
-                        "expr": "((sum(kafka_consumergroup_group_lag{topic=~\".*platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) + sum(kafka_consumergroup_group_lag{topic=~\".*ccx.ocp.results\", group=\"ccx_data_pipeline_app\"})) < 200) / (sum(kafka_consumergroup_group_lag{topic=~\".*platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) + sum(kafka_consumergroup_group_lag{topic=~\".*ccx.ocp.results\", group=\"ccx_data_pipeline_app\"}))\n",
+                        "expr": "sum(kafka_consumergroup_group_lag{topic=~\".*platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) + sum(kafka_consumergroup_group_lag{topic=~\".*ccx.ocp.results\", group=\"ccx_data_pipeline_app\"})",
                         "interval": "",
                         "legendFormat": "",
                         "refId": "A"
@@ -190,11 +190,11 @@ data:
                     "type": "prometheus",
                     "uid": "${datasource}"
                 },
-                "description": "Percentage of requests that has a request time less than slo_response_time_seconds seconds",
+                "description": "Percentage of requests that has a request time greater than slo_response_time_seconds seconds",
                 "fieldConfig": {
                     "defaults": {
                         "color": {
-                            "mode": "continuous-GrYlRd"
+                            "mode": "thresholds"
                         },
                         "mappings": [],
                         "noValue": "0%",
@@ -248,13 +248,13 @@ data:
                             "uid": "${datasource}"
                         },
                         "exemplar": true,
-                        "expr": "( count ( rate(api_endpoints_response_time_sum{ service=\"ccx-smart-proxy\"}[1m]) < $slo_response_time_seconds ) \n/\ncount(rate(api_endpoints_response_time_sum{service=\"ccx-smart-proxy\"}[1m])) ) OR on() vector(0)",
+                        "expr": "( count ( rate(api_endpoints_response_time_sum{namespace=\"$namespace\", service=\"ccx-smart-proxy\"}[1m]) > $slo_response_time_seconds ) \n/\nsum(rate(api_endpoints_response_time_sum{namespace=\"$namespace\", service=\"ccx-smart-proxy\"}[1m])) ) OR on() vector(0)",
                         "interval": "",
                         "legendFormat": "",
                         "refId": "A"
                     }
                 ],
-                "title": "Request time less than $slo_response_time_seconds s",
+                "title": "Request time greater than $slo_response_time_seconds s",
                 "type": "stat"
             },
             {
@@ -262,7 +262,7 @@ data:
                     "type": "prometheus",
                     "uid": "${datasource}"
                 },
-                "description": "Percentage of responses with a status code != 500",
+                "description": "Percentage of responses with a status code 500",
                 "fieldConfig": {
                     "defaults": {
                         "color": {
@@ -319,13 +319,13 @@ data:
                             "uid": "${datasource}"
                         },
                         "exemplar": true,
-                        "expr": "sum(rate(api_endpoints_status_codes{service=\"ccx-smart-proxy\", status_code!=\"500\"}[5m]))\n/\nsum(rate(api_endpoints_status_codes{service=\"ccx-smart-proxy\"}[5m]))",
+                        "expr": "sum(rate(api_endpoints_status_codes{namespace=\"$namespace\", service=\"ccx-smart-proxy\", status_code=\"500\"}[1m]))\n/\nsum(rate(api_endpoints_requests{namespace=\"$namespace\", service=\"ccx-smart-proxy\"}[1m]))",
                         "interval": "",
                         "legendFormat": "",
                         "refId": "A"
                     }
                 ],
-                "title": "Responses with non 500 status code",
+                "title": "Responses with 500 status code",
                 "type": "stat"
             },
             {
