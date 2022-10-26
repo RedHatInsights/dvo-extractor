@@ -176,7 +176,7 @@ data:
                             "uid": "${datasource}"
                         },
                         "exemplar": true,
-                        "expr": "((sum(kafka_consumergroup_group_lag{topic=\"platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) + sum(kafka_consumergroup_group_lag{topic=\"ccx.ocp.results\", group=\"ccx_data_pipeline_app\"})) < 200) / (sum(kafka_consumergroup_group_lag{topic=\"platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) + sum(kafka_consumergroup_group_lag{topic=\"ccx.ocp.results\", group=\"ccx_data_pipeline_app\"}))\n",
+                        "expr": "((sum(kafka_consumergroup_group_lag{topic=~\".*platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) + sum(kafka_consumergroup_group_lag{topic=~\".*ccx.ocp.results\", group=\"ccx_data_pipeline_app\"})) < 200) / (sum(kafka_consumergroup_group_lag{topic=~\".*platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) + sum(kafka_consumergroup_group_lag{topic=~\".*ccx.ocp.results\", group=\"ccx_data_pipeline_app\"}))\n",
                         "interval": "",
                         "legendFormat": "",
                         "refId": "A"
@@ -423,7 +423,7 @@ data:
                             "uid": "pKSsqZB7k"
                         },
                         "exemplar": true,
-                        "expr": "sum(kafka_consumergroup_group_lag{topic=\"platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) by (group, topic)",
+                        "expr": "sum(kafka_consumergroup_group_lag{topic=~\".*platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) by (group, topic)",
                         "interval": "",
                         "legendFormat": "ccx-data-pipeline ({{ topic }})",
                         "refId": "A"
@@ -434,7 +434,7 @@ data:
                             "uid": "pKSsqZB7k"
                         },
                         "exemplar": true,
-                        "expr": "sum(kafka_consumergroup_group_lag{topic=\"ccx.ocp.results\", group=\"ccx_data_pipeline_app\"}) by (group, topic)",
+                        "expr": "sum(kafka_consumergroup_group_lag{topic=~\".*ccx.ocp.results\", group=\"ccx_data_pipeline_app\"}) by (group, topic)",
                         "hide": false,
                         "interval": "",
                         "legendFormat": "db-writer ({{ topic }})",
@@ -538,7 +538,7 @@ data:
                             "uid": "pKSsqZB7k"
                         },
                         "exemplar": true,
-                        "expr": "sum(kafka_consumergroup_group_lag{topic=\"platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) by (group, topic)",
+                        "expr": "sum(kafka_consumergroup_group_lag{topic=~\".*platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) by (group, topic)",
                         "hide": false,
                         "interval": "",
                         "legendFormat": "ccx-data-pipeline ({{ topic }})",
@@ -642,7 +642,7 @@ data:
                             "uid": "pKSsqZB7k"
                         },
                         "exemplar": true,
-                        "expr": "sum(kafka_consumergroup_group_lag{topic=\"ccx.ocp.results\", group=\"ccx_data_pipeline_app\"}) by (group, topic)",
+                        "expr": "sum(kafka_consumergroup_group_lag{topic=~\".*ccx.ocp.results\", group=\"ccx_data_pipeline_app\"}) by (group, topic)",
                         "hide": false,
                         "interval": "",
                         "legendFormat": "db-writer ({{ topic }})",
