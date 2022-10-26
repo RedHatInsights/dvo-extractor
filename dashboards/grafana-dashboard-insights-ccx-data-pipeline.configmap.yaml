@@ -174,7 +174,7 @@ data:
           "gridPos": {
             "h": 4,
             "w": 4,
-            "x": 5,
+            "x": 4,
             "y": 0
           },
           "id": 14,
@@ -261,7 +261,7 @@ data:
           "gridPos": {
             "h": 4,
             "w": 4,
-            "x": 10,
+            "x": 8,
             "y": 0
           },
           "id": 13,
@@ -346,7 +346,7 @@ data:
           "gridPos": {
             "h": 4,
             "w": 4,
-            "x": 15,
+            "x": 12,
             "y": 0
           },
           "id": 8,
@@ -435,7 +435,7 @@ data:
           "gridPos": {
             "h": 4,
             "w": 4,
-            "x": 20,
+            "x": 16,
             "y": 0
           },
           "id": 10,
@@ -494,6 +494,73 @@ data:
             }
           ],
           "valueName": "current"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "#EAB839",
+                    "value": 250
+                  },
+                  {
+                    "color": "red",
+                    "value": 500
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 4,
+            "x": 20,
+            "y": 0
+          },
+          "id": 26,
+          "options": {
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "pluginVersion": "9.0.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "editorMode": "code",
+              "expr": "sum(kafka_consumergroup_group_lag{topic=~\".*platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) - sum(kafka_consumergroup_group_lag{topic=~\".*platform.upload.announce\",group=\"ccx_data_pipeline_app\"} offset 1h)",
+              "legendFormat": "{{group}} - {{topic}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Lag increase per our",
+          "type": "gauge"
         },
         {
           "aliasColors": {},
