@@ -105,7 +105,7 @@ data:
                             "uid": "${datasource}"
                         },
                         "exemplar": true,
-                        "expr": "(\n  sum(\n    increase(successful_messages_processing_time_sum{service=\"ccx-insights-results-db-writer-prometheus-exporter\",namespace=\"$namespace\"}[1m])\n  )\n  /\n  sum(\n    increase(successful_messages_processing_time_count{service=\"ccx-insights-results-db-writer-prometheus-exporter\",namespace=\"$namespace\"}[1m])\n  )\n) + (\n  sum(\n    increase(ccx_process_duration_seconds_count{service=\"ccx-data-pipeline-prometheus-exporter\",namespace=\"$namespace\"}[1m])\n  )\n  /\n  sum(\n    increase(ccx_process_duration_seconds_count{service=\"ccx-data-pipeline-prometheus-exporter\",namespace=\"$namespace\"}[1m])\n  )\n)",
+                        "expr": "(\n  sum(\n    increase(successful_messages_processing_time_sum{service=\"ccx-insights-results-db-writer-prometheus-exporter\",namespace=\"$namespace\"}[1m])\n  )\n  /\n  sum(\n    increase(successful_messages_processing_time_count{service=\"ccx-insights-results-db-writer-prometheus-exporter\",namespace=\"$namespace\"}[1m])\n  )\n) + (\n  sum(\n    increase(ccx_process_duration_seconds_sum{service=\"ccx-data-pipeline-prometheus-exporter\",namespace=\"$namespace\"}[1m])\n  )\n  /\n  sum(\n    increase(ccx_process_duration_seconds_count{service=\"ccx-data-pipeline-prometheus-exporter\",namespace=\"$namespace\"}[1m])\n  )\n)",
                         "interval": "",
                         "legendFormat": "",
                         "refId": "A"
