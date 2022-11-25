@@ -1,7 +1,6 @@
 plugins:
   packages:
     - ccx_rules_ocp.external
-    - ccx_rules_ocm
     - ccx_rules_processing
     - ccx_messaging
   configs:
