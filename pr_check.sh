@@ -27,8 +27,9 @@ COMPONENTS_W_RESOURCES="ccx-data-pipeline"  # component to keep
 CACHE_FROM_LATEST_IMAGE="true"
 
 export IQE_PLUGINS="ccx"
-export IQE_MARKER_EXPRESSION="smoke" # ccx_data_pipeline_smoke does not exits (at least yet) as marker in the plugin
-export IQE_FILTER_EXPRESSION=""
+#export IQE_MARKER_EXPRESSION="pipeline" # ccx_data_pipeline_smoke does not exits (at least yet) as marker in the plugin
+# check the failing test in ephemeral:
+export IQE_FILTER_EXPRESSION="test_report_for_not_registered"
 export IQE_REQUIREMENTS_PRIORITY=""
 export IQE_TEST_IMPORTANCE=""
 export IQE_CJI_TIMEOUT="30m"
