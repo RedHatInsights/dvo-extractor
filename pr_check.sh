@@ -27,8 +27,10 @@ COMPONENTS_W_RESOURCES="ccx-data-pipeline"  # component to keep
 CACHE_FROM_LATEST_IMAGE="true"
 
 export IQE_PLUGINS="ccx"
-export IQE_MARKER_EXPRESSION="smoke" # ccx_data_pipeline_smoke does not exits (at least yet) as marker in the plugin
-export IQE_FILTER_EXPRESSION=""
+# Run all pipeline tests
+export IQE_MARKER_EXPRESSION="pipeline"
+# Skip fuzz_api_v1/fuzz_api_v2 tests. The take long and not much useful for PR.
+export IQE_FILTER_EXPRESSION="not test_fuzz"
 export IQE_REQUIREMENTS_PRIORITY=""
 export IQE_TEST_IMPORTANCE=""
 export IQE_CJI_TIMEOUT="30m"
