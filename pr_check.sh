@@ -27,8 +27,10 @@ COMPONENTS_W_RESOURCES="ccx-data-pipeline"  # component to keep
 CACHE_FROM_LATEST_IMAGE="true"
 
 export IQE_PLUGINS="ccx"
+# Run all pipeline tests
 export IQE_MARKER_EXPRESSION="pipeline"
-export IQE_FILTER_EXPRESSION=""
+# Skip fuzz_api_v1/fuzz_api_v2 tests. The take long and not much useful for PR.
+export IQE_FILTER_EXPRESSION="not test_fuzz"
 export IQE_REQUIREMENTS_PRIORITY=""
 export IQE_TEST_IMPORTANCE=""
 export IQE_CJI_TIMEOUT="30m"
