@@ -22,18 +22,21 @@ set -exv
 APP_NAME="ccx-data-pipeline"  # name of app-sre "application" folder this component lives in
 COMPONENT_NAME="ccx-data-pipeline"  # name of app-sre "resourceTemplate" in deploy.yaml for this component
 IMAGE="quay.io/cloudservices/ccx-data-pipeline"
-COMPONENTS="ccx-data-pipeline ccx-insights-results insights-content-service insights-results-smart-proxy"  # space-separated list of components to laod
+COMPONENTS="ccx-data-pipeline ccx-insights-results insights-content-service insights-results-smart-proxy ocp-advisor-frontend" # space-separated list of components to laod
 COMPONENTS_W_RESOURCES="ccx-data-pipeline"  # component to keep
 CACHE_FROM_LATEST_IMAGE="true"
+DEPLOY_FRONTENDS="true"   # enable for front-end/UI tests
 
 export IQE_PLUGINS="ccx"
-# Run all pipeline tests
-export IQE_MARKER_EXPRESSION="pipeline"
-# Skip fuzz_api_v1/fuzz_api_v2 tests. The take long and not much useful for PR.
+# Run all pipeline and ui tests
+export IQE_MARKER_EXPRESSION="pipeline or (core and ui)"
+# Skip  fuzz_api_v1/fuzz_api_v2 tests. The take long and not much useful for PR.
 export IQE_FILTER_EXPRESSION="not test_fuzz"
 export IQE_REQUIREMENTS_PRIORITY=""
 export IQE_TEST_IMPORTANCE=""
 export IQE_CJI_TIMEOUT="30m"
+export IQE_SELENIUM="true"  # Required for UI tests
+export IQE_ENV="ephemeral"
 
 
 function build_image() {
