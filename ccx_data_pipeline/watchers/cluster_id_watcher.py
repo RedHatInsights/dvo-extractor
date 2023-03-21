@@ -56,7 +56,7 @@ class ClusterIdWatcher(EngineWatcher, ConsumerWatcher):
         id_file_path = os.path.join(extraction.tmp_dir, "config", "id")
 
         try:
-            with open(id_file_path) as id_file:
+            with open(id_file_path, "r") as id_file:
                 cluster_uuid = id_file.read(ClusterIdWatcher.CLUSTER_ID_LENGTH)
 
                 try:
