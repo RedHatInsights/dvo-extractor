@@ -49,7 +49,6 @@ def test_command_line_args_invalid_arg_provided(capsys):
     """Verify help is shown if invalid argument provided."""
     sys.argv = ["ccx-data-pipeline", "--config"]
     with pytest.raises(SystemExit) as exception:
-
         parser = command_line.parse_args()
 
         assert exception.type == SystemExit
