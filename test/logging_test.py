@@ -93,10 +93,8 @@ def test_setup_watchtower(get_logger_mock, log_handler_init_mock, session_init_m
     get_logger_mock.return_value = logger_mock
 
     # Session init should return a mock to check CloudWatchLogHandler args
-    client_mock = MagicMock()
     session_mock = MagicMock()
     session_init_mock.return_value = session_mock
-    session_mock.client.return_value = client_mock
 
     valid_env = {
         "CW_AWS_ACCESS_KEY_ID": "AWS_KEY",
@@ -114,10 +112,9 @@ def test_setup_watchtower(get_logger_mock, log_handler_init_mock, session_init_m
             aws_secret_access_key=valid_env["CW_AWS_SECRET_ACCESS_KEY"],
             region_name=valid_env["AWS_REGION_NAME"],
         )
-        session_mock.client.assert_called_with("logs")
         log_handler_init_mock.assert_called_with(
-            boto3_client=client_mock,
-            log_group_name=valid_env["CW_LOG_GROUP"],
-            log_stream_name=valid_env["CW_STREAM_NAME"],
+            boto3_session=session_mock,
+            log_group=valid_env["CW_LOG_GROUP"],
+            stream_name=valid_env["CW_STREAM_NAME"],
             create_log_group=False,
         )
