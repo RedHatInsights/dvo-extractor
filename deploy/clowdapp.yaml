@@ -189,10 +189,10 @@ objects:
             allow_unsafe_links: $ALLOW_UNSAFE_LINKS
 
         publisher:
-          name: ccx_messaging.publishers.data_pipeline_publisher.DataPipelinePublisher
+          name: ccx_messaging.publishers.rule_processing_publisher.RuleProcessingPublisher
           kwargs:
             outgoing_topic: ${CDP_OUTGOING_TOPIC}
-            bootstrap_servers: $KAFKA_BOOTSTRAP_URL
+            bootstrap.servers: $KAFKA_BOOTSTRAP_URL
         watchers:
           - name: ccx_messaging.watchers.stats_watcher.StatsWatcher
           - name: ccx_messaging.watchers.cluster_id_watcher.ClusterIdWatcher
