@@ -40,7 +40,9 @@ export IQE_ENV="ephemeral"
 
 
 changes_including_ocp_rules_version() {
-    git log -1 | grep 'Bumped ccx-rules-ocp version' > /dev/null
+    git log -5 HEAD
+    git log -1 HEAD .
+    git log -1 | grep "Bumped ccx-rules-ocp version"
 }
 
 create_junit_dummy_result() {
