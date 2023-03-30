@@ -40,7 +40,7 @@ export IQE_ENV="ephemeral"
 
 
 changes_including_ocp_rules_version() {
-    git log -1 | grep 'Bumped ccx-rules-ocp version' > /dev/null
+    git log -1 HEAD . | grep "Bumped ccx-rules-ocp version"
 }
 
 create_junit_dummy_result() {
@@ -71,7 +71,7 @@ function run_smoke_tests() {
 
 
 # for ccx-rules-ocp version bump PRs skip pr_check.sh tests.
-if ! changes_including_ocp_rules_version; then
+if changes_including_ocp_rules_version; then
     echo "Only ccx-rules-ocp version bump, exiting"
     create_junit_dummy_result
     exit 0
