@@ -198,7 +198,7 @@ objects:
           - name: ccx_messaging.watchers.cluster_id_watcher.ClusterIdWatcher
           - name: ccx_messaging.watchers.payload_tracker_watcher.PayloadTrackerWatcher
             kwargs:
-              bootstrap_servers: $KAFKA_BOOTSTRAP_URL
+              bootstrap.servers: $KAFKA_BOOTSTRAP_URL
               topic: ${PAYLOAD_TRACKER_TOPIC}
 
         logging:
