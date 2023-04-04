@@ -45,7 +45,7 @@ service:
     - name: ccx_messaging.watchers.cluster_id_watcher.ClusterIdWatcher
     - name: ccx_messaging.watchers.payload_tracker_watcher.PayloadTrackerWatcher
       kwargs:
-        bootstrap_servers: ${CDP_PRODUCER_SERVER:kafka:29092}
+        bootstrap.servers: ${CDP_PRODUCER_SERVER:kafka:29092}
         topic: platform.payload-status
 
   logging:
