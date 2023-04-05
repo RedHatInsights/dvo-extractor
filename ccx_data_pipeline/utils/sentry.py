@@ -31,6 +31,7 @@ def get_event_level():
 def init_sentry(dsn=None, transport=None, environment=None):
     """Configure and initialize sentry SDK for this project."""
     if dsn:
+        logging.getLogger(__name__).info("Initializing sentry")
         sentry_logging = LoggingIntegration(level=logging.INFO, event_level=get_event_level())
 
         sentry_sdk.init(
