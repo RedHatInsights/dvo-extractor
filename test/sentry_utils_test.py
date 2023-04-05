@@ -35,7 +35,7 @@ def test_utils_sentry_init_sentry_bad_dsn():
     """Verify sentry is not started if bad dsn provided and error is reported."""
     err_message = "test error"
     events = []
-    init_sentry("http://test@localhost", events.append)
+    init_sentry("http://test@localhost", events.append, None)
 
     logging.error(err_message)
 
@@ -47,6 +47,6 @@ def test_utils_sentry_init_sentry_bad_dsn():
 def test_utils_sentry_init_sentry_no_dsn():
     """Verify sentry is not started if no dsn provided."""
     events = []
-    init_sentry("http://test@localhost", events.append)
+    init_sentry("http://test@localhost", events.append, None)
 
     assert len(events) == 0

@@ -85,11 +85,13 @@ objects:
             - name: SENTRY_DSN
               valueFrom:
                 secretKeyRef:
-                  key: SENTRY_DSN
-                  name: sentry-dsn
+                  key: dsn
+                  name: ccx-data-pipeline-dsn
                   optional: true
             - name: SENTRY_CATCH_WARNINGS
               value: '1'
+            - name: SENTRY_ENVIRONMENT
+              value: ${ENV_NAME}
             - name: ALLOW_UNSAFE_LINKS
               value: ${ALLOW_UNSAFE_LINKS}
           image: ${IMAGE}:${IMAGE_TAG}
@@ -263,7 +265,7 @@ parameters:
   value: "true"
 - description: ClowdEnv Name
   name: ENV_NAME
-  requred: true
+  required: true
 - description: Minimum number of pods to use when autoscaling is enabled
   name: MIN_REPLICAS
   value: '3'
