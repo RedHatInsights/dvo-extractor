@@ -22,7 +22,7 @@ set -exv
 APP_NAME="ccx-data-pipeline"  # name of app-sre "application" folder this component lives in
 COMPONENT_NAME="ccx-data-pipeline"  # name of app-sre "resourceTemplate" in deploy.yaml for this component
 IMAGE="quay.io/cloudservices/ccx-data-pipeline"
-COMPONENTS="ccx-data-pipeline ccx-insights-results insights-content-service insights-results-smart-proxy ocp-advisor-frontend" # space-separated list of components to laod
+COMPONENTS="ccx-data-pipeline ccx-insights-results insights-content-service insights-results-smart-proxy ocp-advisor-frontend ccx-mock-ams" # space-separated list of components to laod
 COMPONENTS_W_RESOURCES="ccx-data-pipeline"  # component to keep
 CACHE_FROM_LATEST_IMAGE="true"
 DEPLOY_FRONTENDS="true"   # enable for front-end/UI tests
