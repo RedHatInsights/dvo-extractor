@@ -2,31 +2,33 @@
 
 The `config.yaml` is an standard **Insights Core Messaging** configuration file.
 To learn about its structure and configuring some common things, you probably
-want to read its documentation:
+want to read its documentation: [Insights Core Messaging documentation][1].
 
-[Insights Core Messaging
-documentation](https://github.com/RedHatInsights/insights-core-messaging#example-configuration).
+CCX Data Pipeline is a _clowderized_ application, ready to be used in AppSRE platform.
+The currant deployed service configuration can be read in the
+[Clowder Deployment file][2]
 
 Some of the specific **ccx-data-pipeline** configuration points are in the
 `service` section, where the specific _consumer_, _downloader_ and _publisher_
 are configured.
 
 - `consumer` name refers to the class
-  `ccx_messaging.consumers.consumer.AnemicConsumer`. The arguments passed
+  `ccx_messaging.consumers.kafka_consumer.KafkaConsumer`. The arguments passed
   to the initializer are defined in the `kwargs` dictionary initializer.
   The most relevants are:
   - `incoming_topic`: the Kafka topic to subscribe the consumer object.
-  - `group_id`: Kafka group identifier. Several instances of the same pipeline
+  - `platform_service`: Used by `KafkaConsumer` to filter the received messages.
+  - `group.id`: Kafka group identifier. Several instances of the same pipeline
     will need to be into the same group in order to not process the same
     messages.
-  - `bootstrap_servers`: a list of "IP:PORT" strings where the Kafka server is
+  - `bootstrap.servers`: a list of "IP:PORT" strings where the Kafka server is
     listening.
   - `max_record_age`: an integer that defines the amount of seconds for ignoring
     older Kafka records. If a received record is older than this amount of
     seconds, it will be ignored. By default, messages older than 2 hours will be
     ignored. To disable this functionality and process every record ignoring its
     age, use `-1`.
-  - `platform_service`: Used by `AnemicConsumer` to filter the received messages.
+  
 - `downloader`: name refers to the class
   `ccx_messaging.downloaders.http_downloader.HTTPDownloader`. Some of the accepted
   argument are:
@@ -38,12 +40,12 @@ are configured.
   - `allow_unsafe_link`: it is used mostly in test environments in order to avoid
     checking the URL of the archive to allow downloads from not recognized URLs.
 - `publisher` name refers to the class
-  `ccx_messaging.publishers.data_pipeline_publisher.DataPipelinePublisher` and it
+  `ccx_messaging.publishers.rule_processing_publisher.RuleProcessingPublisher` and it
   also allow to define the arguments passed to the initializer modifying the
   `kwargs` dictionary:
   - `outgoing_topic`: a string indicating the topic where the reported results
     should be sent.
-  - `bootstrap_servers`: same as in `consumer`, a list of Kafka servers to
+  - `bootstrap.servers`: same as in `consumer`, a list of Kafka servers to
     connect
 - `watchers`: it has a list of `Watcher` objects that will receive notifications
   of events during the pipeline processing steps. The default configured one is
@@ -79,7 +81,7 @@ case the environment variable is not defined.
 In addition to the YAML configuration, another important note about the needed
 environment variables:
 
-### Cloud Watch configuration
+## CloudWatch configuration
 
 To enable the sending of log messages to a Cloud Watch instance, you should
 define **all** the following environment variables:
@@ -97,3 +99,6 @@ define **all** the following environment variables:
 
 If any of these environment variables are not defined, the Cloud Watch service
 cannot be configured and won't be used at all.
+
+[1]: https://github.com/RedHatInsights/insights-core-messaging#example-configuration
+[2]: https://gitlab.cee.redhat.com/ccx/ccx-data-pipeline/-/blob/master/deploy/clowdapp.yaml
