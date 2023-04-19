@@ -85,7 +85,7 @@ Sentry SDK configuration and utility functions.</p>
       <p>Configure and initialize sentry SDK for this project.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">def</span> <span class="nf">init_sentry</span><span class="p">(</span><span class="n">dsn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">transport</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span></pre></div>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">init_sentry</span><span class="p">(</span><span class="n">dsn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">transport</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">environment</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -98,6 +98,7 @@ Sentry SDK configuration and utility functions.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="k">if</span> <span class="n">dsn</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Initializing sentry&quot;</span><span class="p">)</span>
         <span class="n">sentry_logging</span> <span class="o">=</span> <span class="n">LoggingIntegration</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">event_level</span><span class="o">=</span><span class="n">get_event_level</span><span class="p">())</span>
 
         <span class="n">sentry_sdk</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
@@ -106,6 +107,7 @@ Sentry SDK configuration and utility functions.</p>
             <span class="n">integrations</span><span class="o">=</span><span class="p">[</span><span class="n">sentry_logging</span><span class="p">],</span>
             <span class="n">max_breadcrumbs</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
             <span class="n">transport</span><span class="o">=</span><span class="n">transport</span><span class="p">,</span>
+            <span class="n">environment</span><span class="o">=</span><span class="n">environment</span><span class="p">,</span>
         <span class="p">)</span>
 
 </pre></div>

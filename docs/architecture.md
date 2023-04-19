@@ -1,8 +1,8 @@
 # Architecture
 
-This service is built on top of [insights-core-messaging
-framework](https://github.com/RedHatInsights/insights-core-messaging) and will
-be deployed and run inside [cloud.redhat.com](https://cloud.redhat.com).
+This service is built on top of [insights-ccx-messaging][2] and
+[insights-core-messaging framework][1] and will be deployed and
+run inside [cloud.redhat.com][3].
 
 ## External data pipeline diagram
 
@@ -23,3 +23,6 @@ be deployed and run inside [cloud.redhat.com](https://cloud.redhat.com).
 5. That results are consumed by Insights rules aggregator service that caches them
 6. The service provides such data via REST API to other tools, like OpenShift Cluster Manager web UI, OpenShift console, etc.
 
+[1]: https://github.com/RedHatInsights/insights-core-messaging
+[2]: https://github.com/RedHatInsights/insights-ccx-messaging/
+[3]: https://cloud.redhat.com
