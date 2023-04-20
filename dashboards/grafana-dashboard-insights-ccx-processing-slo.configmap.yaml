@@ -1114,7 +1114,7 @@ data:
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "sum(increase(ccx_downloaded_total{namespace=\"$namespace\", service=\"ccx-data-pipeline-prometheus-exporter\"}[1m]))",
+                    "expr": "sum(increase(ccx_downloaded_total_count{namespace=\"$namespace\", service=\"ccx-data-pipeline-prometheus-exporter\"}[1m]))",
                     "format": "time_series",
                     "interval": "1m",
                     "intervalFactor": 1,
@@ -1260,7 +1260,7 @@ data:
                     "datasource": {
                         "uid": "$datasource"
                     },
-                    "expr": "sum(increase(ccx_downloaded_total{namespace=\"$namespace\", service=\"ccx-sha-extractor-prometheus-exporter\"}[1m]))",
+                    "expr": "sum(increase(ccx_downloaded_total_count{namespace=\"$namespace\", service=\"ccx-sha-extractor-prometheus-exporter\"}[1m]))",
                     "format": "time_series",
                     "interval": "1m",
                     "intervalFactor": 1,

@@ -624,7 +624,7 @@ data:
               "refId": "A"
             },
             {
-              "expr": "sum(increase(ccx_downloaded_total{namespace=\"$namespace\"}[1m]))",
+              "expr": "sum(increase(ccx_downloaded_total_count{namespace=\"$namespace\"}[1m]))",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
