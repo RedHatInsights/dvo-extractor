@@ -559,7 +559,7 @@ data:
               "refId": "A"
             }
           ],
-          "title": "Lag increase per our",
+          "title": "Lag increase per hour",
           "type": "gauge"
         },
         {
