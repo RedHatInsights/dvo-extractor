@@ -30,8 +30,8 @@ This will allow the smoke test to run automatically every merge request you make
 
 In `test/benchmark_test.py` file there are benchmark tests to measure the service
 performance. To perform those test the pipeline must be running, either
-[locally](https://ccx.pages.redhat.com/ccx-docs/howto/local_edp.html) or
-in an [ephemeral cluster](https://ccx.pages.redhat.com/ccx-docs/howto/ephemeral_env.html).
+[locally](https://ccx.pages.redhat.com/ccx-docs/docs/processing/howto/local_edp/) or
+in an [ephemeral cluster](https://ccx.pages.redhat.com/ccx-docs/docs/processing/howto/ephemeral_env/).
 If you're running tests locally you can tweak the tests configuration by setting the
 proper environment variables (a list with description can be found in `deploy/benchmark.yaml`).
 To run the test in an ephemeral cluster you need to add the following service to
@@ -57,3 +57,4 @@ The last step is to launch the test and read the output:
 Documentation is hosted on Gitlab Pages
 <https://ccx.pages.redhat.com/ccx-data-pipeline/>.
 Sources are located in [docs](https://gitlab.cee.redhat.com/ccx/ccx-data-pipeline/-/tree/master/docs).
+
