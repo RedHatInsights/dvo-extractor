@@ -57,4 +57,3 @@ The last step is to launch the test and read the output:
 Documentation is hosted on Gitlab Pages
 <https://ccx.pages.redhat.com/ccx-data-pipeline/>.
 Sources are located in [docs](https://gitlab.cee.redhat.com/ccx/ccx-data-pipeline/-/tree/master/docs).
-

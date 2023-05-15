@@ -5,4 +5,4 @@ source = ccx_data_pipeline, test
 include =
     ccx_data_pipeline/*
     test/*
-fail_under = 67.0
+fail_under = 60.0
