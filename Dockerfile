@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8/ubi:8.7-1054
+FROM registry.access.redhat.com/ubi8/ubi:8.7-1112
 
 ENV CONFIG_PATH=/ccx-data-pipeline/config.yaml \
     VENV=/ccx-data-pipeline-venv \
