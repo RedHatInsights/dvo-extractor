@@ -1143,17 +1143,6 @@ data:
                     "intervalFactor": 1,
                     "legendFormat": "Published",
                     "refId": "D"
-                    },
-                    {
-                    "datasource": {
-                        "uid": "$datasource"
-                    },
-                    "expr": "sum(increase(consumed_messages{namespace=\"$namespace\"}[1m]))",
-                    "format": "time_series",
-                    "interval": "1m",
-                    "intervalFactor": 1,
-                    "legendFormat": "Consumed",
-                    "refId": "E"
                     }
                 ],
                 "title": "CCX Data Pipeline - Successful Events per 1 Minute",
@@ -1288,17 +1277,6 @@ data:
                     "intervalFactor": 1,
                     "legendFormat": "Published",
                     "refId": "D"
-                    },
-                    {
-                    "datasource": {
-                        "uid": "$datasource"
-                    },
-                    "expr": "sum(increase(consumed_messages{namespace=\"$namespace\"}[1m]))",
-                    "format": "time_series",
-                    "interval": "1m",
-                    "intervalFactor": 1,
-                    "legendFormat": "Consumed",
-                    "refId": "E"
                     }
                 ],
                 "title": "CCX SHA Extractor - Successful Events per 1 Minute",

@@ -646,14 +646,6 @@ data:
               "intervalFactor": 1,
               "legendFormat": "Published",
               "refId": "D"
-            },
-            {
-              "expr": "sum(increase(consumed_messages{namespace=\"$namespace\"}[1m]))",
-              "format": "time_series",
-              "interval": "1m",
-              "intervalFactor": 1,
-              "legendFormat": "Consumed",
-              "refId": "E"
             }
           ],
           "thresholds": [],
