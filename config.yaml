@@ -12,21 +12,19 @@ service:
   format: insights.formats._json.JsonFormat
   target_components: []
   consumer:
-    name: ccx_messaging.consumers.AnemicConsumer
+    name: ccx_messaging.consumers.kafka_consumer.KafkaConsumer
     kwargs:
       incoming_topic: ${CDP_INCOMING_TOPIC:platform.upload.announce}
-      group_id: ${CDP_GROUP_ID:ccx_data_pipeline_app}
-      bootstrap_servers: ${CDP_CONSUMER_SERVER:["10.34.129.172:9092"]}
+      group.id: ${CDP_GROUP_ID:ccx_data_pipeline_app}
+      bootstrap.servers: ${CDP_CONSUMER_SERVER:["10.34.129.172:9092"]}
       platform_service: openshift
       security_protocol: SASL_SSL
       sasl_mechanism: PLAIN
       sasl_plain_username: ${CDP_CONSUMER_USERNAME}
       sasl_plain_password: ${CDP_CONSUMER_USERPASS}
-      processing_timeout_s: 0
-      max_poll_records: 10
-      max_poll_interval_ms: 600000
-      heartbeat_interval_ms: 10000
-      session_timeout_ms: 20000
+      max.poll.interval.ms: 600000
+      heartbeat.interval.ms: 10000
+      session.timeout.ms: 20000
       dead_letter_queue_topic: ${CDP_DEAD_LETTER_QUEUE_TOPIC:dead.letter.queue}
   downloader:
     name: ccx_messaging.downloaders.http_downloader.HTTPDownloader
@@ -34,10 +32,10 @@ service:
       max_archive_size: 100MiB
 
   publisher:
-    name: ccx_messaging.publishers.data_pipeline_publisher.DataPipelinePublisher
+    name: ccx_messaging.publishers.rule_processing_publisher.RuleProcessingPublisher
     kwargs:
       outgoing_topic: ${CDP_OUTGOING_TOPIC:ccx.ocp.results}
-      bootstrap_servers: ${CDP_PUBLISHER_SERVER:10.34.129.172:9092}
+      bootstrap.servers: ${CDP_PUBLISHER_SERVER:10.34.129.172:9092}
       security_protocol: SASL_SSL
       sasl_mechanism: PLAIN
       sasl_plain_username: ${CDP_PUBLISHER_USERNAME}
