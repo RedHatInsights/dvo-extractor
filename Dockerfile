@@ -11,8 +11,8 @@ COPY . $HOME
 
 ENV PATH="$VENV/bin:$PATH"
 
-RUN dnf install --nodocs -y python3-pip unzip git-core && \
-    python3 -m venv $VENV && \
+RUN dnf install --nodocs -y python3-pip unzip git-core python38 && \
+    python3.8 -m venv $VENV && \
     curl -ksL https://certs.corp.redhat.com/certs/2015-IT-Root-CA.pem -o /etc/pki/ca-trust/source/anchors/RH-IT-Root-CA.crt && \
     curl -ksL https://certs.corp.redhat.com/certs/2022-IT-Root-CA.pem -o /etc/pki/ca-trust/source/anchors/2022-IT-Root-CA.pem && \
     update-ca-trust && \
