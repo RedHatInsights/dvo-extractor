@@ -352,6 +352,8 @@ data:
                             "mode": "palette-classic"
                         },
                         "custom": {
+                            "axisCenteredZero": false,
+                            "axisColorMode": "text",
                             "axisLabel": "Lag",
                             "axisPlacement": "auto",
                             "barAlignment": 0,
@@ -408,7 +410,8 @@ data:
                     "legend": {
                         "calcs": [],
                         "displayMode": "list",
-                        "placement": "bottom"
+                        "placement": "bottom",
+                    "showLegend": true
                     },
                     "tooltip": {
                         "mode": "multi",
@@ -420,24 +423,13 @@ data:
                     {
                         "datasource": {
                             "type": "prometheus",
-                            "uid": "pKSsqZB7k"
+                            "uid": "$datasource"
                         },
-                        "exemplar": true,
-                        "expr": "sum(kafka_consumergroup_group_lag{topic=~\".*platform.upload.announce\",group=\"ccx_data_pipeline_app\"}) by (group, topic)",
-                        "interval": "",
-                        "legendFormat": "ccx-data-pipeline ({{ topic }})",
-                        "refId": "A"
-                    },
-                    {
-                        "datasource": {
-                            "type": "prometheus",
-                            "uid": "pKSsqZB7k"
-                        },
-                        "exemplar": true,
-                        "expr": "sum(kafka_consumergroup_group_lag{topic=~\".*ccx.ocp.results\", group=\"ccx_data_pipeline_app\"}) by (group, topic)",
+                        "editorMode": "code",
+                        "expr": "sum(kafka_consumergroup_group_lag{group=~\"ccx.+\"}) by (group, topic)",
                         "hide": false,
-                        "interval": "",
-                        "legendFormat": "db-writer ({{ topic }})",
+                        "legendFormat": "{{group}} ({{topic}})",
+                        "range": true,
                         "refId": "B"
                     }
                 ],
