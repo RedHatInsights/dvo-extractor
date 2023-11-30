@@ -1,0 +1,5 @@
+-i https://repository.engineering.redhat.com/nexus/repository/ccx/simple
+
+ccx-rules-ocm==0.0.1
+ccx-rules-ocp==2023.11.22
+ccx-rules-processing==0.0.3
