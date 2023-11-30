@@ -3,8 +3,7 @@ FROM registry.access.redhat.com/ubi8/ubi:latest
 ENV CONFIG_PATH=/ccx-data-pipeline/config.yaml \
     VENV=/ccx-data-pipeline-venv \
     HOME=/ccx-data-pipeline \
-    REQUESTS_CA_BUNDLE=/etc/pki/tls/certs/ca-bundle.crt \
-
+    REQUESTS_CA_BUNDLE=/etc/pki/tls/certs/ca-bundle.crt
 
 WORKDIR $HOME
 
