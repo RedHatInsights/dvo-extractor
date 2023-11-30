@@ -41,7 +41,7 @@ Homepage = "https://gitlab.cee.redhat.com/ccx/ccx-data-pipeline"
 [project.scripts]
 ccx-data-pipeline = "ccx_data_pipeline.command_line:ccx_data_pipeline"
 
-[options.extras_require]
+[project.optional-dependencies]
 dev = [
     "black",
     "coverage",
