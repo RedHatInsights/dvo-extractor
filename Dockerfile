@@ -9,15 +9,17 @@ WORKDIR $HOME
 
 COPY . $HOME
 
-ENV PATH="$VENV/bin:$PATH"
+ENV PATH="$VENV/bin:$PATH" \
+    PIP_CONSTRAINT=$HOME/constraints.txt
 
 RUN dnf install --nodocs -y python3-pip unzip git-core python38 && \
     python3.8 -m venv $VENV && \
     curl -ksL https://certs.corp.redhat.com/certs/2015-IT-Root-CA.pem -o /etc/pki/ca-trust/source/anchors/RH-IT-Root-CA.crt && \
     curl -ksL https://certs.corp.redhat.com/certs/2022-IT-Root-CA.pem -o /etc/pki/ca-trust/source/anchors/2022-IT-Root-CA.pem && \
     update-ca-trust && \
-    pip install --no-cache-dir -U pip setuptools wheel && \
-    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -U pip setuptools && \
+    pip install --no-cache-dir . && \
+    pip install --no-cache-dir -r deployment-requirements.txt && \
     dnf remove -y git-core && \
     dnf clean all && \
     chmod -R g=u $HOME $VENV /etc/passwd && \

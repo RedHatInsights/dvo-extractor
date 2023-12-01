@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ccx-data-pipeline"
+dynamic = ["version"]
+readme = "README.md"
+authors = [
+    {name="CCX Processing Team", email="ccx-core-processing-team@redhat.com"}
+]
+classifiers = [
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12"
+]
+
+requires-python = ">= 3.8"
+dependencies = [
+    "app-common-python>=0.2.5",
+    "ccx-messaging>=3.5.3",
+    "insights-core-messaging>=1.2.4"
+]
+
+[tool.setuptools.packages.find]
+include = ["ccx_data_pipeline"]
+
+[project.license]
+text = "Apache-2.0"
+
+[project.urls]
+Homepage = "https://gitlab.cee.redhat.com/ccx/ccx-data-pipeline"
+
+[project.scripts]
+ccx-data-pipeline = "ccx_data_pipeline.command_line:ccx_data_pipeline"
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "coverage",
+    "freezegun",
+    "pycco",
+    "pycodestyle",
+    "pylint",
+    "pytest",
+    "pytest-cov"
+]
+
+[tool.setuptools_scm]
