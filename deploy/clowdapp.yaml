@@ -1,4 +1,4 @@
----
+``---
 apiVersion: v1
 kind: Template
 metadata:
@@ -88,8 +88,6 @@ objects:
                   key: dsn
                   name: ccx-data-pipeline-dsn
                   optional: true
-            - name: SENTRY_CATCH_WARNINGS
-              value: '1'
             - name: SENTRY_ENVIRONMENT
               value: ${ENV_NAME}
             - name: ALLOW_UNSAFE_LINKS
