@@ -3,4 +3,4 @@
 app-common-python==0.2.6
 ccx-messaging @ git+https://github.com/RedHatInsights/insights-ccx-messaging@v3.6.1
 insights-core-messaging @ git+https://github.com/RedHatInsights/insights-core-messaging@1.2.7
-ccx-rules-ocp==2023.11.22
+ccx-rules-ocp==2024.01.31
