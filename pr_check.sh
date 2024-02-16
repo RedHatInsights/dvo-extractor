@@ -17,9 +17,7 @@
 # Options that must be configured by app owner
 # --------------------------------------------
 export APP_NAME="ccx-data-pipeline"  # name of app-sre "application" folder this component lives in
-# TODO set it to "insights-stage" once we have dvo-writer/dvo-extractor stage deploy config
-# TODO set it back to "insights-production" once we have dvo deployed to prod
-export REF_ENV="insights-stage"
+export REF_ENV="insights-production"
 export COMPONENT_NAME="dvo-extractor"
 export IMAGE="quay.io/cloudservices/dvo-extractor"
 export COMPONENTS="ccx-insights-results dvo-writer dvo-extractor insights-content-service insights-results-smart-proxy ccx-mock-ams"  # space-separated list of components to laod
