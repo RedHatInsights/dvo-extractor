@@ -21,7 +21,7 @@ echo "job tmp dir location: $TMP_JOB_DIR"
 
 function job_cleanup() {
     echo "cleaning up job tmp dir: $TMP_JOB_DIR"
-    rm -fr $TMP_JOB_DIR
+    rm -fr "$TMP_JOB_DIR"
 }
 
 trap job_cleanup EXIT ERR SIGINT SIGTERM
