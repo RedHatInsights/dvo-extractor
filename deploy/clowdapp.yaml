@@ -56,7 +56,6 @@ objects:
             - name: CDP_PUBLISHER_SERVER
               value: ${CDP_PUBLISHER_SERVER}
             - name: SENTRY_DSN
-              # TODO: CCXDEV-11596
               valueFrom:
                 secretKeyRef:
                   key: dsn
