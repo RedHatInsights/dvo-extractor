@@ -42,7 +42,7 @@ def test_command_line_args_no_config_provided():
     with pytest.raises(SystemExit) as exception:
         sys.argv = ["dvo-extractor"]
         command_line.insights_dvo_extractor()
-    assert exception.type == SystemExit
+    assert exception.type is SystemExit
     assert exception.value.code == 1
 
 
@@ -53,7 +53,7 @@ def test_command_line_args_invalid_arg_provided(capsys):
 
         parser = command_line.parse_args()
 
-        assert exception.type == SystemExit
+        assert exception.type is SystemExit
         assert exception.value.code == 2
 
         assert not parser.config
