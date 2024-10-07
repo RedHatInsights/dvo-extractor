@@ -11,7 +11,10 @@ jobs:
   bot-automerge:
     runs-on: ubuntu-latest
     # Check the pull request author.
-    if: github.event.pull_request.user.login == 'InsightsDroid'
+    if: |
+      github.event.pull_request.user.login == 'dependabot[bot]' ||
+      github.event.pull_request.user.login == 'red-hat-konflux[bot]' ||
+      github.event.pull_request.user.login == 'InsightsDroid'
     steps:
       - name: Hello world
         run: echo "Hello World!"
