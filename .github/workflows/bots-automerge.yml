@@ -10,7 +10,8 @@ permissions:
 jobs:
   bot-automerge:
     runs-on: ubuntu-latest
-    if: github.actor == 'InsightsDroid'
+    # Check the pull request author.
+    if: github.event.pull_request.user.login == 'InsightsDroid'
     steps:
       - name: Hello world
         run: echo "Hello World!"
