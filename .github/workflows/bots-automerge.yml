@@ -17,10 +17,10 @@ jobs:
       github.event.pull_request.user.login == 'InsightsDroid'
     steps:
       - name: Github Actions bot approves the PR
-        run: gh pr review --approve "$PR_URL"
+        run: gh pr review --approve "$PR_NUMBER"
         env:
-            PR_URL: ${{github.event.pull_request.html_url}}
-            GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+            PR_NUMBER: ${{ github.event.pull_request.number }}
+            #GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       # - name: InsightsDroid approves the PR
       #   run: gh pr review --approve "$PR_URL"
       #   env:
