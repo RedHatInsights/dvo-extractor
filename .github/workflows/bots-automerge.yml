@@ -10,10 +10,7 @@ permissions:
 jobs:
   bot-automerge:
     runs-on: ubuntu-latest
-    if: |
-      (github.actor == 'red-hat-konflux[bot]') ||
-      (github.actor == 'dependabot[bot]') ||
-      (github.actor == 'InsightsDroid')
+    if: github.actor == 'InsightsDroid'
     steps:
       - name: Hello world
         run: echo "Hello World!"
