@@ -16,13 +16,11 @@ jobs:
       github.event.pull_request.user.login == 'red-hat-konflux[bot]' ||
       github.event.pull_request.user.login == 'InsightsDroid'
     steps:
-      - name: Hello world
-        run: echo "Hello World!"
-      # - name: Github Actions bot approves the PR
-      #   run: gh pr review --approve "$PR_URL"
-      #   env:
-      #       PR_URL: ${{github.event.pull_request.html_url}}
-      #       GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: Github Actions bot approves the PR
+        run: gh pr review --approve "$PR_URL"
+        env:
+            PR_URL: ${{github.event.pull_request.html_url}}
+            GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       # - name: InsightsDroid approves the PR
       #   run: gh pr review --approve "$PR_URL"
       #   env:
