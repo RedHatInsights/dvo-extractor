@@ -16,8 +16,8 @@ jobs:
       github.event.pull_request.user.login == 'red-hat-konflux[bot]' ||
       github.event.pull_request.user.login == 'InsightsDroid'
     steps:
-      - uses: actions/checkout@v4
       - name: Github Actions bot approves the PR
+        uses: actions/checkout@v4
         run: gh pr review --approve "$PR_URL"
         env:
             PR_URL: ${{github.event.pull_request.html_url}}
