@@ -3,13 +3,14 @@ name: Bots auto-merge
 on: pull_request
 
 # This section adds write permissions to the secrets.GITHUB_TOKEN. Default is just read
-permissions:
-  contents: write
-  pull-requests: write
+#permissions:
+  #contents: write
+  #pull-requests: write
 
 jobs:
   bot-automerge:
     runs-on: ubuntu-latest
+    permissions: write-all
     # Check the pull request author.
     if: |
       github.event.pull_request.user.login == 'dependabot[bot]' ||
@@ -19,16 +20,11 @@ jobs:
       - run: gh auth status
         env:
             GH_TOKEN: ${{ github.token }}
-      - run: gh auth login
+      - run: echo "$PR_URL"
         env:
-            GH_TOKEN: ${{ github.token }}
-      - run: gh auth status
-        env:
-            GH_TOKEN: ${{ github.token }}
+            PR_URL: ${{github.event.pull_request.html_url}}
       - name: Github Actions bot approves the PR
-        run: |
-          gh auth status
-          gh pr review --approve "$PR_URL"
+        run: gh pr review --approve "$PR_URL"
         env:
             PR_URL: ${{github.event.pull_request.html_url}}
             GH_TOKEN: ${{ github.token }}
