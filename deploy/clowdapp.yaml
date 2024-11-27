@@ -164,6 +164,7 @@ objects:
       plugins:
         packages:
           - ccx_rules_ocp.external.dvo
+          - runtime_ocp_rules
           - dvo_extractor
           - insights.specs.default
           - pythonjsonlogger
