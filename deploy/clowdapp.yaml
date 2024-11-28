@@ -171,7 +171,7 @@ objects:
       service:
         extract_timeout:
         extract_tmp_dir:
-        format: ccx_ocp_core.core.formats.json.OCPRecommendationsJsonFormat
+        format: runtime_ocp_rules.core.json
         target_components: []
         consumer:
           name: ccx_messaging.consumers.kafka_consumer.KafkaConsumer
