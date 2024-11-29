@@ -1,5 +1,6 @@
 plugins:
   packages:
+    - runtime_ocp_rules.rules
     - ccx_rules_ocp.external.dvo
     - dvo_extractor
     - insights.specs.default

@@ -163,7 +163,7 @@ objects:
     config.yaml: |-
       plugins:
         packages:
-          - runtime_ocp_rules
+          - runtime_ocp_rules.rules
           - dvo_extractor
           - insights.specs.default
           - pythonjsonlogger
