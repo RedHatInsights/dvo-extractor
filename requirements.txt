@@ -1,7 +1,8 @@
 -i https://repository.engineering.redhat.com/nexus/repository/ccx/simple
 
 app-common-python==0.2.7
-ccx-messaging @ git+https://github.com/RedHatInsights/insights-ccx-messaging@v4.1.4
-insights-core-messaging @ git+https://github.com/RedHatInsights/insights-ccx-messaging.git
+ccx-messaging @ git+https://github.com/Jakub007d/insights-ccx-messaging.git@1.0
+insights-core-messaging @ git+https://github.com/RedHatInsights/insights-core-messaging@1.2.11
+runtime-ocp-rules @ git+https://gitlab.cee.redhat.com/wabuahma/runtime-ocp-rules
 ccx-rules-ocp==2024.11.19
 setuptools>=70.0.0
