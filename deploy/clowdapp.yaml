@@ -168,6 +168,7 @@ objects:
           - insights.specs.default
           - pythonjsonlogger
           - pythonjsonlogger.jsonlogger
+          
       service:
         extract_timeout:
         extract_tmp_dir:
