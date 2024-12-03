@@ -164,7 +164,6 @@ objects:
       plugins:
         packages:
           - ccx_rules_ocp.external.dvo
-          - runtime_ocp_rules.external.rules
           - dvo_extractor
           - insights.specs.default
           - pythonjsonlogger
@@ -172,7 +171,7 @@ objects:
       service:
         extract_timeout:
         extract_tmp_dir:
-        format: runtime_ocp_rules.core.json.OCPRecommendationsJsonFormat
+        format: ccx_ocp_core.core.formats.json.OCPRecommendationsJsonFormat
         target_components: []
         consumer:
           name: ccx_messaging.consumers.kafka_consumer.KafkaConsumer
