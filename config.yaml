@@ -1,7 +1,11 @@
 plugins:
   packages:
     - ccx_rules_ocp.external.dvo
+<<<<<<< HEAD
     - runtime_ocp_rules.external.rules
+=======
+    - runtime_ocp_rules.rules
+>>>>>>> origin/poc-runtimes
     - dvo_extractor
     - insights.specs.default
     - pythonjsonlogger
@@ -9,7 +13,11 @@ plugins:
 service:
   extract_timeout:
   extract_tmp_dir:
+<<<<<<< HEAD
   format: runtime_ocp_rules.core.json.OCPRecommendationsJsonFormat
+=======
+  format: runtime_ocp_rules.core.json
+>>>>>>> origin/poc-runtimes
   target_components: []
   consumer:
     name: ccx_messaging.consumers.kafka_consumer.KafkaConsumer
