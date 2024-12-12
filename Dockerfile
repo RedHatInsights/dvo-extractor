@@ -5,6 +5,8 @@ ENV CONFIG_PATH=/dvo-extractor/config.yaml \
     HOME=/dvo-extractor \
     REQUESTS_CA_BUNDLE=/etc/pki/tls/certs/ca-bundle.crt
 
+ADD https://certs.corp.redhat.com/certs/2022-IT-Root-CA.pem https://certs.corp.redhat.com/certs/Current-IT-Root-CAs.pem /etc/pki/ca-trust/source/anchors/
+
 WORKDIR $HOME
 
 COPY . $HOME
@@ -13,8 +15,6 @@ ENV PATH="$VENV/bin:$PATH"
 
 RUN microdnf install --nodocs -y python3.11 unzip tar git-core && \
     python3.11 -m venv $VENV && \
-    curl -ksL https://certs.corp.redhat.com/certs/2015-IT-Root-CA.pem -o /etc/pki/ca-trust/source/anchors/RH-IT-Root-CA.crt && \
-    curl -ksL https://certs.corp.redhat.com/certs/2022-IT-Root-CA.pem -o /etc/pki/ca-trust/source/anchors/2022-IT-Root-CA.pem && \
     update-ca-trust && \
     pip install --no-cache-dir -U pip && \
     pip install --no-cache-dir -r requirements.txt && \
