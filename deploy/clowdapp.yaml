@@ -165,9 +165,6 @@ objects:
         packages:
           - ccx_rules_ocp.external.dvo
           - dvo_extractor
-          - insights.specs.default
-          - pythonjsonlogger
-          - pythonjsonlogger.jsonlogger
       service:
         extract_timeout:
         extract_tmp_dir:
