@@ -2,6 +2,6 @@
 
 app-common-python==0.2.7
 ccx-messaging @ git+https://github.com/RedHatInsights/insights-ccx-messaging@v4.1.11
-insights-core-messaging @ git+https://github.com/RedHatInsights/insights-core-messaging@1.2.11
+insights-core-messaging @ git+https://github.com/RedHatInsights/insights-core-messaging@1.2.15
 ccx-rules-ocp==2024.12.11
 setuptools>=70.0.0
